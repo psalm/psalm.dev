@@ -1,0 +1,12 @@
+{
+    "name": "muglug/getpsalm.org",
+    "type": "project",
+    "require": {
+        "vimeo/psalm": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Psalm\\Tests\\Provider\\": "vendor/vimeo/psalm/tests/Provider"
+        }
+    }
+}
