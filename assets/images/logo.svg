@@ -1,9 +1,9 @@
-<svg width="64" height="64" viewbox="395 -132 64 64" xmlns="http://www.w3.org/2000/svg">
+<svg width="64" height="64" viewBox="395 -132 64 64" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <lineargradient x1="50%" y1="100%" x2="50%" y2="0%" id="a">
+    <linearGradient x1="50%" y1="100%" x2="50%" y2="0%" id="a">
       <stop stop-color="#F7F7F7" offset="0%"/>
       <stop stop-color="#E5E7E6" offset="100%"/>
-    </lineargradient>
+    </linearGradient>
   </defs>
   <g fill="none" fill-rule="evenodd">
     <path d="M58.1497 0H5.8503C2.6183 0 0 2.6192 0 5.8503v52.2994C0 61.3817 2.6184 64 5.8503 64h52.2994C61.3817 64 64 61.3816 64 58.1497V5.8503C64 2.6193 61.3816 0 58.1497 0z" fill="url(#a)" transform="matrix(1 0 0 -1 395 -68)"/>
