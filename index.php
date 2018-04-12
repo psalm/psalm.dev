@@ -14,7 +14,7 @@
 </head>
 <body>
 <hgroup>
-<h1><svg viewBox="395 -132 64 64" xmlns="http://www.w3.org/2000/svg" width="64" height="64"><defs><linearGradient x1="50%" y1="100%" x2="50%" y2="0%" id="a"><stop stop-color="#F7F7F7" offset="0%"/><stop stop-color="#E5E7E6" offset="100%"/></linearGradient></defs><g fill="none" fill-rule="evenodd"><path d="M58.1 0H6a5.8 5.8 0 0 0-6 5.9V58c0 3.4 2.6 6 5.9 6H58c3.3 0 5.9-2.6 5.9-5.9V6c.1-3.4-2.5-6-5.8-6z" fill="url(#a)" transform="matrix(1 0 0 -1 395 -68)"/><path d="M407.9-121.2v2.8l-2.4 1.6 2.4 1.4v3.2l-5.7-4.5 5.7-4.5m2.6-1l.6 2s2.3-1.7 2.9-.4c.6 1.4-2.5 2.3-2 4.6l1.2-.1 1.3.1s-.1-1.2.8-1.9c1-.9 2-2.5 1-4.2-1-1.6-3.5-2-5.8 0m4.2 8.6c0 .8-.6 1.4-1.4 1.4-.8 0-1.4-.6-1.4-1.4 0-.7.6-1.3 1.4-1.3.8 0 1.4.6 1.4 1.3" opacity=".6" fill="#000"/><g opacity=".5" fill="#000"><path opacity=".4" d="M442-112h-20v-7h20v7"/><path opacity=".3" d="M442-119h-20v-3h20v3"/></g><g opacity=".5" fill="#000"><path opacity=".4" d="M418-95h-16v-7h16v7"/><path opacity=".3" d="M418-102h-16v-3h16v3"/></g><g opacity=".5" fill="#000"><path opacity=".4" d="M451-95h-28v-7h28v7"/><path opacity=".3" d="M451-102h-28v-3h28v3"/></g><g opacity=".5" fill="#000"><path opacity=".4" d="M431-78h-24v-7h24v7"/><path opacity=".3" d="M431-85h-24v-3h24v3"/></g><g opacity=".5" fill="#000"><path opacity=".4" d="M451-78h-15v-7h15v7"/><path opacity=".3" d="M451-85h-15v-3h15v3"/></g><path fill="#FF2305" opacity=".5" d="M405-76v-4h28v4"/></g></svg> Psalm</h1>
+<h1><img src="assets/images/logo.svg" alt=""> Psalm</h1>
 <h2>A static analysis tool for PHP</h2>
 </hgroup>
 <div class="cm_container_container">
