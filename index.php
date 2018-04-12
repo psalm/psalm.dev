@@ -5,7 +5,6 @@
 <script src="//getpsalm.org/assets/js/codemirror.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cloud.typography.com/751592/7707372/css/fonts.css" />
 <meta property="og:image" content="psalm_preview.png" />
-<link rel="stylesheet" href="//getpsalm.org/assets/css/codemirror.css">
 <link rel="stylesheet" href="//getpsalm.org/assets/css/site.css">
 <link rel="icon" 
       type="image/png" 
