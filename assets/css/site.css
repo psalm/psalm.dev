@@ -1,0 +1,235 @@
+body {
+    font-family: "Sentinel SSm A", "Sentinel SSm B";
+    line-height: 1.5em;
+    margin: 0;
+    padding: 0;
+}
+hgroup {
+    margin: 20px 0 30px;
+}
+h1 {
+    width: 300px;
+    margin: 10px auto;
+    font-size: 56px;
+}
+h1 img {
+    width: 64px;
+    height: auto;
+    display: inline-block;
+    margin-right: 2px;
+    vertical-align: text-top;
+    margin-left: 5px;
+    box-shadow: 0 -1px 0px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+h2 {
+    font-weight: normal;
+    margin: 10px auto;
+    text-align: center;
+    font-size: 22px;
+}
+div.cm_container_container {
+    background-color: #f3f3f3;
+    box-sizing: border-box;
+    padding: 30px 15px;
+}
+
+div.cm_container {
+    max-width: 638px;
+    margin: 0 auto;
+}
+div.CodeMirror,
+div.CodeMirror-lint-tooltip,
+.intro pre,
+code {
+    font-family: "Operator Mono SSm A", "Operator Mono SSm B";
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.5em;
+}
+div.CodeMirror {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    z-index: 2;
+    overflow: hidden;
+    height: 340px;
+    font-size: 14px;
+    transition: 0.2s linear border-color, 0.2s linear box-shadow;
+}
+@media all and (min-device-width: 600px) {
+    div.CodeMirror.CodeMirror-focused {
+        box-shadow: 0 0 0 5px rgba(0, 0, 0, 0.03);
+        border-color: #aaa;
+    }
+
+    div.CodeMirror:not(.CodeMirror-focused):hover {
+        box-shadow: 0 0 0px 10px rgba(255, 255, 255, 0.5);
+    }
+    div.CodeMirror-lint-tooltip {
+        padding: 4px 6px;
+    }
+}
+
+.cm-s-elegant span.cm-number, .cm-s-elegant span.cm-string, .cm-s-elegant span.cm-atom { color: #998200; }
+.cm-s-elegant span.cm-comment { color: #518e3a; line-height: 1em; }
+.cm-s-elegant span.cm-meta { color: #555; font-style: italic; line-height: 1em; }
+.cm-s-elegant span.cm-variable { color: #7d4646; }
+.cm-s-elegant span.cm-variable-2 { color: #2082af; }
+.cm-s-elegant span.cm-qualifier { color: #555; }
+.cm-s-elegant span.cm-keyword { color: #6b2eab; }
+.cm-s-elegant span.cm-builtin { color: #30a; }
+.cm-s-elegant span.cm-link { color: #762; }
+.cm-s-elegant span.cm-error { background-color: #fdd; }
+
+.cm-s-elegant .CodeMirror-activeline-background { background: #e8f2ff; }
+.cm-s-elegant .CodeMirror-matchingbracket { outline:1px solid rgba(0,0,0,0.15); color:black !important; }
+
+.CodeMirror-lint-mark-error {
+    background-image: none;
+    box-shadow: 0 -1px rgba(255,0,0,0.3) inset, 0 3px rgba(255,0,0,0.2);
+}
+.CodeMirror-lint-mark-warning {
+    background-image: none;
+    box-shadow: 0 -1px rgba(255,200,0,0.6) inset, 0 3px rgba(255,200,0,0.3);
+}
+.CodeMirror pre.CodeMirror-line {
+    padding: 0 8px;
+}
+.CodeMirror-linenumber {
+    padding-left: 0;
+}
+.CodeMirror-lint-marker-error,
+.CodeMirror-lint-message-error {
+    background-size: 16px 16px;
+    background-image: url(data:image/svg+xml,%3Csvg%20width%3D%2224%22%20height%3D%2225%22%20viewBox%3D%22342%20152%2024%2025%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Ccircle%20fill%3D%22%23D51717%22%20fill-rule%3D%22evenodd%22%20cx%3D%22354%22%20cy%3D%22164.9775%22%20r%3D%2212%22/%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%20stroke-linecap%3D%22square%22%20stroke%3D%22%23FFF%22%20stroke-width%3D%223%22%3E%3Cpath%20d%3D%22M349.0328%20169.9503L359.2832%20159.7M359.5187%20169.9503L349.2684%20159.7%22/%3E%3C/g%3E%3C/svg%3E);
+}
+.CodeMirror-lint-marker-warning,
+.CodeMirror-lint-message-warning {
+    background-size: 16px 16px;
+    background-image: url(data:image/svg+xml,%3Csvg%20width%3D%2228%22%20height%3D%2223%22%20viewBox%3D%22375%20153%2028%2023%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M389%20153.34c2.22%200%203.1%201.68%203.1%201.68l9.04%2015.37s1.55%202.54.5%203.94c-1.06%201.4-2.68%201.66-2.68%201.66h-19.53s-2.35-.32-3.2-1.66c-.85-1.35.8-3.95.8-3.95l8.9-15.38s.85-1.68%203.07-1.68z%22%20fill%3D%22%23F3CF00%22%20fill-rule%3D%22evenodd%22/%3E%3Cpath%20fill%3D%22%23544800%22%20fill-rule%3D%22evenodd%22%20d%3D%22M387%20159l.78%209%202.57.03.65-9.03%22/%3E%3Ccircle%20fill%3D%22%23544800%22%20fill-rule%3D%22evenodd%22%20cx%3D%22389%22%20cy%3D%22171.5%22%20r%3D%222%22/%3E%3C/svg%3E);
+}
+.CodeMirror-lint-marker-error,
+.CodeMirror-lint-marker-warning {
+    left: 4px;
+    top: 2px;
+}
+.CodeMirror-lint-message-error,
+.CodeMirror-lint-message-warning {
+    background-position-y: 2px;
+    padding-left: 20px;
+}
+
+.CodeMirror-lint-markers {
+    width: 24px;
+}
+.CodeMirror-linenumber {
+    color: #ccc;
+}
+.CodeMirror-gutters {
+    background: #fff;
+}
+.hanger {
+    background: #f3f3f3;
+    margin: 0 auto 40px;
+    width: 230px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    padding-bottom: 25px;
+}
+
+.intro {
+    max-width: 540px;
+    padding: 0 15px;
+    margin: 0 auto;
+}
+
+.intro p,
+.intro ul {
+    hyphens: auto;
+    margin: 1em 0;
+}
+
+.intro ul {
+    margin-left: 0;
+    -webkit-padding-start: 30px;
+    padding-inline-start: 30px;
+}
+
+.intro h3 {
+    font-weight: normal;
+    font-size: 24px;
+    margin: 1.5em 0 0.8em;
+}
+
+.intro code {
+    background: #eee;
+    border-radius: 3px;
+    display: inline-block;
+    padding: 0 4px;
+    font-size: 0.9em;
+    box-shadow: 0 0 0.5px 0 rgba(0, 0, 0, 0.5) inset;
+    margin: 0 0.2em 0;
+}
+
+.intro pre {
+    background: #555;
+    padding: 20px 30px;
+    font-size: 14px;
+    color: #eee;
+    border-radius: 6px;
+    margin-bottom: 2em;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+@media all and (max-device-width: 600px) {
+    .intro pre {
+        border-radius: 0;
+    }
+}
+
+.github_button {
+    width: 150px;
+    display: block;
+    text-decoration: none;
+    color: #777;
+    padding: 14px 10px;
+    text-align: center;
+    margin: 0 auto;
+    border-radius: 6px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    background-color: #fcfcfc;
+    border: 1px solid #d5d5d5;
+    box-shadow: 0;
+    transition: 0.2s box-shadow ease-out;
+}
+.github_button:hover {
+    box-shadow: 0 0 0px 8px rgba(255, 255, 255, 0.5);
+}
+.github_button:focus {
+    box-shadow: 0 0 0 5px rgba(0, 0, 0, 0.03);
+    border-color: #aaa;
+}
+.github_button strong {
+    font-weight: normal;
+    color: #000;
+}
+
+footer {
+    box-sizing: border-box;
+    padding: 20px 30px;
+    margin-top: 40px;
+    text-align: center;
+    background: #f3f3f3;
+}
+
+.vimeo_logo {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 3px 5px;
+}
+
+footer a:hover svg path {
+    fill: #4bf;
+}

@@ -1,0 +1,10 @@
+Header set Access-Control-Allow-Origin "*"
+AddType image/svg+xml svg svgz
+AddType application/javascript .js
+AddEncoding gzip svgz
+<ifmodule mod_deflate.c>
+AddOutputFilterByType DEFLATE text/css application/x-javascript application/javascript
+</ifmodule>
+<FilesMatch ^(composer\.(lock|json)$|vendor\/*)$>
+Deny from all
+</FilesMatch>
