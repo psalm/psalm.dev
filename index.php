@@ -21,7 +21,7 @@
 <textarea
     name="code"
     id="code"
-    rows="20" style="font-family: monospace; font-size: 14px; max-width: 900px; min-width: 320px;"
+    rows="20" style="visibility: hidden; font-family: monospace; font-size: 14px; max-width: 900px; min-width: 320px;"
 >
 <<?='?'?>php
 function psalmCanCheck(int $your_code) : ?string {
