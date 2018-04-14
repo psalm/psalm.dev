@@ -10,9 +10,8 @@
 <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 </head>
 <body>
-<? require('../nav.php'); ?>
-
 <div class="container">
+<? require('../nav.php'); ?>
 <div class="documentation">
     <h3>Quickstart Guide</h3>
 
