@@ -12,6 +12,31 @@
 <body>
 <div class="container">
     <? require('nav.php'); ?>
+    <div class="cm_container_container">
+        <div class="cm_container">
+            <textarea
+                name="code"
+                id="code"
+                rows="20" style="visibility: hidden; font-family: monospace; font-size: 14px; max-width: 900px; min-width: 320px;"
+            >
+<<?='?'?>php
+  
+function foo(string $s) : void {
+    return "bar";
+}
+
+$a = ["hello", 5];
+foo($a[1]);
+foo();
+
+if (rand(0, 1)) $b = 5;
+echo $b;
+
+$c = rand(0, 5);
+if ($c) {} elseif ($c) {}</textarea>
+        </div>
+    </div>
+
     <div class="intro">
         <p>Life is complicated. PHP can be, too.</p>
 
@@ -26,29 +51,6 @@
         </ul>
 
         <p>Psalm has a number of other features that help you improve your codebase, including a fixer called Psalter that updates your code directly by leveraging Psalm’s analysis engine.</p>
-    </div>
-
-    <div class="cm_container_container">
-        <div class="cm_container">
-            <textarea
-                name="code"
-                id="code"
-                rows="20" style="visibility: hidden; font-family: monospace; font-size: 14px; max-width: 900px; min-width: 320px;"
-            >
-<<?='?'?>php
-function foo(string $s) : void {
-    return "bar";
-}
-
-$a = ["hello", 5];
-
-foo($a[1]);
-
-if (rand(0, 1)) $b = 5;
-
-echo $b;
-            </textarea>
-        </div>
     </div>
 </div>
 

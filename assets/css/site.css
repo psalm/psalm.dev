@@ -496,7 +496,7 @@ nav ul li.doc_link a svg {
 
 div.cm_container_container {
     box-sizing: border-box;
-    float: left;
+    float: right;
     padding: 15px 20px 70px;
     width: 492px;
 }
@@ -544,7 +544,7 @@ div.CodeMirror {
     }
 
     nav {
-        padding: 25px 10px;
+        padding: 25px 10px 50px;
     }
 
     nav ul,
