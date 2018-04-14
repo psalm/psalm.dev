@@ -668,7 +668,7 @@ div.CodeMirror {
 
 footer {
     box-sizing: border-box;
-    padding: 0 30px;
+    padding: 5px 15px 0;
     margin-top: 50px;
     text-align: center;
     clear: both;
