@@ -1,15 +1,16 @@
 <html>
 <head>
 <title>Psalm - a static analysis tool for PHP</title>
-<script src="//getpsalm.org/assets/js/fetch.js"></script>
-<script src="//getpsalm.org/assets/js/codemirror.js"></script>
+<script src="/assets/js/fetch.js"></script>
+<script src="/assets/js/codemirror.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cloud.typography.com/751592/7707372/css/fonts.css" />
 <meta property="og:image" content="psalm_preview.png" />
-<link rel="stylesheet" href="//getpsalm.org/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/site.css">
 <link rel="icon" type="image/png" href="favicon.png">
 <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 </head>
 <body>
+<div class="container">
     <? require('nav.php'); ?>
     <div class="intro">
         <p>Life is complicated. PHP can be, too.</p>
@@ -25,33 +26,6 @@
         </ul>
 
         <p>Psalm has a number of other features that help you improve your codebase, including a fixer called Psalter that updates your code directly by leveraging Psalm’s analysis engine.</p>
-
-        <h3>Quickstart Guide</h3>
-
-        <p>Install via <a href="http://getcomposer.org">Composer</a> or download <a href="https://github.com/vimeo/psalm">via GitHub</a>:</p>
-        <pre>
-composer require --dev vimeo/psalm
-        </pre>
-
-        <p>Add a <a href="https://github.com/vimeo/psalm/blob/master/docs/configuration.md">config</a>:</p>
-
-        <pre>
-./vendor/bin/psalm --init
-        </pre>
-
-        <p>Then run Psalm:</p>
-        <pre>
-./vendor/bin/psalm
-        </pre>
-        <p>The config created above will show you all issues in your code, but will emit <code>INFO</code> issues (as opposed to <code>ERROR</code>) for certain common trivial code problems. If you want a more lenient config you can specify the level with</p>
-
-        <pre>
-./vendor/bin/psalm --init [source_dir] [level]
-        </pre>
-
-        <p>You can also <a href="https://github.com/vimeo/psalm/blob/master/docs/dealing_with_code_issues.md">learn how to suppress certain issues</a>.</p>
-
-        <p>Want to know more? Check out the <a href="https://github.com/vimeo/psalm/blob/master/docs/index.md">docs</a>!</p>
     </div>
 
     <div class="cm_container_container">
@@ -62,25 +36,23 @@ composer require --dev vimeo/psalm
                 rows="20" style="visibility: hidden; font-family: monospace; font-size: 14px; max-width: 900px; min-width: 320px;"
             >
 <<?='?'?>php
-function psalmCanCheck(int $your_code) : ?string {
-  return $on_your . "behalf";
+function foo(string $s) : void {
+    return "bar";
 }
 
-// it requires PHP 5.6+ or PHP 7.*
-const AND_IT_IS = WRITTEN_IN_PLAIN_PHP;
+$a = ["hello", 5];
 
-if (rand(0, 100) > 10) {
-  $a = 5;
-} else {
-  //$a = 2;
-}
+foo($a[1]);
 
-echo $a; // uncomment the line above to fix!
+if (rand(0, 1)) $b = 5;
+
+echo $b;
             </textarea>
         </div>
     </div>
+</div>
 
-    <? require('footer.php'); ?>
+<? require('footer.php'); ?>
 
 <script>
 var serializeJSON = function(data) {
@@ -96,13 +68,12 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     matchBrackets: true,
     mode: "text/x-php",
     indentUnit: 2,
-    gutters: ["CodeMirror-lint-markers"],
     theme: 'elegant',
     lint: {
         getAnnotations: function (code, callback, options, cm) {
             latestFetch++;
             fetchKey = latestFetch;
-            fetch('//getpsalm.org/check.php', {
+            fetch('/check.php', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
@@ -150,7 +121,7 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     }
 });
 
-editor.focus();
+//editor.focus();
 editor.setCursor(editor.lineCount(), 0);
 
 </script>
