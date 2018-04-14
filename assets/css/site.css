@@ -539,6 +539,8 @@ div.CodeMirror {
     div.cm_container_container {
         float: none;
         padding: 0 25px 50px;
+        max-width: 492px;
+        width: auto;
     }
 
     nav {
