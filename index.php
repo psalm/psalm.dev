@@ -45,7 +45,7 @@ if ($c) {} elseif ($c) {}
     <div class="intro">
         <p>Life is complicated. PHP can be, too.</p>
 
-        <p>Psalm is designed to under stand that complexity, allowing it to quickly find common programmer errors like null references and misspelled variable names.</p>
+        <p>Psalm is designed to understand that complexity, allowing it to quickly find common programmer errors like null references and misspelled variable names.</p>
 
         <p>You should use Psalm if you run PHP 5.6+ or PHP 7, and you want&nbsp;to</p>
 
