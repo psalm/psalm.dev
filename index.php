@@ -35,8 +35,8 @@ $c = rand(0, 5);
 if ($c) {} elseif ($c) {}
 </textarea>
         <div class="button_bar">
-            <button onclick="javascript:expandCode();" id="expander">Expand</button>
-            <button onclick="javascript:shrinkCode();" id="shrinker">Shrink</button>
+            <button onclick="javascript:expandCode();" id="expander"><svg width="15" height="15" xmlns="http://www.w3.org/2000/svg"><path d="M0 6h2v5.8L13 .7 14.2 2 3.3 13H9v2H0z" fill="#000" fill-rule="evenodd"/></svg> Expand</button>
+            <button onclick="javascript:shrinkCode();" id="shrinker"><svg width="15" height="15" xmlns="http://www.w3.org/2000/svg"><path d="M15 9h-2V3.2L2 14.3.8 13 11.7 2H6V0h9z" fill="#000" fill-rule="evenodd"/></svg> Shrink</button>
             <button>Get link</button>
         </div>
     </div>

@@ -435,6 +435,7 @@ h1 {
     margin: 10px 0;
     font-size: 64px;
 }
+
 h2 {
     font-weight: normal;
     margin: 10px 0;
@@ -460,6 +461,7 @@ nav ul li a {
     color: #000;
     font-weight: bold;
     text-decoration: none;
+    display: block;
 }
 
 nav ul li a:hover {
@@ -481,12 +483,12 @@ nav ul li.doc_link a svg {
 }
 
 .code_expanded nav hgroup {
-    margin: 10px 0 0;
+    margin: 15px 0 10px;
 }
 
 .code_expanded nav h1 a svg {
-    width: 40%;
-    height: auto;
+    height: 25px;
+    width: auto;
 }
 
 .intro {
@@ -529,6 +531,7 @@ div.cm_container {
 
 .code_expanded .cm_container {
     width: 100%;
+    padding-bottom: 0;
 }
 
 div.cm_container button {
@@ -537,10 +540,16 @@ div.cm_container button {
     font-family: "Sentinel SSm A", "Sentinel SSm B";
     font-size: 16px;
     display: block;
-    padding: 0 20px;
+    padding: 0 15px;
     float: left;
     line-height: 2.5em;
     cursor: pointer;
+}
+
+div.cm_container button svg {
+    padding-right: 3px;
+    position: relative;
+    top: 1px;
 }
 
 div.cm_container button:hover {
@@ -576,7 +585,7 @@ div.CodeMirror {
     border: 2px solid #000;
     z-index: 2;
     font-size: 14px;
-    height: 400px;
+    height: 360px;
     overflow: hidden;
     transition: 0.2s linear border-color, 0.2s linear box-shadow;
     position: relative;
@@ -600,7 +609,7 @@ div.CodeMirror {
 }
 
 .code_expanded .CodeMirror {
-    height: calc(100vh - 200px);
+    height: calc(100vh - 160px);
 }
 
 @media all and (max-width: 1021px) {
