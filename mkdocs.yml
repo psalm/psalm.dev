@@ -1,0 +1,24 @@
+site_name: Psalm Documentation
+site_url: https://getpsalm.org
+repo_url: https://github.com/vimeo/psalm
+repo_name: GitHub
+site_dir: docs
+docs_dir: vendor/vimeo/psalm/docs
+theme:
+  name: 'mkdocs'
+  custom_dir: 'theme_overrides'
+extra_css:
+  - '../theme_overrides/extra.css'
+  - 'https://cloud.typography.com/751592/7707372/css/fonts.css'
+pages:
+  - Home: index.md
+  - Using Psalm:
+    - Installation: installation.md
+    - Configuration: configuration.md
+    - Running Psalm: running_psalm.md
+    - Supported Annotations: supported_annotations.md
+    - Dealing with code issues: dealing_with_code_issues.md
+    - Issue Types: issues.md
+    - Typing in Psalm: typing_in_psalm.md
+    - Plugins: plugins.md
+    - Checking non-PHP files: checking_non_php_files.md
