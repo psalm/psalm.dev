@@ -599,6 +599,10 @@ div.CodeMirror {
     position: relative;
 }
 
+.code_expanded #psalm_output {
+    display: block;
+}
+
 @media all and (min-device-width: 600px) {
     div.CodeMirror.CodeMirror-focused {
         box-shadow: 0 0 0px 1px #000;
