@@ -536,7 +536,7 @@ div.cm_container button {
     font-family: "Sentinel SSm A", "Sentinel SSm B";
     font-size: 16px;
     display: block;
-    padding: 0 15px;
+    padding: 0 12px;
     float: left;
     line-height: 2.5em;
     cursor: pointer;
@@ -545,7 +545,7 @@ div.cm_container button {
 div.cm_container button svg {
     padding-right: 3px;
     position: relative;
-    top: 1px;
+    top: 2px;
 }
 
 div.cm_container button:hover {

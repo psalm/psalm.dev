@@ -37,7 +37,7 @@ if ($c) {} elseif ($c) {}
         <div class="button_bar">
             <button onclick="javascript:expandCode();" id="expander"><svg width="15" height="15" xmlns="http://www.w3.org/2000/svg"><path d="M0 6h2v5.8L13 .7 14.2 2 3.3 13H9v2H0z" fill="#000" fill-rule="evenodd"/></svg> Expand</button>
             <button onclick="javascript:shrinkCode();" id="shrinker"><svg width="15" height="15" xmlns="http://www.w3.org/2000/svg"><path d="M15 9h-2V3.2L2 14.3.8 13 11.7 2H6V0h9z" fill="#000" fill-rule="evenodd"/></svg> Shrink</button>
-            <button onclick="javascript:getLink();">Get link</button>
+            <button onclick="javascript:getLink();"><svg width="27" height="16" xmlns="http://www.w3.org/2000/svg"><g fill-rule="evenodd"><path d="M9.67 13.5A5 5 0 0 0 14 16h8a5 5 0 0 0 5-5V9a5 5 0 0 0-5-5h-8a5 5 0 0 0-4.98 4.5h1.92A3 3 0 0 1 13.89 6h8.22a3 3 0 0 1 3 3v2a3 3 0 0 1-3 3h-8.22c-.6 0-1.18-.18-1.65-.5H9.67z"/><path d="M17.33 2.5A5 5 0 0 0 13 0H5a5 5 0 0 0-5 5v2a5 5 0 0 0 5 5h8a5 5 0 0 0 4.98-4.5h-1.92a3 3 0 0 1-2.95 2.5H4.89a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3h8.22c.6 0 1.18.18 1.65.5h2.57z"/></g></svg> Get link</button>
         </div>
     </div>
     
