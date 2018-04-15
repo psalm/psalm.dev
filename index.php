@@ -10,15 +10,14 @@
 <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 </head>
 <body>
-<div class="container">
+<div class="container" id="page_container">
     <? require('nav.php'); ?>
-    <div class="cm_container_container">
-        <div class="cm_container">
-            <textarea
-                name="code"
-                id="code"
-                rows="20" style="visibility: hidden; font-family: monospace; font-size: 14px; max-width: 900px; min-width: 320px;"
-            >
+    <div class="cm_container">
+        <textarea
+            name="code"
+            id="code"
+            rows="20" style="visibility: hidden; font-family: monospace; font-size: 14px; max-width: 900px; min-width: 320px;"
+        >
 <<?='?'?>php
   
 function foo(string $s) : void {
@@ -33,9 +32,15 @@ if (rand(0, 1)) $b = 5;
 echo $b;
 
 $c = rand(0, 5);
-if ($c) {} elseif ($c) {}</textarea>
+if ($c) {} elseif ($c) {}
+</textarea>
+        <div class="button_bar">
+            <button onclick="javascript:expandCode();" id="expander">Expand</button>
+            <button onclick="javascript:shrinkCode();" id="shrinker">Shrink</button>
+            <button>Get link</button>
         </div>
     </div>
+    
 
     <div class="intro">
         <p>Life is complicated. PHP can be, too.</p>
@@ -57,6 +62,14 @@ if ($c) {} elseif ($c) {}</textarea>
 <? require('footer.php'); ?>
 
 <script>
+var expandCode = function() {
+    document.querySelector('body').classList.add('code_expanded');
+};
+
+var shrinkCode = function() {
+    document.querySelector('body').classList.remove('code_expanded');
+};
+
 var serializeJSON = function(data) {
     return Object.keys(data).map(function (keyName) {
         return encodeURIComponent(keyName) + '=' + encodeURIComponent(data[keyName])
