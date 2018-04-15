@@ -64,28 +64,51 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
                 if (latestFetch != fetchKey) {
                     return;
                 }
-                
+
                 if ('results' in response) {
+
                     if (response.results.length === 0) {
+                        document.getElementById('psalm_output').innerText = 'Psalm output: \n\n' + 'No issues!';
+
                         callback([]);
                     }
                     else {
-                        callback(response.results.map(function (issue) {
-                            return {
-                                severity: issue.severity === 'error' ? 'error' : 'warning',
-                                message: issue.message,
-                                from: cm.posFromIndex(issue.from),
-                                to: cm.posFromIndex(issue.to)
-                            };
-                        }));
+                        var text = response.results.map(
+                            function (issue) {
+                                return (issue.severity === 'error' ? 'ERROR' : 'INFO') + ': '
+                                    + issue.type + ' - ' + issue.line_from + ':'
+                                    + issue.column_from + ' - ' + issue.message;
+                            }
+                        );
+
+                        document.getElementById('psalm_output').innerText = 'Psalm output: \n\n' + text.join('\n\n');
+
+                        callback(
+                            response.results.map(
+                                function (issue) {
+                                    return {
+                                        severity: issue.severity === 'error' ? 'error' : 'warning',
+                                        message: issue.message,
+                                        from: cm.posFromIndex(issue.from),
+                                        to: cm.posFromIndex(issue.to)
+                                    };
+                                }
+                            )
+                        );
                     }  
                 }
-                else {
+                else if ('error' in response) {
+                    document.getElementById('psalm_output').innerText = 'PHP Parser output: \n\n'
+                        + 'Parser error on line ' + response.error.line_from + ' - '
+                        + response.error.message;
+
+                    console.log(cm.posFromIndex(response.error.to));
+
                     callback({
                        message: response.error.message,
                        severity: 'error',
-                       from: CodeMirror.Pos(error.line - 1, start),
-                       to: CodeMirror.Pos(error.line - 1, end)
+                       from: cm.posFromIndex(response.error.from),
+                       to: cm.posFromIndex(response.error.to),
                     });
                 }
             })

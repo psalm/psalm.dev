@@ -571,14 +571,26 @@ div.cm_container #shrinker {
 div.CodeMirror,
 div.CodeMirror-lint-tooltip,
 .intro pre,
+#psalm_output,
 code {
     font-family: "Operator Mono SSm A", "Operator Mono SSm B";
     font-style: normal;
     font-weight: 400;
     line-height: 1.5em;
 }
+div.CodeMirror,
+#psalm_output {
+    border: 2px solid black;
+}
+#psalm_output {
+    display: none;
+    font-family: "Operator Mono SSm A", "Operator Mono SSm B";
+    font-size: 14px;
+    line-height: 1.5em;
+    padding: 5px;
+    color: #666;
+}
 div.CodeMirror {
-    border: 2px solid #000;
     z-index: 2;
     font-size: 14px;
     height: 360px;
@@ -603,8 +615,17 @@ div.CodeMirror {
         width: 100%;
     }
 
-    .code_expanded .CodeMirror {
+    .code_expanded .CodeMirror,
+    .code_expanded #psalm_output {
         height: calc(100vh - 160px);
+        width:50%;
+        display: block;
+        float: left;
+        box-sizing: border-box;
+    }
+
+    .code_expanded #psalm_output {
+        border-left: 0;
     }
 
     .code_expanded .container {

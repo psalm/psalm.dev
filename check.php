@@ -98,7 +98,21 @@ $file_provider->registerFile(
 $project_checker->codebase->scanner->queueFileForScanning(__DIR__ . '/src/somefile.php');
 $codebase = $project_checker->getCodebase();
 $codebase->addFilesToAnalyze([$file_path => $file_path]);
-$codebase->scanFiles();
+try {
+    $codebase->scanFiles();
+} catch (PhpParser\Error $e) {
+    $attributes = $e->getAttributes();
+    echo json_encode([
+        'error' => [
+            'message' => $e->getRawMessage(),
+            'line_from' => $e->getStartLine(),
+            'from' => $attributes['startFilePos'],
+            'to' => $attributes['endFilePos'] + 1,
+            'type' => 'error'
+        ]
+    ]);
+    exit();
+}
 
 try {
     $file_checker = new FileChecker(
@@ -116,12 +130,12 @@ try {
 } catch (PhpParser\Error $e) {
     $attributes = $e->getAttributes();
     echo json_encode([
-        'results' => [[
+        'error' => [
             'message' => $e->getRawMessage(),
-            'line_number' => $e->getStartLine(),
+            'line_from' => $e->getStartLine(),
             'from' => $attributes['startFilePos'],
             'to' => $attributes['endFilePos'] + 1,
             'type' => 'error'
-        ]]
+        ]
     ]);
 }
