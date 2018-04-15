@@ -1,3 +1,59 @@
 .third-level {
 	padding-left: 15px;
 }
+
+body {
+	line-height: 1.5em;
+	font-size: 16px;
+}
+
+body, h3 {
+	font-family: "Sentinel SSm A", "Sentinel SSm B";
+}
+
+h1, h2 {
+	font-family: "Sentinel A", "Sentinel B";
+}
+
+p, ul {
+	max-width: 650px;
+}
+
+footer hr {
+	display: none;
+}
+
+footer p {
+	float: right;
+}
+
+[role="main"] ul li {
+	margin-bottom: .7em;
+}
+
+ul.nav .main {
+	font-weight: normal;
+}
+
+.bs-sidebar .nav > .active > a,
+.bs-sidebar .nav > .active:hover > a,
+.bs-sidebar .nav > .active:focus > a {
+	font-weight: normal;
+	color: #196996;
+	background: #FFF;
+}
+
+code, pre {
+	font-family: "Operator Mono SSm A", "Operator Mono SSm B";
+	font-style: normal;
+}
+
+pre code {
+	font-family: "Operator Mono SSm A", "Operator Mono SSm B";
+	font-style: normal;
+	line-height: 1.7em;
+}
+
+.hljs-comment {
+	font-style: normal;
+}
