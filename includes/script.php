@@ -22,7 +22,11 @@ var getLink = function() {
         return response.text();
     })
     .then(function (response) {
-        window.location = '//' + response;
+        if (response.indexOf('/r/') === -1) {
+            alert(response);
+        } else {
+            window.location = '//' + response;
+        }
     });
     return false;
 };

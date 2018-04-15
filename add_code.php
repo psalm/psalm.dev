@@ -13,6 +13,18 @@ if (substr($code, 0, 5) !== '<?php') {
     exit();
 }
 
+if ($code === '<?php') {
+    http_response_code(412);
+    echo 'There is no code';
+    exit();
+}
+
+if (strlen($code) > 6000) {
+    http_response_code(412);
+    echo 'There is too much code';
+    exit();
+}
+
 require_once('vendor/autoload.php');
 
 $hash = substr(hash_hmac('sha256', $code, 'not much of a secret'), 0, 10);
