@@ -417,10 +417,6 @@ body {
     flex: 1;
 }
 
-.code_expanded .container {
-    width: 1024px;
-}
-
 nav {
     overflow: hidden;
     padding: 0 20px;
@@ -602,14 +598,18 @@ div.CodeMirror {
     div.CodeMirror-lint-tooltip {
         padding: 4px 6px;
     }
-}
 
-.code_expanded .cm_container {
-    width: 100%;
-}
+    .code_expanded .cm_container {
+        width: 100%;
+    }
 
-.code_expanded .CodeMirror {
-    height: calc(100vh - 160px);
+    .code_expanded .CodeMirror {
+        height: calc(100vh - 160px);
+    }
+
+    .code_expanded .container {
+        width: 1024px;
+    }
 }
 
 @media all and (max-width: 1021px) {
@@ -619,6 +619,10 @@ div.CodeMirror {
         padding: 0 25px 50px;
         max-width: 492px;
         width: auto;
+    }
+
+    .code_expanded .cm_container {
+        padding: 0;
     }
 
     nav {

@@ -5,6 +5,11 @@ AddEncoding gzip svgz
 <ifmodule mod_deflate.c>
 AddOutputFilterByType DEFLATE text/css application/x-javascript application/javascript
 </ifmodule>
+
+RewriteEngine On
+RewriteBase /
+RewriteRule ^r/([a-z0-9]+)$ /snippet.php?r=$1 [NC,L,QSA]
+
 <FilesMatch ^(composer\.(lock|json)$|vendor\/*)$>
-Deny from all
+Deny from all 
 </FilesMatch>
