@@ -1,10 +1,30 @@
 <script>
 var expandCode = function() {
     document.querySelector('body').classList.add('code_expanded');
+    return false;
 };
 
 var shrinkCode = function() {
     document.querySelector('body').classList.remove('code_expanded');
+    return false;
+};
+
+var getLink = function() {
+    fetch('/add_code.php', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+        },
+        body: serializeJSON({code: document.getElementById("code").value})
+    })
+    .then(function (response) {
+        return response.text();
+    })
+    .then(function (response) {
+        window.location = '//' + response;
+    });
+    return false;
 };
 
 var serializeJSON = function(data) {

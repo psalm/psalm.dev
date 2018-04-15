@@ -610,6 +610,13 @@ div.CodeMirror {
     .code_expanded .container {
         width: 1024px;
     }
+
+    .code_expanded .date {
+        float: left;
+        display: block;
+        padding: 10px 20px 0 0;
+        color: #999;
+    }
 }
 
 @media all and (max-width: 1021px) {

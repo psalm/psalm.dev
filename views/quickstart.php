@@ -11,7 +11,7 @@
 </head>
 <body>
 <div class="container">
-<? require('../nav.php'); ?>
+<? require('../includes/nav.php'); ?>
 <div class="documentation">
     <h3>Quickstart Guide</h3>
 
@@ -34,7 +34,7 @@
 </div>
 </div>
 
-<? require('../footer.php'); ?>
+<? require('../includes/footer.php'); ?>
 
 </body>
 </html>

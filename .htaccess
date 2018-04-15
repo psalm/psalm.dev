@@ -8,8 +8,11 @@ AddOutputFilterByType DEFLATE text/css application/x-javascript application/java
 
 RewriteEngine On
 RewriteBase /
-RewriteRule ^r/([a-z0-9]+)$ /snippet.php?r=$1 [NC,L,QSA]
+RewriteRule ^r/([a-z0-9]+)$ /views/snippet.php?r=$1 [NC,L,QSA]
+RewriteRule ^quickstart/?$ /views/quickstart.php [NC,L,QSA]
+RewriteRule ^$ /views/index.php [NC,L,QSA]
 
-<FilesMatch ^(composer\.(lock|json)$|vendor\/*)$>
-Deny from all 
-</FilesMatch>
+RewriteRule ^composer\.*$ - [F,L]
+RewriteRule ^includes/?.*$ - [F,L]
+RewriteRule ^vendor/?.*$ - [F,L]
+RewriteRule ^dbconfig.php.*$ - [F,L]

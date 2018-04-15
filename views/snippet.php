@@ -11,12 +11,12 @@ if (!preg_match('/^[a-z0-9]+$/', $hash)) {
     exit;
 }
 
-require_once('vendor/autoload.php');
+require_once('../vendor/autoload.php');
 
 /**
  * @var array{dsn:string, user:string, password:string}
  */
-$db_config = require_once('dbconfig.php');
+$db_config = require_once('../dbconfig.php');
 
 try {
     $pdo = new PDO($db_config['dsn'], $db_config['user'], $db_config['password']);
@@ -24,7 +24,7 @@ try {
     die('Connection to database failed');
 }
 
-$stmt = $pdo->prepare('select `code` from `codes` where `hash` = :hash');
+$stmt = $pdo->prepare('select `code`, UNIX_TIMESTAMP(`created_on`) as `created_on` from `codes` where `hash` = :hash');
 $stmt->execute([':hash' => $hash]);
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -34,6 +34,9 @@ if (!$result) {
 }
 
 $code = $result['code'];
+$created_on = (new DateTime())->setTimestamp($result['created_on']);
+$created_on->setTimezone(new DateTimeZone("UTC"));
+
 ?>
 <html>
 <head>
@@ -47,19 +50,21 @@ $code = $result['code'];
 </head>
 <body class="code_expanded">
 <div class="container" id="page_container">
-    <? require('nav.php'); ?>
+    <? require('../includes/nav.php'); ?>
     <div class="cm_container">
         <textarea
             name="code"
             id="code"
             rows="20" style="visibility: hidden; font-family: monospace; font-size: 14px; max-width: 900px; min-width: 320px;"
-        ><?= $code ?></textarea>
+        ><?= htmlentities($code) ?></textarea>
         <div class="button_bar">
-            <button>Get link</button>
+            <span class="date">Snippet created on <?= $created_on->format('F j Y \a\t H:i') ?> UTC</span>
+            
+            <button onclick="javascript:getLink();">Get link</button>
         </div>
     </div>
 </div>
 
-<? require('script.php'); ?>
+<? require('../includes/script.php'); ?>
 </body>
 </html>
