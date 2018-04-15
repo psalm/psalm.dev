@@ -56,6 +56,8 @@ if ($c) {} elseif ($c) {}
         </ul>
 
         <p>Psalm has a number of other features that help you improve your codebase, including a fixer called Psalter that updates your code directly by leveraging Psalm’s analysis engine.</p>
+
+        <p>Interested in how Psalm came to be? Read <a href="https://medium.com/vimeo-engineering-blog/fixing-code-that-aint-broken-a99e05998c24">this explainer</a>.</p>
     </div>
 </div>
 
