@@ -16,7 +16,7 @@ var getLink = function() {
             'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
             'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
         },
-        body: serializeJSON({code: document.getElementById("code").value})
+        body: serializeJSON({code: editor.getValue()})
     })
     .then(function (response) {
         return response.text();
