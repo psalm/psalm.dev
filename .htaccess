@@ -6,11 +6,13 @@ AddEncoding gzip svgz
 AddOutputFilterByType DEFLATE text/css application/x-javascript application/javascript
 </ifmodule>
 
+DirectoryIndex index.php index.html
+
 RewriteEngine On
 RewriteBase /
-RewriteRule ^r/([a-z0-9]+)$ /views/snippet.php?r=$1 [NC,L,QSA]
-RewriteRule ^quickstart/?$ /views/quickstart.php [NC,L,QSA]
-RewriteRule ^$ /views/index.php [NC,L,QSA]
+RewriteRule ^r/([a-z0-9]+)$ /views/snippet.php?r=$1 [L,NC]
+RewriteRule ^quickstart/?$ /views/quickstart.php [L,NC]
+RewriteRule ^$ /views/index.php [L,NC]
 
 RewriteRule ^composer\.*$ - [F,L]
 RewriteRule ^includes/?.*$ - [F,L]

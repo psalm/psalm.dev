@@ -3,3 +3,4 @@ composer.phar
 dbconfig.php
 .DS_Store
 */.DS_Store
+/docs/
