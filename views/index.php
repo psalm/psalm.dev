@@ -11,7 +11,7 @@
 </head>
 <body>
 <div class="container" id="page_container">
-    <? require('../includes/nav.php'); ?>
+    <?php require('../includes/nav.php'); ?>
     <div class="cm_container">
         <textarea
             name="code"
@@ -58,7 +58,7 @@ if ($c) {} elseif ($c) {}
     </div>
 </div>
 
-<? require('../includes/footer.php'); ?>
-<? require('../includes/script.php'); ?>
+<?php require('../includes/footer.php'); ?>
+<?php require('../includes/script.php'); ?>
 </body>
 </html>

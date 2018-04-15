@@ -1,4 +1,4 @@
-<?
+<?php
 if (!isset($_POST['code']) ) {
     http_response_code(412);
     echo 'Expecting code';

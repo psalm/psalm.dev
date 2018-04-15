@@ -1,4 +1,4 @@
-<?
+<?php
 if (!isset($_GET['r']) ) {
     header('Location: /');
     exit;
@@ -50,7 +50,7 @@ $created_on->setTimezone(new DateTimeZone("UTC"));
 </head>
 <body class="code_expanded">
 <div class="container" id="page_container">
-    <? require('../includes/nav.php'); ?>
+    <?php require('../includes/nav.php'); ?>
     <div class="cm_container">
         <textarea
             name="code"
@@ -65,6 +65,6 @@ $created_on->setTimezone(new DateTimeZone("UTC"));
     </div>
 </div>
 
-<? require('../includes/script.php'); ?>
+<?php require('../includes/script.php'); ?>
 </body>
 </html>
