@@ -621,15 +621,16 @@ div.CodeMirror {
 
     .code_expanded .CodeMirror,
     .code_expanded #psalm_output {
-        height: calc(100vh - 160px);
-        width:50%;
+        height: calc(65vh - 80px);
+        width:100%;
         display: block;
-        float: left;
         box-sizing: border-box;
     }
 
     .code_expanded #psalm_output {
-        border-left: 0;
+        height: calc(35vh - 80px);
+        border-top: 0;
+        overflow: auto;
     }
 
     .code_expanded .container {
