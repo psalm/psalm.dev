@@ -35,9 +35,9 @@ if ($c) {} elseif ($c) {}
 </textarea>
         <div id="psalm_output"></div>
         <div class="button_bar">
-            <button onclick="javascript:expandCode();" id="expander"><svg width="15" height="15" xmlns="http://www.w3.org/2000/svg"><path d="M0 6h2v5.8L13 .7 14.2 2 3.3 13H9v2H0z" fill="#000" fill-rule="evenodd"/></svg> Expand</button>
-            <button onclick="javascript:shrinkCode();" id="shrinker"><svg width="15" height="15" xmlns="http://www.w3.org/2000/svg"><path d="M15 9h-2V3.2L2 14.3.8 13 11.7 2H6V0h9z" fill="#000" fill-rule="evenodd"/></svg> Shrink</button>
-            <button onclick="javascript:getLink();"><svg width="27" height="16" xmlns="http://www.w3.org/2000/svg"><g fill-rule="evenodd"><path d="M9.67 13.5A5 5 0 0 0 14 16h8a5 5 0 0 0 5-5V9a5 5 0 0 0-5-5h-8a5 5 0 0 0-4.98 4.5h1.92A3 3 0 0 1 13.89 6h8.22a3 3 0 0 1 3 3v2a3 3 0 0 1-3 3h-8.22c-.6 0-1.18-.18-1.65-.5H9.67z"/><path d="M17.33 2.5A5 5 0 0 0 13 0H5a5 5 0 0 0-5 5v2a5 5 0 0 0 5 5h8a5 5 0 0 0 4.98-4.5h-1.92a3 3 0 0 1-2.95 2.5H4.89a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3h8.22c.6 0 1.18.18 1.65.5h2.57z"/></g></svg> Get link</button>
+            <button onclick="javascript:expandCode();" id="expander"><svg width="15" height="14" xmlns="http://www.w3.org/2000/svg"><path d="M0 5h1.5v6.4L12.9 0l1.4 1.2L2.8 12.5H9V14H0z" fill-rule="evenodd"/></svg> Expand</button>
+            <button onclick="javascript:shrinkCode();" id="shrinker"><svg width="15" height="14" xmlns="http://www.w3.org/2000/svg"><path d="M15 9h-1.5V2.6L2.1 14 .8 12.8 12.2 1.5H6V0h9z" fill-rule="evenodd"/></svg> Shrink</button>
+            <button onclick="javascript:getLink();"><svg width="28" height="15" xmlns="http://www.w3.org/2000/svg"><g fill-rule="evenodd"><path d="M17.3 2.5A5 5 0 0 0 13 0H5a5 5 0 0 0-5 5v1a5 5 0 0 0 5 5h8a5 5 0 0 0 4.8-3.5H16a4 4 0 0 1-3.5 2h-7a4 4 0 1 1 0-8h7c1 0 2 .4 2.6 1h2.2z"/><path d="M10.4 12.5a5 5 0 0 0 4.4 2.5h8a5 5 0 0 0 5-5V9a5 5 0 0 0-5-5h-8A5 5 0 0 0 10 7.5h1.8a4 4 0 0 1 3.5-2h7a4 4 0 1 1 0 8h-7c-1 0-2-.4-2.7-1h-2.2z"/></g></svg> Get link</button>
         </div>
     </div>
     
