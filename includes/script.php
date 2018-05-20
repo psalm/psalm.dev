@@ -66,9 +66,10 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
                 }
 
                 if ('results' in response) {
+                    var psalm_header = 'Psalm output (using commit ' + response.version.substring(0, 7) + '): \n\n'
 
                     if (response.results.length === 0) {
-                        document.getElementById('psalm_output').innerText = 'Psalm output: \n\n' + 'No issues!';
+                        document.getElementById('psalm_output').innerText = psalm_header + 'No issues!';
 
                         callback([]);
                     }
@@ -81,7 +82,7 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
                             }
                         );
 
-                        document.getElementById('psalm_output').innerText = 'Psalm output: \n\n' + text.join('\n\n');
+                        document.getElementById('psalm_output').innerText = psalm_header + text.join('\n\n');
 
                         callback(
                             response.results.map(

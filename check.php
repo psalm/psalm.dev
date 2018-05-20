@@ -14,6 +14,7 @@ if (!isset($_POST['code'])) {
 }
 const PHP_PARSER_VERSION = '4.0.0';
 $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+$psalm_version = (string) \Muglug\PackageVersions\Versions::getVersion('vimeo/psalm');
 
 $config = Config::loadFromXML(
         (string)getcwd(),
@@ -126,7 +127,7 @@ try {
     $project_checker->checkClassReferences();
     $issue_data = IssueBuffer::getIssuesData();
 
-    echo json_encode(['results' => $issue_data]);
+    echo json_encode(['results' => $issue_data, 'version' => $psalm_version]);
 } catch (PhpParser\Error $e) {
     $attributes = $e->getAttributes();
     echo json_encode([
