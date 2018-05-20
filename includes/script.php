@@ -66,7 +66,13 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
                 }
 
                 if ('results' in response) {
-                    var psalm_header = 'Psalm output (using commit ' + response.version.substring(0, 7) + '): \n\n'
+                    var psalm_version = response.version;
+                    
+                    if (psalm_version.indexOf('@')) {
+                        psalm_version = psalm_version.split('@')[1];
+                    }
+
+                    var psalm_header = 'Psalm output (using commit ' + psalm_version.substring(0, 7) + '): \n\n'
 
                     if (response.results.length === 0) {
                         document.getElementById('psalm_output').innerText = psalm_header + 'No issues!';
