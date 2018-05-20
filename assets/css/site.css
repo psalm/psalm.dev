@@ -689,7 +689,7 @@ div.CodeMirror {
 }
 
 .cm-s-elegant span.cm-number, .cm-s-elegant span.cm-string, .cm-s-elegant span.cm-atom { color: #000; }
-.cm-s-elegant span.cm-comment { color: #000; line-height: 1em; }
+.cm-s-elegant span.cm-comment { color: #888; line-height: 1em; }
 .cm-s-elegant span.cm-meta { color: #000; font-style: italic; line-height: 1em; }
 .cm-s-elegant span.cm-variable { color: #000; }
 .cm-s-elegant span.cm-variable-2 { color: #000; }

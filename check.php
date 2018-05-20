@@ -12,7 +12,7 @@ use Psalm\IssueBuffer;
 if (!isset($_POST['code'])) {
     exit;
 }
-
+const PHP_PARSER_VERSION = '4.0.0';
 $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
 
 $config = Config::loadFromXML(
