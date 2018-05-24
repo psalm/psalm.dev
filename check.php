@@ -96,7 +96,7 @@ $file_provider->registerFile(
     $file_path,
     $file_contents
 );
-$project_checker->codebase->scanner->queueFileForScanning(__DIR__ . '/src/somefile.php');
+$project_checker->codebase->scanner->addFileToDeepScan(__DIR__ . '/src/somefile.php');
 $codebase = $project_checker->getCodebase();
 $codebase->addFilesToAnalyze([$file_path => $file_path]);
 try {
