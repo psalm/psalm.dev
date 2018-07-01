@@ -105,8 +105,9 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
                     }  
                 }
                 else if ('error' in response) {
-                    document.getElementById('psalm_output').innerText = 'PHP Parser output: \n\n'
-                        + 'Parser error on line ' + response.error.line_from + ' - '
+                    var error_type = response.error.type === 'parser_error' ? 'Parser' : 'Internal Psalm';
+                    document.getElementById('psalm_output').innerText = 'Psalm runner output: \n\n'
+                        + error_type + ' error on line ' + response.error.line_from + ' - '
                         + response.error.message;
 
                     console.log(cm.posFromIndex(response.error.to));

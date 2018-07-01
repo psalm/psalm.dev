@@ -16,6 +16,20 @@ const PHP_PARSER_VERSION = '4.0.0';
 $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
 $psalm_version = (string) \Muglug\PackageVersions\Versions::getVersion('vimeo/psalm');
 
+function jsonExceptionHandler($exception) {
+    echo json_encode([
+        'error' => [
+            'message' => $exception->getMessage(),
+            'line_from' => $exception->getLine(),
+            'type' => 'psalm_error'
+        ]
+    ]);
+    exit;
+}
+
+// Set user-defined error handler function
+set_exception_handler("jsonExceptionHandler");
+
 $config = Config::loadFromXML(
         (string)getcwd(),
         '<?xml version="1.0"?>
@@ -32,7 +46,7 @@ $config->stop_on_first_error = false;
 $config->allow_includes = false;
 $config->totally_typed = true;
 $config->use_property_default_for_type = false;
-$config->strict_binary_operands = true;
+$config->check_for_throws_docblock = true;
 $config->remember_property_assignments_after_call = true;
 $config->setCustomErrorLevel('MixedArrayAccess', Config::REPORT_INFO);
 $config->setCustomErrorLevel('MixedArrayOffset', Config::REPORT_INFO);
@@ -50,6 +64,7 @@ $config->setCustomErrorLevel('MixedReturnStatement', Config::REPORT_INFO);
 $config->setCustomErrorLevel('MissingPropertyType', Config::REPORT_INFO);
 $config->setCustomErrorLevel('MissingReturnType', Config::REPORT_INFO);
 $config->setCustomErrorLevel('MissingClosureReturnType', Config::REPORT_SUPPRESS);
+$config->setCustomErrorLevel('MissingThrowsDocblock', Config::REPORT_INFO);
 $config->setCustomErrorLevel('DeprecatedMethod', Config::REPORT_INFO);
 $config->setCustomErrorLevel('PossiblyUndefinedGlobalVariable', Config::REPORT_INFO);
 $config->setCustomErrorLevel('PossiblyUndefinedVariable', Config::REPORT_INFO);
@@ -91,6 +106,7 @@ ProjectChecker::TYPE_JSON
 );
 $project_checker->codebase->collect_references = true;
 $project_checker->infer_types_from_usage = true;
+$project_checker->checkClassReferences();
 $file_path = __DIR__ . '/src/somefile.php';
 $file_provider->registerFile(
     $file_path,
@@ -98,6 +114,7 @@ $file_provider->registerFile(
 );
 $project_checker->codebase->scanner->addFileToDeepScan(__DIR__ . '/src/somefile.php');
 $codebase = $project_checker->getCodebase();
+$codebase->reportUnusedCode();
 $codebase->addFilesToAnalyze([$file_path => $file_path]);
 try {
     $codebase->scanFiles();
@@ -109,7 +126,7 @@ try {
             'line_from' => $e->getStartLine(),
             'from' => $attributes['startFilePos'],
             'to' => $attributes['endFilePos'] + 1,
-            'type' => 'error'
+            'type' => 'parser_error'
         ]
     ]);
     exit();
@@ -124,7 +141,6 @@ try {
     $context = new \Psalm\Context();
     $context->collect_references = true;
     $file_checker->analyze($context);
-    $project_checker->checkClassReferences();
     $issue_data = IssueBuffer::getIssuesData();
 
     echo json_encode(['results' => $issue_data, 'version' => $psalm_version]);
@@ -136,7 +152,7 @@ try {
             'line_from' => $e->getStartLine(),
             'from' => $attributes['startFilePos'],
             'to' => $attributes['endFilePos'] + 1,
-            'type' => 'error'
+            'type' => 'parser_error'
         ]
     ]);
 }
