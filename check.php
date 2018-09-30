@@ -95,14 +95,13 @@ if (strlen($file_contents) > 6000) {
 
 $file_provider = new Psalm\Tests\Provider\FakeFileProvider();
 $project_checker = new ProjectChecker(
-$config,
-    $file_provider,
-    new Psalm\Tests\Provider\FakeParserCacheProvider(),
-new \Psalm\Provider\NoCache\NoFileStorageCacheProvider(),
-    new \Psalm\Provider\NoCache\NoClassLikeStorageCacheProvider(),
+    $config,
+    new Psalm\Provider\Providers(
+        $file_provider
+    ),
     false,
-true,
-ProjectChecker::TYPE_JSON
+    true,
+    ProjectChecker::TYPE_JSON
 );
 $project_checker->codebase->collect_references = true;
 $project_checker->infer_types_from_usage = true;
