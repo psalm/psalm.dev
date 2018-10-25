@@ -15,7 +15,8 @@ pages:
   - Using Psalm:
     - Installation: installation.md
     - Configuration: configuration.md
-    - Running Psalm: running_psalm.md
+    - Running Psalm via command line: running_psalm.md
+    - Running Psalm in your IDE: language_server.md
     - Supported Annotations: supported_annotations.md
     - Dealing with code issues: dealing_with_code_issues.md
     - Issue Types: issues.md
