@@ -2,10 +2,11 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 require_once('vendor/autoload.php');
-
+// not included in autoload
+require_once('vendor/vimeo/psalm/tests/Internal/Provider/FakeFileProvider.php');
 use PhpParser\ParserFactory;
-use Psalm\Checker\FileChecker;
-use Psalm\Checker\ProjectChecker;
+use Psalm\Internal\Analyzer\FileAnalyzer;
+use Psalm\Internal\Analyzer\ProjectAnalyzer;
 use Psalm\Config;
 use Psalm\IssueBuffer;
 
@@ -93,26 +94,26 @@ if (strlen($file_contents) > 6000) {
     exit;
 }
 
-$file_provider = new Psalm\Tests\Provider\FakeFileProvider();
-$project_checker = new ProjectChecker(
+$file_provider = new Psalm\Tests\Internal\Provider\FakeFileProvider();
+$project_checker = new ProjectAnalyzer(
     $config,
-    new Psalm\Provider\Providers(
+    new Psalm\Internal\Provider\Providers(
         $file_provider
     ),
     false,
     true,
-    ProjectChecker::TYPE_JSON
+    ProjectAnalyzer::TYPE_JSON
 );
-$project_checker->codebase->collect_references = true;
-$project_checker->infer_types_from_usage = true;
+$codebase = $project_checker->getCodebase();
+$codebase->collect_references = true;
+$infer_types_from_usage = true;
 $project_checker->checkClassReferences();
 $file_path = __DIR__ . '/src/somefile.php';
 $file_provider->registerFile(
     $file_path,
     $file_contents
 );
-$project_checker->codebase->scanner->addFileToDeepScan(__DIR__ . '/src/somefile.php');
-$codebase = $project_checker->getCodebase();
+$codebase->scanner->addFileToDeepScan(__DIR__ . '/src/somefile.php');
 $codebase->reportUnusedCode();
 $codebase->addFilesToAnalyze([$file_path => $file_path]);
 try {
@@ -132,7 +133,7 @@ try {
 }
 
 try {
-    $file_checker = new FileChecker(
+    $file_checker = new FileAnalyzer(
         $project_checker,
         $file_path,
         $config->shortenFileName($file_path)
