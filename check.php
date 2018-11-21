@@ -113,6 +113,7 @@ $file_provider->registerFile(
     $file_path,
     $file_contents
 );
+$config->visitStubFiles($codebase, false);
 $codebase->scanner->addFileToDeepScan(__DIR__ . '/src/somefile.php');
 $codebase->reportUnusedCode();
 $codebase->addFilesToAnalyze([$file_path => $file_path]);
