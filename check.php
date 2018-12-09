@@ -141,6 +141,10 @@ try {
     );
     $context = new \Psalm\Context();
     $context->collect_references = true;
+    $class_aliases = $codebase->file_storage_provider->get($file_path)->classlike_aliases;
+    foreach ($class_aliases as $aliased_class => $new_class) {
+        $codebase->classlikes->addClassAlias($new_class, $aliased_class);
+    }
     $file_checker->analyze($context);
     $issue_data = IssueBuffer::getIssuesData();
 
