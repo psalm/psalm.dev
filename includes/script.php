@@ -37,6 +37,8 @@ var serializeJSON = function(data) {
     }).join('&');
 }
 
+var urlParams = new URLSearchParams(window.location.search);
+
 var latestFetch = 0;
 
 var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
@@ -55,7 +57,10 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
                     'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
                     'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
                 },
-                body: serializeJSON({code: code})
+                body: serializeJSON({
+                    code: code,
+                    strict_internal_functions: urlParams.has('strict_internal_functions')
+                })
             })
             .then(function (response) {
                 return response.json();
