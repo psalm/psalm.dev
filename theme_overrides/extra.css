@@ -5,6 +5,12 @@
 body {
 	line-height: 1.5em;
 	font-size: 16px;
+	background: #FFF;
+}
+
+.navbar-default {
+	background: #333;
+	box-shadow: none;
 }
 
 body, h3 {
