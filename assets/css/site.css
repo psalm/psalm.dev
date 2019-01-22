@@ -807,7 +807,7 @@ footer {
 .vimeo_logo {
     display: inline-block;
     vertical-align: middle;
-    margin: -2px 3px 7px;
+    margin: 0 3px 3px;
 }
 
 footer a:hover svg path {
