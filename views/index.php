@@ -47,7 +47,7 @@ if ($c) {} elseif ($c) {}
 
         <p>Psalm is designed to understand that complexity, allowing it to quickly find common programmer errors like null references and misspelled variable names.</p>
 
-        <p>You should use Psalm if you run PHP 5.6+ or PHP 7, and you want&nbsp;to</p>
+        <p>You should use Psalm if want&nbsp;to</p>
 
         <ul>
             <li>prevent errors in a big refactor</li>
@@ -55,7 +55,7 @@ if ($c) {} elseif ($c) {}
             <li>guarantee that there won’t be any type-related runtime errors</li>
         </ul>
 
-        <p>Psalm has a number of other features that help you improve your codebase, including a fixer called Psalter that updates your code directly by leveraging Psalm’s analysis engine.</p>
+        <p>Psalm has a number of features that help you improve your codebase, including a fixer called Psalter that updates your code directly by leveraging Psalm’s analysis engine.</p>
 
         <p>Interested in how Psalm came to be? Read <a href="https://medium.com/vimeo-engineering-blog/fixing-code-that-aint-broken-a99e05998c24">this explainer</a>.</p>
     </div>
