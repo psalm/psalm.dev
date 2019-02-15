@@ -15,11 +15,17 @@ pages:
   - Using Psalm:
     - Installation: installation.md
     - Configuration: configuration.md
-    - Running Psalm via command line: running_psalm.md
-    - Running Psalm in your IDE: language_server.md
+    - Running Psalm:
+      - Running Psalm via command line: running_psalm.md
+      - Running Psalm in your IDE: language_server.md
+    - Fixing code: fixing_code.md
     - Supported Annotations: supported_annotations.md
-    - Dealing with code issues: dealing_with_code_issues.md
-    - Issue Types: issues.md
-    - Typing in Psalm: typing_in_psalm.md
+    - Error handling:
+      - Dealing with code issues: dealing_with_code_issues.md
+      - Issue Types: issues.md
+    - Type system:
+      - Typing in Psalm: typing_in_psalm.md
+      - Supported Annotations: supported_annotations.md
+      - Template Annotations: templated_annotations.md
     - Plugins: plugins.md
     - Checking non-PHP files: checking_non_php_files.md
