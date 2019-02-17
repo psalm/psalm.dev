@@ -58,7 +58,7 @@ $created_on->setTimezone(new DateTimeZone("UTC"));
             rows="20" style="visibility: hidden; font-family: monospace; font-size: 14px; max-width: 900px; min-width: 320px;"
         ><?= htmlentities($code) ?></textarea>
         <div id="psalm_output"></div>
-        <div id="settings_panel"></div>
+        <div id="settings_panel" class="hidden"></div>
         <div class="button_bar">
             <span class="date">Snippet created on <?= $created_on->format('F j Y \a\t H:i') ?> UTC</span>
             
