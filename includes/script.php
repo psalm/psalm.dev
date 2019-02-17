@@ -8,6 +8,12 @@ var shrinkCode = function() {
     document.querySelector('body').classList.remove('code_expanded');
     return false;
 };
+    
+var toggleSettings = function() {
+    document.querySelector('#settings_panel').classList.toggle('hidden');
+    document.querySelector('#psalm_output').classList.toggle('hidden');
+    return false;
+};
 
 var getLink = function() {
     fetch('/add_code.php', {
