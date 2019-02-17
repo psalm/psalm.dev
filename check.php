@@ -49,6 +49,7 @@ $config->totally_typed = true;
 $config->use_property_default_for_type = false;
 $config->check_for_throws_docblock = true;
 $config->remember_property_assignments_after_call = true;
+$config->allow_phpstorm_generics = ($_POST['allow_phpstorm_generics'] ?? '') === 'true';
 $config->ignore_internal_nullable_issues = ($_POST['strict_internal_functions'] ?? '') !== 'true';
 $config->ignore_internal_falsable_issues = ($_POST['strict_internal_functions'] ?? '') !== 'true';
 $config->setCustomErrorLevel('MixedArrayAccess', Config::REPORT_INFO);

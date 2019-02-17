@@ -59,6 +59,7 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
                 },
                 body: serializeJSON({
                     code: code,
+                    allow_phpstorm_generics: urlParams.has('allow_phpstorm_generics'),
                     strict_internal_functions: urlParams.has('strict_internal_functions')
                 })
             })
