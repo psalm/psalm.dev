@@ -552,8 +552,14 @@ div.cm_container button:hover {
     background: #EEE;
 }
 
-div.cm_container button:last-child {
+div.cm_container button:last-child,
+div.cm_container button#settings {
     float: right;
+    margin-left: -2px;
+}
+
+div.cm_container button#settings svg {
+    top: 3px;
 }
 
 div.cm_container #shrinker {
@@ -572,6 +578,7 @@ div.CodeMirror,
 div.CodeMirror-lint-tooltip,
 .intro pre,
 #psalm_output,
+#settings_panel,
 code {
     font-family: "Operator Mono SSm A", "Operator Mono SSm B";
     font-style: normal;
@@ -579,16 +586,21 @@ code {
     line-height: 1.5em;
 }
 div.CodeMirror,
-#psalm_output {
+#psalm_output,
+#settings_panel {
     border: 2px solid black;
 }
-#psalm_output {
+#psalm_output,
+#settings_panel {
     display: none;
     font-family: "Operator Mono SSm A", "Operator Mono SSm B";
     font-size: 14px;
     line-height: 1.5em;
     padding: 5px;
     color: #666;
+}
+#settings_panel {
+    background-color: #ddd;
 }
 div.CodeMirror {
     z-index: 2;
@@ -598,8 +610,12 @@ div.CodeMirror {
     transition: 0.2s linear border-color, 0.2s linear box-shadow;
     position: relative;
 }
-
-.code_expanded #psalm_output {
+.code_expanded #psalm_output.hidden,
+.code_expanded #settings_panel.hidden {
+    display: none;
+}
+.code_expanded #psalm_output,
+.code_expanded #settings_panel {
     display: block;
 }
 
@@ -620,14 +636,15 @@ div.CodeMirror {
     }
 
     .code_expanded .CodeMirror,
-    .code_expanded #psalm_output {
+    .code_expanded #psalm_output,
+    .code_expanded #settings_panel {
         height: calc(65vh - 80px);
         width:100%;
         display: block;
         box-sizing: border-box;
     }
 
-    .code_expanded #psalm_output {
+    .code_expanded #psalm_output, .code_expanded #settings_panel {
         height: calc(35vh - 80px);
         border-top: 0;
         overflow: auto;
