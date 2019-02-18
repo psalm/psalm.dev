@@ -631,7 +631,9 @@ div.CodeMirror {
     color: #333;
 }
 
-@media all and (min-device-width: 600px) {
+.code_expanded .date { display: none; }
+
+@media all and (min-device-width: 1022px) {
     div.CodeMirror.CodeMirror-focused {
         box-shadow: 0 0 0px 1px #000;
     }
@@ -684,7 +686,8 @@ div.CodeMirror {
     }
 
     .code_expanded .cm_container {
-        padding: 0;
+        box-sizing: border-box;
+        padding: 0 10px 70px;
     }
 
     nav {
@@ -711,11 +714,15 @@ div.CodeMirror {
     nav ul li.doc_link {
         margin-left: -3px;
     }
-
     #expander {
         display: none;
     }
+
+    .code_expanded .date {
+        display: none;
+    }
 }
+
 
 .cm-s-elegant span.cm-number, .cm-s-elegant span.cm-string, .cm-s-elegant span.cm-atom { color: #000; }
 .cm-s-elegant span.cm-comment { color: #888; line-height: 1em; }

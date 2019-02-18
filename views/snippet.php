@@ -24,7 +24,7 @@ try {
     die('Connection to database failed');
 }
 
-$stmt = $pdo->prepare('select `code`, UNIX_TIMESTAMP(`created_on`) as `created_on` from `codes` where `hash` = :hash');
+$stmt = $pdo->prepare('select *, UNIX_TIMESTAMP(`created_on`) as `created_on` from `codes` where `hash` = :hash');
 $stmt->execute([':hash' => $hash]);
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -67,7 +67,24 @@ $created_on->setTimezone(new DateTimeZone("UTC"));
         </div>
     </div>
 </div>
-
+<script>
+<?php
+$settings_fields = [
+    'unused_variables',
+    'unused_methods',
+    'memoize_properties',
+    'memoize_method_calls',
+    'check_throws',
+    'strict_internal_functions',
+    'allow_phpstorm_generics'
+];
+?>
+var settings = {
+<?php foreach ($settings_fields as $field) : ?>
+    <?php echo $field ?>: <?php echo $result[$field] ? 'true' : 'false' ?>,
+<?php endforeach ?>
+};
+</script>
 <?php require('../includes/script.php'); ?>
 </body>
 </html>

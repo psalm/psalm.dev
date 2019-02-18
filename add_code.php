@@ -1,11 +1,22 @@
 <?php
-if (!isset($_POST['code']) ) {
+ini_set("display_errors", 1); 
+ini_set("display_startup_errors", 1);
+error_reporting(-1);
+if (!isset($_POST['code']) || !isset($_POST['settings']) ) {
     http_response_code(412);
     echo 'Expecting code';
     exit();
 }
 
 $code = trim($_POST['code']);
+
+$settings = json_decode($_POST['settings'], true);
+
+if (!$settings) {
+    http_response_code(412);
+    echo 'Expecting settings';
+    exit();
+}
 
 if (substr($code, 0, 5) !== '<?php') {
     http_response_code(412);
@@ -27,7 +38,7 @@ if (strlen($code) > 6000) {
 
 require_once('vendor/autoload.php');
 
-$hash = substr(hash_hmac('sha256', $code, 'not much of a secret'), 0, 10);
+$hash = substr(hash_hmac('sha256', $code . json_encode($settings), 'not much of a secret'), 0, 10);
 
 /**
  * @var array{dsn:string, user:string, password:string}
@@ -49,8 +60,24 @@ if ($result) {
     exit();
 }
 
-$stmt = $pdo->prepare('insert into `codes` (`hash`, `code`, `ip`) values (:hash, :code, :ip)');
-$stmt->execute([':hash' => $hash, ':code' => $code, 'ip' => $_SERVER['REMOTE_ADDR']]);
+$data = ['hash' => $hash, 'code' => $code, 'ip' => $_SERVER['REMOTE_ADDR']];
+
+$settings_fields = [
+    'unused_variables',
+    'unused_methods',
+    'memoize_properties',
+    'memoize_method_calls',
+    'check_throws',
+    'strict_internal_functions',
+    'allow_phpstorm_generics'
+];
+
+foreach ($settings_fields as $field) {
+    $data[$field] = ($settings[$field] ?? false) ? '1' : '';
+}
+$insert_sql = 'insert into `codes` (`' . implode('`,`', array_keys($data)) .  '`) values (:' . implode(', :', array_keys($data)) . ')';
+$stmt = $pdo->prepare($insert_sql);
+$stmt->execute($data);
 
 echo $_SERVER['SERVER_NAME'] . '/r/' . $hash;
 exit();

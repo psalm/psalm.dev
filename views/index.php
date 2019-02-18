@@ -63,7 +63,17 @@ if ($c) {} elseif ($c) {}
         <p>Interested in how Psalm came to be? Read <a href="https://medium.com/vimeo-engineering-blog/fixing-code-that-aint-broken-a99e05998c24">this explainer</a>.</p>
     </div>
 </div>
-
+<script>
+var settings = {
+    'unused_variables': true,
+    'unused_methods': false,
+    'memoize_properties': true,
+    'memoize_method_calls': false,
+    'check_throws': false,
+    'strict_internal_functions': false,
+    'allow_phpstorm_generics': false,
+};
+</script>
 <?php require('../includes/footer.php'); ?>
 <?php require('../includes/script.php'); ?>
 </body>
