@@ -24,7 +24,7 @@ var settingsText = {
     'use_internal_functions': 'Use strict internal function results',
 };
     
-var settingsEnabled {
+var settingsEnabled = {
     'unused_variables': true,
     'memoize_properties': true
 };
