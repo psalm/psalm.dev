@@ -14,6 +14,48 @@ var toggleSettings = function() {
     document.querySelector('#psalm_output').classList.toggle('hidden');
     return false;
 };
+    
+var settingsText = {
+    'unused_variables': 'Detect unused variables and parameters',
+    'unused_methods': 'Detect unused classes and methods',
+    'memoize_properties': 'Memoize property assignments',
+    'memoize_method_calls': 'Memoize simple method calls',
+    'check_throws': 'Check for <code>@throws</code> docblock',
+    'use_internal_functions': 'Use strict internal function results',
+};
+    
+var settingsEnabled {
+    'unused_variables': true,
+    'memoize_properties': true
+};
+    
+var toggleSetting = function(key) {
+    if (key in settingsEnabled) {
+        settingsEnabled[key] = !settingsEnabled[key];
+    } else {
+        settingsEnabled[key] = true;
+    }
+    
+    redrawSettings();
+    
+    return false;
+};
+
+var redrawSettings = function() {
+    var settings = [];
+    
+    Object.keys(settingsText).forEach(function (key) {
+        var checked = key in settingsEnabled && settingsEnabled[key];
+        var clickHandler = 'javascript:toggleSetting(' + key + ')';
+        var input = '<input name="' + key + '" type="checkbox" onclick="' + clickHandler + '"' + (checked ? ' checked' : '') + '>';
+        
+        settings.push(
+            input + ' ' + settingsText[key]
+        );
+    });
+    
+    document.getElementById('settings_panel').innerHtml = settings.implode('\n');
+};
 
 var getLink = function() {
     fetch('/add_code.php', {
@@ -142,5 +184,7 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
 
 //editor.focus();
 editor.setCursor(editor.lineCount(), 0);
+    
+redrawSettings();
 
 </script>
