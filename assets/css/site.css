@@ -558,6 +558,14 @@ div.cm_container button#settings {
     margin-left: -2px;
 }
 
+div.cm_container button#settings {
+    display: none;
+}
+
+.code_expanded div.cm_container button#settings {
+    display: block;
+}
+
 div.cm_container button#settings svg {
     top: 3px;
 }
@@ -617,6 +625,10 @@ div.CodeMirror {
 .code_expanded #psalm_output,
 .code_expanded #settings_panel {
     display: block;
+}
+
+#settings_panel label {
+    color: #333;
 }
 
 @media all and (min-device-width: 600px) {

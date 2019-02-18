@@ -21,40 +21,45 @@ var settingsText = {
     'memoize_properties': 'Memoize property assignments',
     'memoize_method_calls': 'Memoize simple method calls',
     'check_throws': 'Check for <code>@throws</code> docblock',
-    'use_internal_functions': 'Use strict internal function results',
+    'strict_internal_functions': 'Use strict internal function results',
+    'allow_phpstorm_generics': 'Allow PHPStorm generic annotations (e.g. Traversable|string[])',
 };
     
-var settingsEnabled = {
+var settings = {
     'unused_variables': true,
-    'memoize_properties': true
+    'unused_methods': false,
+    'memoize_properties': true,
+    'memoize_method_calls': false,
+    'check_throws': false,
+    'strict_internal_functions': false,
+    'allow_phpstorm_generics': false,
 };
     
 var toggleSetting = function(key) {
-    if (key in settingsEnabled) {
-        settingsEnabled[key] = !settingsEnabled[key];
+    if (key in settings) {
+        settings[key] = !settings[key];
     } else {
-        settingsEnabled[key] = true;
+        settings[key] = true;
     }
-    
-    redrawSettings();
+
+    editor.performLint();
     
     return false;
 };
 
 var redrawSettings = function() {
-    var settings = [];
-    
+    var settingsLines = [];
+
     Object.keys(settingsText).forEach(function (key) {
-        var checked = key in settingsEnabled && settingsEnabled[key];
-        var clickHandler = 'javascript:toggleSetting(' + key + ')';
-        var input = '<input name="' + key + '" type="checkbox" onclick="' + clickHandler + '"' + (checked ? ' checked' : '') + '>';
+        var checked = key in settings && settings[key];
+        var clickHandler = 'javascript:toggleSetting(\'' + key + '\')';
+        var input = '<input id="' + key + '" type="checkbox" onclick="' + clickHandler + '"' + (checked ? ' checked' : '') + '>';
         
-        settings.push(
-            input + ' ' + settingsText[key]
+        settingsLines.push(
+            '<div>' + input + ' <label for="' + key + '">' + settingsText[key] + '</label></div>'
         );
     });
-    
-    document.getElementById('settings_panel').innerHtml = settings.implode('\n');
+    document.getElementById('settings_panel').innerHTML = settingsLines.join('\n');
 };
 
 var getLink = function() {
@@ -89,6 +94,88 @@ var urlParams = new URLSearchParams(window.location.search);
 
 var latestFetch = 0;
 
+var fetchAnnotations = function (code, callback, options, cm) {
+    latestFetch++;
+    fetchKey = latestFetch;
+    fetch('/check.php', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+        },
+        body: serializeJSON({
+            code: code,
+            settings: JSON.stringify(settings),
+        })
+    })
+    .then(function (response) {
+        return response.json();
+    })
+    .then(function (response) {
+        if (latestFetch != fetchKey) {
+            return;
+        }
+
+        if ('results' in response) {
+            var psalm_version = response.version;
+            
+            if (psalm_version.indexOf('@')) {
+                psalm_version = psalm_version.split('@')[1];
+            }
+
+            var psalm_header = 'Psalm output (using commit ' + psalm_version.substring(0, 7) + '): \n\n'
+
+            if (response.results.length === 0) {
+                document.getElementById('psalm_output').innerText = psalm_header + 'No issues!';
+
+                callback([]);
+            }
+            else {
+                var text = response.results.map(
+                    function (issue) {
+                        return (issue.severity === 'error' ? 'ERROR' : 'INFO') + ': '
+                            + issue.type + ' - ' + issue.line_from + ':'
+                            + issue.column_from + ' - ' + issue.message;
+                    }
+                );
+
+                document.getElementById('psalm_output').innerText = psalm_header + text.join('\n\n');
+
+                callback(
+                    response.results.map(
+                        function (issue) {
+                            return {
+                                severity: issue.severity === 'error' ? 'error' : 'warning',
+                                message: issue.message,
+                                from: cm.posFromIndex(issue.from),
+                                to: cm.posFromIndex(issue.to)
+                            };
+                        }
+                    )
+                );
+            }  
+        }
+        else if ('error' in response) {
+            var error_type = response.error.type === 'parser_error' ? 'Parser' : 'Internal Psalm';
+            document.getElementById('psalm_output').innerText = 'Psalm runner output: \n\n'
+                + error_type + ' error on line ' + response.error.line_from + ' - '
+                + response.error.message;
+
+            console.log(cm.posFromIndex(response.error.to));
+
+            callback({
+               message: response.error.message,
+               severity: 'error',
+               from: cm.posFromIndex(response.error.from),
+               to: cm.posFromIndex(response.error.to),
+            });
+        }
+    })
+    .catch (function (error) {
+        console.log('Request failed', error);
+    });
+};
+
 var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     lineNumbers: true,
     matchBrackets: true,
@@ -96,88 +183,7 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     indentUnit: 2,
     theme: 'elegant',
     lint: {
-        getAnnotations: function (code, callback, options, cm) {
-            latestFetch++;
-            fetchKey = latestFetch;
-            fetch('/check.php', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
-                    'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
-                },
-                body: serializeJSON({
-                    code: code,
-                    allow_phpstorm_generics: urlParams.has('allow_phpstorm_generics'),
-                    strict_internal_functions: urlParams.has('strict_internal_functions')
-                })
-            })
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (response) {
-                if (latestFetch != fetchKey) {
-                    return;
-                }
-
-                if ('results' in response) {
-                    var psalm_version = response.version;
-                    
-                    if (psalm_version.indexOf('@')) {
-                        psalm_version = psalm_version.split('@')[1];
-                    }
-
-                    var psalm_header = 'Psalm output (using commit ' + psalm_version.substring(0, 7) + '): \n\n'
-
-                    if (response.results.length === 0) {
-                        document.getElementById('psalm_output').innerText = psalm_header + 'No issues!';
-
-                        callback([]);
-                    }
-                    else {
-                        var text = response.results.map(
-                            function (issue) {
-                                return (issue.severity === 'error' ? 'ERROR' : 'INFO') + ': '
-                                    + issue.type + ' - ' + issue.line_from + ':'
-                                    + issue.column_from + ' - ' + issue.message;
-                            }
-                        );
-
-                        document.getElementById('psalm_output').innerText = psalm_header + text.join('\n\n');
-
-                        callback(
-                            response.results.map(
-                                function (issue) {
-                                    return {
-                                        severity: issue.severity === 'error' ? 'error' : 'warning',
-                                        message: issue.message,
-                                        from: cm.posFromIndex(issue.from),
-                                        to: cm.posFromIndex(issue.to)
-                                    };
-                                }
-                            )
-                        );
-                    }  
-                }
-                else if ('error' in response) {
-                    var error_type = response.error.type === 'parser_error' ? 'Parser' : 'Internal Psalm';
-                    document.getElementById('psalm_output').innerText = 'Psalm runner output: \n\n'
-                        + error_type + ' error on line ' + response.error.line_from + ' - '
-                        + response.error.message;
-
-                    console.log(cm.posFromIndex(response.error.to));
-
-                    callback({
-                       message: response.error.message,
-                       severity: 'error',
-                       from: cm.posFromIndex(response.error.from),
-                       to: cm.posFromIndex(response.error.to),
-                    });
-                }
-            })
-            .catch (function (error) {
-                console.log('Request failed', error);
-            });
-        },
+        getAnnotations: fetchAnnotations,
         async: true,
     }
 });

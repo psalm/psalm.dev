@@ -13,6 +13,14 @@ use Psalm\IssueBuffer;
 if (!isset($_POST['code'])) {
     exit;
 }
+if (!isset($_POST['settings'])) {
+    exit;
+}
+
+$settings = json_decode($_POST['settings'], true);
+if (!is_array($settings)) {
+    exit;
+}
 const PHP_PARSER_VERSION = '4.0.0';
 $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
 $psalm_version = (string) \Muglug\PackageVersions\Versions::getVersion('vimeo/psalm');
@@ -46,12 +54,12 @@ $config->cache_directory = null;
 $config->stop_on_first_error = false;
 $config->allow_includes = false;
 $config->totally_typed = true;
-$config->use_property_default_for_type = false;
-$config->check_for_throws_docblock = true;
-$config->remember_property_assignments_after_call = true;
-$config->allow_phpstorm_generics = ($_POST['allow_phpstorm_generics'] ?? '') === 'true';
-$config->ignore_internal_nullable_issues = ($_POST['strict_internal_functions'] ?? '') !== 'true';
-$config->ignore_internal_falsable_issues = ($_POST['strict_internal_functions'] ?? '') !== 'true';
+$config->check_for_throws_docblock = $settings['check_throws'] ?? true;
+$config->remember_property_assignments_after_call = $settings['memoize_properties'] ?? true;;
+$config->memoize_method_calls = $settings['memoize_method_calls'] ?? false;
+$config->allow_phpstorm_generics = $settings['allow_phpstorm_generics'] ?? false;
+$config->ignore_internal_nullable_issues = !($settings['strict_internal_functions'] ?? false);
+$config->ignore_internal_falsable_issues = !($settings['strict_internal_functions'] ?? false);
 $config->setCustomErrorLevel('MixedArrayAccess', Config::REPORT_INFO);
 $config->setCustomErrorLevel('MixedArrayOffset', Config::REPORT_INFO);
 $config->setCustomErrorLevel('MixedAssignment', Config::REPORT_INFO);
@@ -73,14 +81,32 @@ $config->setCustomErrorLevel('DeprecatedMethod', Config::REPORT_INFO);
 $config->setCustomErrorLevel('PossiblyUndefinedGlobalVariable', Config::REPORT_INFO);
 $config->setCustomErrorLevel('PossiblyUndefinedVariable', Config::REPORT_INFO);
 $config->setCustomErrorLevel('NonStaticSelfCall', Config::REPORT_INFO);
-$config->setCustomErrorLevel('UnusedParam', Config::REPORT_INFO);
-$config->setCustomErrorLevel('PossiblyUnusedParam', Config::REPORT_INFO);
-$config->setCustomErrorLevel('UnusedVariable', Config::REPORT_INFO);
-$config->setCustomErrorLevel('UnusedClass', Config::REPORT_SUPPRESS);
-$config->setCustomErrorLevel('UnusedMethod', Config::REPORT_INFO);
-$config->setCustomErrorLevel('PossiblyUnusedMethod', Config::REPORT_INFO);
-$config->setCustomErrorLevel('PossiblyUnusedProperty', Config::REPORT_INFO);
-$config->setCustomErrorLevel('UnusedProperty', Config::REPORT_INFO);
+
+if ($settings['unused_variables'] ?? false) {
+    $config->setCustomErrorLevel('UnusedParam', Config::REPORT_INFO);
+    $config->setCustomErrorLevel('PossiblyUnusedParam', Config::REPORT_INFO);
+    $config->setCustomErrorLevel('UnusedVariable', Config::REPORT_INFO);
+} else {
+    $config->setCustomErrorLevel('UnusedParam', Config::REPORT_SUPPRESS);
+    $config->setCustomErrorLevel('PossiblyUnusedParam', Config::REPORT_SUPPRESS);
+    $config->setCustomErrorLevel('UnusedVariable', Config::REPORT_SUPPRESS);
+}
+
+if ($settings['unused_methods'] ?? false) {
+    $config->setCustomErrorLevel('UnusedClass', Config::REPORT_INFO);
+    $config->setCustomErrorLevel('UnusedMethod', Config::REPORT_INFO);
+    $config->setCustomErrorLevel('PossiblyUnusedMethod', Config::REPORT_INFO);
+    $config->setCustomErrorLevel('PossiblyUnusedProperty', Config::REPORT_INFO);
+    $config->setCustomErrorLevel('UnusedProperty', Config::REPORT_INFO);
+} else {
+    $config->setCustomErrorLevel('UnusedClass', Config::REPORT_SUPPRESS);
+    $config->setCustomErrorLevel('UnusedMethod', Config::REPORT_SUPPRESS);
+    $config->setCustomErrorLevel('PossiblyUnusedMethod', Config::REPORT_SUPPRESS);
+    $config->setCustomErrorLevel('PossiblyUnusedProperty', Config::REPORT_SUPPRESS);
+    $config->setCustomErrorLevel('UnusedProperty', Config::REPORT_SUPPRESS);
+}
+
+
 $config->setCustomErrorLevel('MoreSpecificReturnType', Config::REPORT_INFO);
 $config->setCustomErrorLevel('LessSpecificReturnStatement', Config::REPORT_INFO);
 $file_contents = $_POST['code'];
@@ -118,7 +144,9 @@ $file_provider->registerFile(
 );
 $config->visitStubFiles($codebase, false);
 $codebase->scanner->addFileToDeepScan(__DIR__ . '/src/somefile.php');
-$codebase->reportUnusedCode();
+if (($settings['unused_variables'] ?? false) || ($settings['unused_methods'] ?? false)) {
+    $codebase->reportUnusedCode();
+}
 $codebase->addFilesToAnalyze([$file_path => $file_path]);
 try {
     $codebase->scanFiles();
@@ -149,6 +177,9 @@ try {
         $codebase->classlikes->addClassAlias($new_class, $aliased_class);
     }
     $file_checker->analyze($context);
+    if ($settings['unused_methods'] ?? false) {
+        $project_checker->checkClassReferences();
+    }
     $issue_data = IssueBuffer::getIssuesData();
 
     echo json_encode(['results' => $issue_data, 'version' => $psalm_version]);
