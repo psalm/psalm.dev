@@ -25,16 +25,6 @@ var settingsText = {
     'allow_phpstorm_generics': 'Allow PHPStorm generic annotations (e.g. Traversable|string[])',
 };
     
-var settings = {
-    'unused_variables': true,
-    'unused_methods': false,
-    'memoize_properties': true,
-    'memoize_method_calls': false,
-    'check_throws': false,
-    'strict_internal_functions': false,
-    'allow_phpstorm_generics': false,
-};
-    
 var toggleSetting = function(key) {
     if (key in settings) {
         settings[key] = !settings[key];
@@ -69,7 +59,7 @@ var getLink = function() {
             'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
             'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
         },
-        body: serializeJSON({code: editor.getValue()})
+        body: serializeJSON({code: editor.getValue(), settings: JSON.stringify(settings)})
     })
     .then(function (response) {
         return response.text();
