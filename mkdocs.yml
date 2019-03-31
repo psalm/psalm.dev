@@ -10,22 +10,21 @@ theme:
 extra_css:
   - '../theme_overrides/extra.css'
   - 'https://cloud.typography.com/751592/7707372/css/fonts.css'
-pages:
-  - Home: index.md
-  - Using Psalm:
+nav:
+  - Home: README.md
+  - Running Psalm:
     - Installation: installation.md
     - Configuration: configuration.md
-    - Running Psalm:
-      - Running Psalm via command line: running_psalm.md
-      - Running Psalm in your IDE: language_server.md
-    - Fixing code: fixing_code.md
-    - Supported Annotations: supported_annotations.md
-    - Error handling:
+    - Plugins: plugins.md
+    - Command line usage: running_psalm.md
+    - IDE support: language_server.md
+    - Handling errors:
       - Dealing with code issues: dealing_with_code_issues.md
       - Issue Types: issues.md
-    - Type system:
-      - Typing in Psalm: typing_in_psalm.md
-      - Supported Annotations: supported_annotations.md
-      - Template Annotations: templated_annotations.md
-    - Plugins: plugins.md
     - Checking non-PHP files: checking_non_php_files.md
+  - Annotating code:
+    - Typing in Psalm: typing_in_psalm.md
+    - Docblock Type Syntax: docblock_type_syntax.md
+    - Supported Annotations: supported_annotations.md
+    - Template Annotations: templated_annotations.md
+  - Fixing code: fixing_code.md
