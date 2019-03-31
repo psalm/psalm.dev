@@ -49,8 +49,8 @@ $created_on->setTimezone(new DateTimeZone("UTC"));
 <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 </head>
 <body class="code_expanded">
-<div class="container" id="page_container">
-    <?php require('../includes/nav.php'); ?>
+<?php require('../includes/nav.php'); ?>
+<div class="container snippet" id="page_container">
     <div class="cm_container">
         <textarea
             name="code"

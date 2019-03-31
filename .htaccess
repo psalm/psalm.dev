@@ -11,7 +11,7 @@ DirectoryIndex index.php index.html
 RewriteEngine On
 RewriteBase /
 RewriteRule ^r/([a-z0-9]+)$ /views/snippet.php?r=$1 [L,NC]
-RewriteRule ^quickstart/?$ /views/quickstart.php [L,NC]
+RewriteRule ^quickstart/?$ /docs/installation [R]
 RewriteRule ^$ /views/index.php [L,NC]
 
 RewriteRule ^composer\.*$ - [F,L]

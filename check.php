@@ -142,7 +142,7 @@ $file_provider->registerFile(
     $file_path,
     $file_contents
 );
-$config->visitStubFiles($codebase, false);
+
 $codebase->scanner->addFileToDeepScan(__DIR__ . '/src/somefile.php');
 if (($settings['unused_variables'] ?? false) || ($settings['unused_methods'] ?? false)) {
     $codebase->reportUnusedCode();
@@ -163,6 +163,8 @@ try {
     ]);
     exit();
 }
+
+$config->visitStubFiles($codebase, false);
 
 try {
     $file_checker = new FileAnalyzer(

@@ -10,8 +10,8 @@
 <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 </head>
 <body>
-<div class="container" id="page_container">
-    <?php require('../includes/nav.php'); ?>
+<?php require('../includes/nav.php'); ?>
+<div class="container front" id="page_container">
     <div class="cm_container">
         <textarea
             name="code"
@@ -31,8 +31,7 @@ if (rand(0, 1)) $b = 5;
 echo $b;
 
 $c = rand(0, 5);
-if ($c) {} elseif ($c) {}
-</textarea>
+if ($c) {} elseif ($c) {}</textarea>
         <div id="psalm_output"></div>
         <div id="settings_panel" class="hidden"></div>
         <div class="button_bar">
@@ -46,19 +45,17 @@ if ($c) {} elseif ($c) {}
     
 
     <div class="intro">
-        <p>Life is complicated. PHP can be, too.</p>
+        <p>Psalm is a static analysis tool that’s designed to improve large PHP codebases by identifying both obvious and hard-to-spot bugs.</p>
 
-        <p>Psalm is designed to understand that complexity, allowing it to quickly find common programmer errors like null references and misspelled variable names.</p>
+        <p>Psalm comes with a fixer that allows you to improve your code automatically, too.</p>
 
-        <p>You should use Psalm if want&nbsp;to</p>
+        <p>You should use Psalm if you want to</p>
 
         <ul>
             <li>prevent errors in a big refactor</li>
             <li>maintain a consistent level of quality across a large team</li>
             <li>guarantee that there won’t be any type-related runtime errors</li>
         </ul>
-
-        <p>Psalm has a number of features that help you improve your codebase, including a fixer called Psalter that updates your code directly by leveraging Psalm’s analysis engine.</p>
 
         <p>Interested in how Psalm came to be? Read <a href="https://medium.com/vimeo-engineering-blog/fixing-code-that-aint-broken-a99e05998c24">this explainer</a>.</p>
     </div>
