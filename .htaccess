@@ -13,6 +13,7 @@ RewriteBase /
 RewriteRule ^r/([a-z0-9]+)$ /views/snippet.php?r=$1 [L,NC]
 RewriteRule ^quickstart/?$ /docs/installation [R]
 RewriteRule ^$ /views/index.php [L,NC]
+RewriteRule ^schema/config$ /vendor/vimeo/psalm/config.xsd [L,NC]
 
 RewriteRule ^composer\.*$ - [F,L]
 RewriteRule ^includes/?.*$ - [F,L]
