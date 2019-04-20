@@ -17,5 +17,6 @@ RewriteRule ^schema/config$ /vendor/vimeo/psalm/config.xsd [L,NC]
 
 RewriteRule ^composer\.*$ - [F,L]
 RewriteRule ^includes/?.*$ - [F,L]
+RewriteCond %{REQUEST_URI} !^/vendor/vimeo/psalm/config\.xsd
 RewriteRule ^vendor/?.*$ - [F,L]
 RewriteRule ^dbconfig.php.*$ - [F,L]
