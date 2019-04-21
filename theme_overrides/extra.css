@@ -188,6 +188,7 @@ ul.nav .main {
     position: -moz-sticky;
     position: -ms-sticky;
     position: -o-sticky;
+    position: sticky;
     top: 0;
 }
 
@@ -234,6 +235,7 @@ button.navbar-toggle .icon-bar {
     position: -moz-sticky;
     position: -ms-sticky;
     position: -o-sticky;
+    position: sticky;
     top: 55px;
     padding-top: 30px;
 }
