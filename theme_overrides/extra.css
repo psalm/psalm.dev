@@ -148,7 +148,16 @@ h2 {
 	margin: .8em 0;
 	border-bottom: 1px solid #CCC;
     padding: 0.2em 0 0.3em;
-    background: #FFF;
+}
+
+:target::before {
+	pointer-events: none;
+    display: block;
+    content: " ";
+    margin-top: -70px;
+    height: 70px;
+    visibility: hidden;
+    opacity: 0;
 }
 
 body, h3, h4 {
