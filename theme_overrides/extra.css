@@ -139,7 +139,9 @@ h1, h2 {
 }
 
 h1 {
-	margin: .5em 0;
+	font-weight: 600;
+    font-size: 34px;
+    margin-bottom: .5em 0 .75em;
 }
 
 h2 {
