@@ -75,7 +75,7 @@ $config->setCustomErrorLevel('MixedInferredReturnType', Config::REPORT_INFO);
 $config->setCustomErrorLevel('MixedReturnStatement', Config::REPORT_INFO);
 $config->setCustomErrorLevel('MissingPropertyType', Config::REPORT_INFO);
 $config->setCustomErrorLevel('MissingReturnType', Config::REPORT_INFO);
-$config->setCustomErrorLevel('MissingClosureReturnType', Config::REPORT_SUPPRESS);
+$config->setCustomErrorLevel('MissingClosureReturnType', Config::REPORT_INFO);
 $config->setCustomErrorLevel('MissingThrowsDocblock', Config::REPORT_INFO);
 $config->setCustomErrorLevel('DeprecatedMethod', Config::REPORT_INFO);
 $config->setCustomErrorLevel('PossiblyUndefinedGlobalVariable', Config::REPORT_INFO);
