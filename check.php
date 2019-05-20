@@ -117,7 +117,7 @@ if ($file_hash === '0e0eee096e2def5c7ec41e1c4eb0c56d') {
     exit;
 }
 
-if (strlen($file_contents) > 6000) {
+if (strlen($file_contents) > 10000) {
     header(sprintf('HTTP/1.0 %s', 418));
     echo json_encode(['error' => 'Code too long']);
     exit;
