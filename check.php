@@ -28,7 +28,7 @@ $psalm_version = (string) \Muglug\PackageVersions\Versions::getVersion('vimeo/ps
 function jsonExceptionHandler($exception) {
     echo json_encode([
         'error' => [
-            'message' => $exception->getMessage(),
+            'message' => $exception->getFile() . ': ' . $exception->getMessage(),
             'line_from' => $exception->getLine(),
             'type' => 'psalm_error'
         ]
