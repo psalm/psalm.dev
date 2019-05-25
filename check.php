@@ -26,9 +26,10 @@ $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
 $psalm_version = (string) \Muglug\PackageVersions\Versions::getVersion('vimeo/psalm');
 
 function jsonExceptionHandler($exception) {
+    $message = str_replace(__DIR__, '', $exception->getFile() . ': ' . $exception->getMessage());
     echo json_encode([
         'error' => [
-            'message' => $exception->getFile() . ': ' . $exception->getMessage(),
+            'message' => $message,
             'line_from' => $exception->getLine(),
             'type' => 'psalm_error'
         ]
