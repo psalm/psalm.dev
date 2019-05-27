@@ -165,7 +165,7 @@ try {
     exit();
 }
 
-$config->visitStubFiles($codebase, false);
+$config->visitStubFiles($codebase, null);
 
 try {
     $file_checker = new FileAnalyzer(
