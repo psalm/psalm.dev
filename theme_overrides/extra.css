@@ -153,6 +153,7 @@ nav ul li a svg {
 
 .navbar .navbar-nav>li>a {
 	text-shadow: none;
+	font-size: 16px;
 }
 
 .navbar .navbar-nav>li>a:hover {
