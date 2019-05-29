@@ -237,6 +237,12 @@ button.navbar-toggle .icon-bar {
 	background: #943b3a;
 }
 
+.bs-sidebar .nav > li > a {
+    padding: 2px 20px;
+    font-family: "Operator SSm A", "Operator SSm B";
+    font-size: 14px;
+}
+
 .bs-sidebar .nav > .active > a,
 .bs-sidebar .nav > .active:hover > a,
 .bs-sidebar .nav > .active:focus > a {
