@@ -1,3 +1,66 @@
+/*
+        This font software is the property of Commercial Type.
+
+        You may not modify the font software, use it on another website, or install it on a computer.
+
+        License information is available at http://commercialtype.com/eula
+        For more information please visit Commercial Type at http://commercialtype.com or email us at info[at]commercialtype.com
+
+        Copyright (C) 2019 Schwartzco Inc.
+        License: 1905-TEHPRU     
+*/
+
+
+@font-face {
+  font-family: 'Lyon Text Web';
+  src: url('LyonText-Semibold-Web.woff2') format('woff2'),
+       url('LyonText-Semibold-Web.woff') format('woff');
+  font-weight:  600;
+  font-style:   normal;
+  font-stretch: normal;
+}
+
+.LyonText-Semibold-Web {
+  font-family: 'Lyon Text Web';
+  font-weight:  600;
+  font-style:   normal;
+  font-stretch: normal;
+}
+
+
+@font-face {
+  font-family: 'Lyon Text Web';
+  src: url('LyonText-RegularItalic-Web.woff2') format('woff2'),
+       url('LyonText-RegularItalic-Web.woff') format('woff');
+  font-weight:  400;
+  font-style:   italic;
+  font-stretch: normal;
+}
+
+.LyonText-RegularItalic-Web {
+  font-family: 'Lyon Text Web';
+  font-weight:  400;
+  font-style:   italic;
+  font-stretch: normal;
+}
+
+
+@font-face {
+  font-family: 'Lyon Text Web';
+  src: url('LyonText-Regular-Web.woff2') format('woff2'),
+       url('LyonText-Regular-Web.woff') format('woff');
+  font-weight:  400;
+  font-style:   normal;
+  font-stretch: normal;
+}
+
+.LyonText-Regular-Web {
+  font-family: 'Lyon Text Web';
+  font-weight:  400;
+  font-style:   normal;
+  font-stretch: normal;
+}
+
 /* BASICS */
 
 .CodeMirror {
@@ -402,7 +465,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 
 body {
-    font-family: "Sentinel SSm A", "Sentinel SSm B";
+    font-family: "Lyon Text Web", Georgia;
     line-height: 1.5em;
     margin: 0;
     padding: 0;
@@ -545,7 +608,7 @@ div.cm_container {
 div.cm_container button {
     border: 2px solid #000;
     border-top: 0;
-    font-family: "Sentinel SSm A", "Sentinel SSm B";
+    font-family: "Lyon Text Web";
     font-size: 16px;
     display: block;
     padding: 0 12px;
