@@ -1,3 +1,39 @@
+/*
+        This font software is the property of Commercial Type.
+        You may not modify the font software, use it on another website, or install it on a computer.
+        License information is available at http://commercialtype.com/eula
+        For more information please visit Commercial Type at http://commercialtype.com or email us at info[at]commercialtype.com
+        Copyright (C) 2019 Schwartzco Inc.
+        License: 1905-TEHPRU     
+*/
+
+@font-face {
+  font-family: 'Lyon Text Web';
+  src: url('/extra/LyonText-Semibold-Web.woff2') format('woff2'),
+       url('/extra/LyonText-Semibold-Web.woff') format('woff');
+  font-weight:  600;
+  font-style:   normal;
+  font-stretch: normal;
+}
+
+@font-face {
+  font-family: 'Lyon Text Web';
+  src: url('/extra/LyonText-RegularItalic-Web.woff2') format('woff2'),
+       url('/extra/LyonText-RegularItalic-Web.woff') format('woff');
+  font-weight:  400;
+  font-style:   italic;
+  font-stretch: normal;
+}
+
+@font-face {
+  font-family: 'Lyon Text Web';
+  src: url('/extra/LyonText-Regular-Web.woff2') format('woff2'),
+       url('/extra/LyonText-Regular-Web.woff') format('woff');
+  font-weight:  400;
+  font-style:   normal;
+  font-stretch: normal;
+}
+
 .third-level {
 	padding-left: 15px;
 }
@@ -10,6 +46,7 @@ body {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
+	color: #333;
 }
 
 body > .container {
@@ -135,7 +172,7 @@ nav ul li a svg {
 }
 
 h1, h2 {
-	font-family: "Sentinel A", "Sentinel B";
+	font-family: 'Lyon Text Web';
 }
 
 h1 {
@@ -151,7 +188,7 @@ h2 {
 }
 
 body, h3, h4 {
-	font-family: "Sentinel SSm A", "Sentinel SSm B";
+	font-family: 'Lyon Text Web';
 }
 
 h3, h4 {
