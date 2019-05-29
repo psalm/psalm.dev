@@ -302,6 +302,7 @@ button.navbar-toggle .icon-bar {
 
 .col-md-8 {
 	max-width: 100vw;
+	font-size: 18px;
 }
 
 code, pre {
