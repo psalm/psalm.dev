@@ -553,7 +553,8 @@ nav ul li a svg {
 .documentation ul {
     hyphens: auto;
     margin: 1em 0;
-    font-size: 17px;
+    font-size: 18px;
+    line-height: 1.6em;
 }
 
 .intro ul,
@@ -584,8 +585,8 @@ div.cm_container {
 div.cm_container button {
     border: 2px solid #000;
     border-top: 0;
-    font-family: "Lyon Text Web";
-    font-size: 16px;
+    font-family: "Operator SSm A", "Operator SSm B";
+    font-size: 14px;
     display: block;
     padding: 0 12px;
     float: left;
