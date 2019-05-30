@@ -1,7 +1,4 @@
 Header set Access-Control-Allow-Origin "*"
-AddType image/svg+xml svg svgz
-AddType application/javascript .js
-AddEncoding gzip svgz
 <IfModule mod_deflate.c>
   # Compress HTML, CSS, JavaScript, Text, XML and fonts
   AddOutputFilterByType DEFLATE application/javascript
