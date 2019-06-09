@@ -133,7 +133,7 @@ $project_checker = new ProjectAnalyzer(
     new Psalm\Internal\Provider\Providers(
         $file_provider
     ),
-    $outout_options
+    $output_options
 );
 $codebase = $project_checker->getCodebase();
 $codebase->collect_references = true;
