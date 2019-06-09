@@ -13,22 +13,23 @@ extra_css:
 nav:
   - Home: README.md
   - Running Psalm:
-    - Installation: installation.md
-    - Configuration: configuration.md
+    - Installation: running_psalm/installation.md
+    - Configuration: running_psalm/configuration.md
     - Plugins:
-      - Using plugins: using_plugins.md
-      - Authoring plugins: authoring_plugins.md
-      - How Psalm represents types: plugins_type_system.md
-    - Command line usage: running_psalm.md
-    - IDE support: language_server.md
+      - Using plugins: running_psalm/plugins/using_plugins.md
+      - Authoring plugins: running_psalm/plugins/authoring_plugins.md
+      - How Psalm represents types: running_psalm/plugins/plugins_type_system.md
+    - Command line usage: running_psalm/command_line_usage.md
+    - IDE support: running_psalm/language_server.md
     - Handling errors:
-      - Dealing with code issues: dealing_with_code_issues.md
-      - Issue Types: issues.md
-    - Checking non-PHP files: checking_non_php_files.md
+      - Dealing with code issues: running_psalm/dealing_with_code_issues.md
+      - Issue Types: running_psalm/issues.md
+    - Checking non-PHP files: running_psalm/checking_non_php_files.md
   - Annotating code:
-    - Typing in Psalm: typing_in_psalm.md
-    - Docblock Type Syntax: docblock_type_syntax.md
-    - Supported Annotations: supported_annotations.md
-    - Template Annotations: templated_annotations.md
+    - Typing in Psalm: annotating_code/typing_in_psalm.md
+    - Docblock Type Syntax: annotating_code/docblock_type_syntax.md
+    - Supported Annotations: annotating_code/supported_annotations.md
+    - Template Annotations: annotating_code/templated_annotations.md
   - Manipulating code:
-    - Fixing code with Psalter: fixing_code.md
+    - Fixing code with Psalter: manipulating_code/fixing_code.md
+    - Refactoring code: manipulating_code/refactoring_code.md
