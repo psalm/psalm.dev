@@ -30,4 +30,5 @@ nav:
     - Docblock Type Syntax: docblock_type_syntax.md
     - Supported Annotations: supported_annotations.md
     - Template Annotations: templated_annotations.md
-  - Fixing code: fixing_code.md
+  - Manipulating code:
+    - Fixing code with Psalter: fixing_code.md
