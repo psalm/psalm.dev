@@ -126,7 +126,7 @@ if (strlen($file_contents) > 10000) {
 
 $file_provider = new Psalm\Tests\Internal\Provider\FakeFileProvider();
 $output_options = new \Psalm\Report\ReportOptions();
-$outout_options->format = \Psalm\Report::TYPE_JSON;
+$output_options->format = \Psalm\Report::TYPE_JSON;
 
 $project_checker = new ProjectAnalyzer(
     $config,
