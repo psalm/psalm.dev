@@ -125,14 +125,15 @@ if (strlen($file_contents) > 10000) {
 }
 
 $file_provider = new Psalm\Tests\Internal\Provider\FakeFileProvider();
+$output_options = new \Psalm\Report\ReportOptions();
+$outout_options->format = \Psalm\Report::TYPE_JSON;
+
 $project_checker = new ProjectAnalyzer(
     $config,
     new Psalm\Internal\Provider\Providers(
         $file_provider
     ),
-    false,
-    true,
-    ProjectAnalyzer::TYPE_JSON
+    $outout_options
 );
 $codebase = $project_checker->getCodebase();
 $codebase->collect_references = true;
