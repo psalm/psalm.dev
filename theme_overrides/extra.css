@@ -53,7 +53,7 @@ body > .container {
 	flex: 1;
 }
 
-a {
+a, a code {
 	color: #943b3a;
 	cursor: pointer;
 }
