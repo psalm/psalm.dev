@@ -23,7 +23,7 @@ if (!is_array($settings)) {
 }
 const PHP_PARSER_VERSION = '4.0.0';
 $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
-$psalm_version = (string) \Muglug\PackageVersions\Versions::getVersion('vimeo/psalm');
+$psalm_version = (string) \PackageVersions\Versions::getVersion('vimeo/psalm');
 
 function jsonExceptionHandler($exception) {
     $message = str_replace(__DIR__, '', $exception->getFile() . ': ' . $exception->getMessage());
