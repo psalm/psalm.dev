@@ -27,9 +27,16 @@ nav:
     - Checking non-PHP files: running_psalm/checking_non_php_files.md
   - Annotating code:
     - Typing in Psalm: annotating_code/typing_in_psalm.md
-    - Docblock Type Syntax: annotating_code/docblock_type_syntax.md
+    - Docblock Type syntax:
+        - Summary: annotating_code/docblock_type_syntax.md
+        - Array types: annotating_code/type_syntax/array_types.md
+        - Callable types: annotating_code/type_syntax/callable_types.md
+        - Object types: annotating_code/type_syntax/object_types.md
+        - Scalar types: annotating_code/type_syntax/scalar_types.md
+        - Value types: annotating_code/type_syntax/value_types.md
     - Supported Annotations: annotating_code/supported_annotations.md
     - Template Annotations: annotating_code/templated_annotations.md
+    - Assertions: annotating_code/adding_assertions.md
   - Manipulating code:
     - Fixing code with Psalter: manipulating_code/fixing.md
     - Refactoring code: manipulating_code/refactoring.md
