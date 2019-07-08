@@ -79,6 +79,10 @@ $insert_sql = 'insert into `codes` (`' . implode('`,`', array_keys($data)) .  '`
 $stmt = $pdo->prepare($insert_sql);
 $stmt->execute($data);
 
-echo $_SERVER['SERVER_NAME'] . '/r/' . $hash;
+$port = $_SERVER['SERVER_PORT'];
+
+$server = $_SERVER['SERVER_NAME'] . ($port === 80 || $port === 443 ? '' : ':' . $port);
+
+echo $server . '/r/' . $hash;
 exit();
 
