@@ -1,0 +1,39 @@
+version: '3.7'
+services:
+  php-apache:
+    container_name: psalm-php
+    build:
+      context: .
+      dockerfile: Dockerfile
+    hostname: psalm-php
+    init: true
+    ports:
+      - "8080:80"
+    volumes:
+      - type: "bind"
+        source: "${PWD}"
+        target: "/var/www/html"
+    depends_on:
+      - db
+    networks:
+      - backend
+
+  db:
+    container_name: psalm-sql
+    image: mysql/mysql-server:5.6
+    volumes:
+      - type: "bind"
+        source: "${PWD}/codes.sql"
+        target: "/docker-entrypoint-initdb.d/setup-docker-mysql.sql"
+    ports:
+      - "6512:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: docker_root_pass
+      MYSQL_DATABASE: test_db
+      MYSQL_USER: devuser
+      MYSQL_PASSWORD: devpass
+    networks:
+      - backend
+
+networks:
+  backend:

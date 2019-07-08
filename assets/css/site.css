@@ -643,7 +643,7 @@ div.CodeMirror-lint-tooltip,
 #psalm_output,
 #settings_panel,
 code {
-    font-family: "Operator Mono SSm A", "Operator Mono SSm B";
+    font-family: "Operator Mono SSm A", "Operator Mono SSm B", "SF Mono", monospace;
     font-style: normal;
     font-weight: 400;
     line-height: 1.6em;
@@ -656,7 +656,7 @@ div.CodeMirror,
 #psalm_output,
 #settings_panel {
     display: none;
-    font-family: "Operator Mono SSm A", "Operator Mono SSm B";
+    font-family: "Operator Mono SSm A", "Operator Mono SSm B", "SF Mono", monospace;
     font-size: 14px;
     line-height: 1.5em;
     padding: 5px;
