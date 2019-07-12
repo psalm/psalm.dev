@@ -147,6 +147,7 @@ var fetchFixedContents = function (code, cm) {
 		const textarea = document.createElement('textarea');
 		textarea.value = code_element.innerText;
 		container.appendChild(textarea);
+		container.className = 'cm_inline_container';
 
 		let button = null;
 
@@ -158,11 +159,12 @@ var fetchFixedContents = function (code, cm) {
 
 		parent.replaceChild(container, code_element);
 		const cm = CodeMirror.fromTextArea(textarea, {
-		    lineNumbers: true,
+		    lineNumbers: false,
 		    matchBrackets: true,
 		    mode: "text/x-php",
 		    indentUnit: 2,
 		    theme: 'elegant',
+		    viewportMargin: Infinity,
 		    lint: lint = {
 		        getAnnotations: fetchAnnotations,
 		        async: true,
