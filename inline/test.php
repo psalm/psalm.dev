@@ -22,7 +22,7 @@ $html = $converter->convertToHtml(file_get_contents('dummy.md'));
 </head>
 <body>
 <?php require('../includes/nav.php'); ?>
-<div style="margin: 20px auto;max-width: 600px;">
+<div style="margin: 20px auto;max-width: 600px;" class="post">
 <?= $html ?>
 </div>
 <script>
@@ -146,15 +146,24 @@ var fetchFixedContents = function (code, cm) {
 		const container = document.createElement('div');
 		const textarea = document.createElement('textarea');
 		textarea.value = code_element.innerText;
+
+		const text = code_element.innerText;
 		container.appendChild(textarea);
 		container.className = 'cm_inline_container';
 
-		let button = null;
+		let fix_button = null;
+
+		let reset_button = null;
 
 		if (textarea.value.indexOf('<?= '<?php' ?> // fixme') === 0) {
-			button = document.createElement('button');
-			button.innerText = 'Fix code';
-			container.appendChild(button);
+			fix_button = document.createElement('button');
+			fix_button.innerText = 'Fix code';
+			container.appendChild(fix_button);
+
+			reset_button = document.createElement('button');
+			reset_button.innerText = 'Reset';
+			reset_button.className = 'reset';
+			container.appendChild(reset_button);
 		}
 
 		parent.replaceChild(container, code_element);
@@ -171,11 +180,20 @@ var fetchFixedContents = function (code, cm) {
 		    }
 		});
 
-		if (button) {
-			button.addEventListener(
+		if (fix_button) {
+			fix_button.addEventListener(
 				'click',
 				function() {
 					fetchFixedContents(cm.getValue(), cm);
+				}
+			);
+		}
+
+		if (reset_button) {
+			reset_button.addEventListener(
+				'click',
+				function() {
+					cm.setValue(text);
 				}
 			);
 		}

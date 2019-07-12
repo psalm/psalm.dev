@@ -549,6 +549,7 @@ nav ul li a svg {
 
 .intro p,
 .documentation p,
+.post p,
 .intro ul,
 .documentation ul {
     hyphens: auto;
@@ -568,6 +569,12 @@ nav ul li a svg {
     font-weight: normal;
     font-size: 24px;
     margin: 1.5em 0 0.8em;
+}
+
+p code {
+    background: #f5f5f5;
+    border: 0;
+    font-size: .8em;
 }
 
 div.cm_container {
@@ -702,6 +709,13 @@ div.cm_inline_container button {
     background: #eee;
 
     margin-top: 1em;
+    margin-right: 1em;
+    display: inline-block;
+}
+
+div.cm_inline_container button.reset {
+    float: right;
+    margin-right: 0;
 }
 
 @media all and (min-device-width: 1022px) {
