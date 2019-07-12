@@ -17,6 +17,8 @@ if (!isset($_POST['settings'])) {
     exit;
 }
 
+$fix_file = $_POST['fix'] ?? false;
+
 $settings = json_decode($_POST['settings'], true);
 if (!is_array($settings)) {
     exit;
@@ -137,6 +139,16 @@ $project_checker = new ProjectAnalyzer(
 );
 $codebase = $project_checker->getCodebase();
 $codebase->collect_references = true;
+
+if ($fix_file) {
+    $project_checker->alterCodeAfterCompletion(
+        false,
+        false
+    );
+    $project_checker->setAllIssuesToFix();
+    $project_checker->getCodebase()->reportUnusedCode();
+}
+
 $infer_types_from_usage = true;
 $project_checker->checkClassReferences();
 $file_path = __DIR__ . '/src/somefile.php';
@@ -186,7 +198,14 @@ try {
     }
     $issue_data = IssueBuffer::getIssuesData();
 
-    echo json_encode(['results' => $issue_data, 'version' => $psalm_version]);
+    $fixed_file_contents = null;
+
+    if ($fix_file) {
+        $codebase->analyzer->updateFile($file_path, false);
+        $fixed_file_contents = $codebase->getFileContents($file_path);
+    }
+
+    echo json_encode(['results' => $issue_data, 'version' => $psalm_version, 'fixed_contents' => $fixed_file_contents]);
 } catch (PhpParser\Error $e) {
     $attributes = $e->getAttributes();
     echo json_encode([
