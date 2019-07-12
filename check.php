@@ -85,7 +85,7 @@ $config->setCustomErrorLevel('PossiblyUndefinedGlobalVariable', Config::REPORT_I
 $config->setCustomErrorLevel('PossiblyUndefinedVariable', Config::REPORT_INFO);
 $config->setCustomErrorLevel('NonStaticSelfCall', Config::REPORT_INFO);
 
-if ($settings['unused_variables'] ?? false) {
+if (($settings['unused_variables'] ?? false) || $fix_file) {
     $config->setCustomErrorLevel('UnusedParam', Config::REPORT_INFO);
     $config->setCustomErrorLevel('PossiblyUnusedParam', Config::REPORT_INFO);
     $config->setCustomErrorLevel('UnusedVariable', Config::REPORT_INFO);
@@ -95,7 +95,7 @@ if ($settings['unused_variables'] ?? false) {
     $config->setCustomErrorLevel('UnusedVariable', Config::REPORT_SUPPRESS);
 }
 
-if ($settings['unused_methods'] ?? false) {
+if (($settings['unused_methods'] ?? false) || $fix_file) {
     $config->setCustomErrorLevel('UnusedClass', Config::REPORT_INFO);
     $config->setCustomErrorLevel('UnusedMethod', Config::REPORT_INFO);
     $config->setCustomErrorLevel('PossiblyUnusedMethod', Config::REPORT_INFO);
@@ -146,7 +146,6 @@ if ($fix_file) {
         false
     );
     $project_checker->setAllIssuesToFix();
-    $project_checker->getCodebase()->reportUnusedCode();
 }
 
 $infer_types_from_usage = true;
@@ -158,7 +157,7 @@ $file_provider->registerFile(
 );
 
 $codebase->scanner->addFileToDeepScan(__DIR__ . '/src/somefile.php');
-if (($settings['unused_variables'] ?? false) || ($settings['unused_methods'] ?? false)) {
+if (($settings['unused_variables'] ?? false) || ($settings['unused_methods'] ?? false) || $fix_file) {
     $codebase->reportUnusedCode();
 }
 $codebase->addFilesToAnalyze([$file_path => $file_path]);
@@ -193,7 +192,7 @@ try {
         $codebase->classlikes->addClassAlias($new_class, $aliased_class);
     }
     $file_checker->analyze($context);
-    if ($settings['unused_methods'] ?? false) {
+    if (($settings['unused_methods'] ?? false) || $fix_file) {
         $project_checker->checkClassReferences();
     }
     $issue_data = IssueBuffer::getIssuesData();

@@ -2,7 +2,7 @@ Variables that are passed by reference can be hard for static analysis tools to 
 
 ```php
 <?php
-function bar(string &$s) {  
+function bar(string &$s) : void {  
   $s = new \stdClass(); // typechecker error  
 }
 
@@ -20,7 +20,7 @@ You can now use a `@param-out` annotation to tell Psalm that you _intend_ for th
 /**  
  * @param-out \stdClass $s  
  */  
-function bar(string &$s) {  
+function bar(string &$s) : void {  
   $s = new \stdClass(); // no error  
 }
 
@@ -32,7 +32,7 @@ echo strlen($a); // typechecker error
 Psalm can now automatically remove unused methods and properties:
 
 ```php
-<?php
+<?php // fixme
 class Queue {
   public function clear() : void {}
   public function clearLegacy() : void {}
@@ -41,19 +41,15 @@ class Queue {
 (new Queue())->clear();
 ```
 
-[Fix](#fix-code)
-
 I’ve given Psalter a new skill - the ability to add missing param types to methods based on how they’re used in your codebase, so if you only call a method with a string as its first argument, Psalm will add a `@param string $someParamName` to that method’s docblock.
 
 ```php
-<?php
+<?php // fixme
 class A {
-  public function($foo) : void {
-    echo $foo;
+  public function foo($bar) : void {
+    echo $bar;
   }
 }
 
 (new A)->foo("hello");
 ```
-
-[Fix](#fix-code)

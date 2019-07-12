@@ -35,8 +35,8 @@ let latestFetch = 0;
 let fetchKey = null;
 
 const settings = {
-    'unused_variables': false,
-    'unused_methods': false,
+    'unused_variables': true,
+    'unused_methods': true,
     'memoize_properties': true,
     'memoize_method_calls': false,
     'check_throws': false,
@@ -99,23 +99,84 @@ var fetchAnnotations = function (code, callback, options, cm) {
     });
 };
 
+var fetchFixedContents = function (code, cm) {
+    latestFetch++;
+    fetchKey = latestFetch;
+    fetch('/check.php', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+        },
+        body: serializeJSON({
+            code: code,
+            settings: JSON.stringify(settings),
+            fix: true,
+        })
+    })
+    .then(function (response) {
+        return response.json();
+    })
+    .then(function (response) {
+        if (latestFetch != fetchKey) {
+            return;
+        }
+
+        if ('fixed_contents' in response && response.fixed_contents) {
+            cm.setValue(response.fixed_contents);
+        }
+        else if ('error' in response) {
+            callback({
+               message: response.error.message,
+               severity: 'error',
+               from: cm.posFromIndex(response.error.from),
+               to: cm.posFromIndex(response.error.to),
+            });
+        }
+    })
+    .catch (function (error) {
+        console.log('Request failed', error);
+    });
+};
+
 [...document.querySelectorAll('pre code.language-php')].forEach(
 	function (code_element) {
+		code_element = code_element.parentNode;
 		const parent = code_element.parentNode;
+		const container = document.createElement('div');
 		const textarea = document.createElement('textarea');
 		textarea.value = code_element.innerText;
-		parent.replaceChild(textarea, code_element);
-		CodeMirror.fromTextArea(textarea, {
+		container.appendChild(textarea);
+
+		let button = null;
+
+		if (textarea.value.indexOf('<?= '<?php' ?> // fixme') === 0) {
+			button = document.createElement('button');
+			button.innerText = 'Fix code';
+			container.appendChild(button);
+		}
+
+		parent.replaceChild(container, code_element);
+		const cm = CodeMirror.fromTextArea(textarea, {
 		    lineNumbers: true,
 		    matchBrackets: true,
 		    mode: "text/x-php",
 		    indentUnit: 2,
 		    theme: 'elegant',
-		    lint: {
+		    lint: lint = {
 		        getAnnotations: fetchAnnotations,
 		        async: true,
 		    }
 		});
+
+		if (button) {
+			button.addEventListener(
+				'click',
+				function() {
+					fetchFixedContents(cm.getValue(), cm);
+				}
+			);
+		}
 	}
 );
 
