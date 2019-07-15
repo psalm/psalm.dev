@@ -666,6 +666,10 @@ code {
     padding: 10px;
 }
 
+.cm_inline_container div.CodeMirror-scroll {
+    height: auto;
+}
+
 #psalm_output,
 #settings_panel {
     display: none;
