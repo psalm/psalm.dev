@@ -646,7 +646,7 @@ div.cm_container #shrinker {
 }
 
 .cm_inline_container {
-    margin-bottom: 1em;
+    margin: 1.5em 0;
 }
 
 div.CodeMirror,
@@ -731,9 +731,19 @@ div.cm_inline_container button.reset {
     color: #000;
 }
 
+div.post p {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
 @media all and (min-device-width: 1022px) {
     .cm_container div.CodeMirror.CodeMirror-focused {
         box-shadow: 0 0 0px 1px #000;
+    }
+
+    div.post p {
+        padding-left: 0;
+        padding-right: 0;
     }
 
     .cm_inline_container div.CodeMirror.CodeMirror-focused {
