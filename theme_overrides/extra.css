@@ -81,6 +81,7 @@ nav h1 {
     float: left;
     font-size:18px;
     color: #000;
+    font-weight: normal;
 }
 
 nav h1 a {
