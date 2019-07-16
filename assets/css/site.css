@@ -948,6 +948,9 @@ body {
   display: flex;
   flex-direction: column; }
 
+a {
+  color: #a75251; }
+
 .container {
   max-width: 1024px;
   margin: 0 auto;
