@@ -904,7 +904,7 @@ div.cm_inline_container {
 
 div.post {
   margin: 20px auto;
-  max-width: 680px; }
+  max-width: 640px; }
   div.post h1 {
     margin: 2em 0 0; }
   div.post hr {
@@ -919,7 +919,8 @@ div.post {
     margin: 1em 0 3em; }
   div.post p {
     padding-left: 20px;
-    padding-right: 20px; }
+    padding-right: 20px;
+    hyphens: none; }
     div.post p code {
       background: #f3f3f3;
       border: 0;
