@@ -1,0 +1,62 @@
+div.cm_inline_container {
+    button {
+        font-family: "Operator SSm A", "Operator SSm B";
+        font-size: 14px;
+        padding: 0 12px;
+        line-height: 2.5em;
+        cursor: pointer;
+        margin: 0;
+        border: 0;
+        background: #cfeabb;
+        color: #2e5d0b;
+        margin-right: 1em;
+        display: inline-block;
+
+        &.reset {
+            float: right;
+            margin-right: 0;
+            background: #eee;
+            color: #000;
+        }
+    }
+
+    .CodeMirror {
+        background: #f3f3f3;
+        padding: 10px;
+        box-shadow: 0 -1px 0px rgba(0, 0, 0, 0.3) inset;
+        max-width: 100vw;
+        box-sizing: border-box;
+    }
+
+    .CodeMirror-scroll {
+        height: auto;
+    }
+}
+
+div.post p {
+    padding-left: 20px;
+    padding-right: 20px;
+
+    code {
+        background: #f3f3f3;
+        border: 0;
+        font-size: .8em;
+        padding: 5px;
+    }
+}
+
+.cm_inline_container {
+    margin: 1.5em 0;
+}
+
+@media all and (min-device-width: 1022px) {
+    div.post p {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .cm_inline_container div.CodeMirror.CodeMirror-focused {
+        background: #fff;
+        box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.3) inset;
+    }
+}

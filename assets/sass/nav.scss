@@ -1,0 +1,83 @@
+nav {
+    overflow: hidden;
+    background-position: 0 100%;
+    background-repeat: repeat-x;
+    background-size: 11px 4px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 10'%3E%3Cpath fill='none' stroke='%23c42020' stroke-width='3' d='M0 8.5c8 0 8-7 16-7s8 7 16 7 8-7 16-7 8 7 16 7' class='st0'/%3E%3C/svg%3E");
+    padding: 0 20px;
+    
+    h1 {
+        margin: 10px 0 10px 20px;
+        float: left;
+
+        a {
+            display: block;
+            padding: 20px 0;
+        }
+    }
+
+    ul {
+        list-style: none;
+        float: right;
+        margin-top: 25px;
+        margin: 25px 20px 0 0;
+
+        li {
+            display: inline-block;
+            margin-left: 25px;
+
+            &.doc_link {
+                margin-right: -2px;
+            }
+
+            a {
+                color: #000;
+                text-decoration: none;
+                display: block;
+                padding: 10px;
+                font-family: "Operator SSm A", "Operator SSm B";
+                font-style: normal;
+                font-weight: 400;
+                font-size: 16px;
+
+                svg {
+                    vertical-align: middle;
+                    display: inline-block;
+                    margin-top: -3px;
+                    margin-right: 5px;
+                }
+            }
+        }
+    }
+}
+
+@media all and (max-width: 1021px) {
+    nav {
+        padding: 15px;
+        margin-bottom: 10px;
+
+        h1 {
+            margin: 10px;
+            float: none;
+
+            a {
+                padding: 5px 0;
+            }
+        }
+
+        ul,
+        hgroup {
+            float: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        ul li {
+            margin: 0;
+
+            &.get_started {
+                display: none;
+            }
+        }
+    }
+}
