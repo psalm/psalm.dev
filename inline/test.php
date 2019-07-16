@@ -22,7 +22,7 @@ $html = $converter->convertToHtml(file_get_contents('dummy.md'));
 </head>
 <body>
 <?php require('../includes/nav.php'); ?>
-<div style="margin: 20px auto;max-width: 600px;" class="post">
+<div class="post">
 <h1>This is some headline that may be long</h1>
 
 <div class="meta">
