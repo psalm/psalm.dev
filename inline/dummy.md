@@ -1,3 +1,13 @@
+This blog post includes interactive code snippets - feel free to edit and explore Psalm further!
+
+--------------
+
+Here is a list that should be formatted nicely:
+
+*   Some thing
+*   [IDE support](https://psalm.dev/docs/language_server/) — fdsfsf fds fasfaf afsaffsd f fsadf.
+*   [Automated fixes](https://psalm.dev/docs/fixing_code/)  sdffsd - gsfgagfg fdsfasfs.
+
 Variables that are passed by reference can be hard for static analysis tools to reason about.
 
 ```php

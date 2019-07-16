@@ -33,17 +33,39 @@ div.cm_inline_container {
     }
 }
 
-div.post p {
-    padding-left: 20px;
-    padding-right: 20px;
+div.post {
+    h1 {
+        margin: 2em 0 0;
+    }
 
-    code {
-        background: #f3f3f3;
-        border: 0;
-        font-size: .8em;
-        padding: 5px;
+    hr {
+        margin: 2em 0;
+        border: none;
+        height: 4px;
+        background-position: 0 0;
+        background-repeat: repeat-x;
+        background-size: 11px 4px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 10'%3E%3Cpath fill='none' stroke='%23bbbbbb' stroke-width='3' d='M0 8.5c8 0 8-7 16-7s8 7 16 7 8-7 16-7 8 7 16 7' class='st0'/%3E%3C/svg%3E");
+    }
+
+    .meta {
+        margin: 1em 0 3em;
+    }
+
+    p {
+        padding-left: 20px;
+        padding-right: 20px;
+
+        code {
+            background: #f3f3f3;
+            border: 0;
+            font-size: .8em;
+            padding: 5px;
+        }
     }
 }
+
+div.post 
 
 .cm_inline_container {
     margin: 1.5em 0;
