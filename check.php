@@ -191,7 +191,19 @@ try {
     foreach ($class_aliases as $aliased_class => $new_class) {
         $codebase->classlikes->addClassAlias($new_class, $aliased_class);
     }
+    
+    $codebase->taint = new \Psalm\Internal\Codebase\Taint();
+    
     $file_checker->analyze($context);
+
+    if ($codebase->taint) {
+        $i = 0;
+        while ($codebase->taint->hasNewSinksAndSources() && ++$i < 4) {
+            $codebase->taint->clearNewSinksAndSources();
+            $file_checker->analyze($context);
+        }
+    }
+
     if (($settings['unused_methods'] ?? false) || $fix_file) {
         $project_checker->checkClassReferences();
     }
