@@ -233,8 +233,7 @@ button.navbar-toggle .icon-bar {
     }
 
     a[href*="//"]:not([href*="psalm.dev"]):after {
-        content: '&#8599;';
-        color: #666;
+        content: '↗';
     }
 }
 

@@ -32,7 +32,8 @@
   font-weight:  400;
   font-style:   normal;
   font-stretch: normal;
-}nav {
+}@charset "UTF-8";
+nav {
   overflow: hidden;
   background-position: 0 100%;
   background-repeat: repeat-x;
@@ -273,8 +274,7 @@ button.navbar-toggle .icon-bar {
   .col-md-8 a {
     text-decoration: underline; }
   .col-md-8 a[href*="//"]:not([href*="psalm.dev"]):after {
-    content: '&#8599;';
-    color: #666; }
+    content: '↗'; }
 
 code, pre {
   font-family: "Operator Mono SSm A", "Operator Mono SSm B";
