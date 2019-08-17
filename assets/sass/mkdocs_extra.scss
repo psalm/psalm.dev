@@ -235,6 +235,9 @@ button.navbar-toggle .icon-bar {
     a[href*="//"]:not([href*="psalm.dev"]):after {
         content: '🌎';
         text-decoration: none;
+        display: inline-block;
+        padding-left: 0.3em;
+        opacity: 0.5;
     }
 }
 
