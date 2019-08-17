@@ -161,7 +161,7 @@ var fetchFixedContents = function (code, cm) {
 
 		let reset_button = null;
 
-		if (textarea.value.indexOf('<?= '<?php' ?> // fixme') === 0) {
+		if (textarea.value.indexOf('<?= '<?php' ?> // fix') === 0) {
 			fix_button = document.createElement('button');
 			fix_button.innerText = 'Fix code';
 			container.appendChild(fix_button);
