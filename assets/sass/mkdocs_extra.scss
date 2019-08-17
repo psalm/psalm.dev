@@ -231,6 +231,11 @@ button.navbar-toggle .icon-bar {
     a {
         text-decoration: underline;
     }
+
+    a[href*="//"]:not([href*="psalm.dev"]):after {
+        content: '&#8599;';
+        color: #666;
+    }
 }
 
 code, pre {
