@@ -8,7 +8,7 @@ theme:
   name: 'mkdocs'
   custom_dir: 'theme_overrides'
 extra_css:
-  - '../theme_overrides/extra.css'
+  - '../assets/mkdocs_extra.css'
   - 'https://cloud.typography.com/751592/7707372/css/fonts.css'
 nav:
   - Home: README.md
