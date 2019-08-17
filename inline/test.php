@@ -46,7 +46,7 @@ class AltHeadingParser implements BlockParserInterface
 }
 
 $environment = League\CommonMark\Environment::createCommonMarkEnvironment();
-$environment->addBlockParser(new AltHeadingParser());
+//$environment->addBlockParser(new AltHeadingParser());
 
 $converter = new CommonMarkConverter();
 
