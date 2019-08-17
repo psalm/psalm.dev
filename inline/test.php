@@ -23,7 +23,7 @@ $html = $converter->convertToHtml(file_get_contents('dummy.md'));
 <body>
 <?php require('../includes/nav.php'); ?>
 <div class="post">
-<h1>This is some headline that may be long</h1>
+<h1>Psalm 3-and-a-half</h1>
 
 <div class="meta">
 	<span class="date">August 23 2019</span> by <a href="https://twitter.com/mattbrowndev" rel="author">Matt Brown</a>
