@@ -274,7 +274,8 @@ button.navbar-toggle .icon-bar {
   .col-md-8 a {
     text-decoration: underline; }
   .col-md-8 a[href*="//"]:not([href*="psalm.dev"]):after {
-    content: '↗'; }
+    content: '🌎';
+    text-decoration: none; }
 
 code, pre {
   font-family: "Operator Mono SSm A", "Operator Mono SSm B";

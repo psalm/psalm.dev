@@ -233,7 +233,8 @@ button.navbar-toggle .icon-bar {
     }
 
     a[href*="//"]:not([href*="psalm.dev"]):after {
-        content: '↗';
+        content: '🌎';
+        text-decoration: none;
     }
 }
 
