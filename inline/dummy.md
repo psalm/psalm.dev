@@ -1,5 +1,3 @@
-# Psalm 3-and-a-half
-
 It’s been over seven months since version 3 of [Psalm](https://psalm.dev) was released. There have been over a thousand commits to Psalm since then, bringing all sorts of fun features. Time for an update!
 
 **Hey, you:** this blog post includes interactive code snippets - feel free to edit and explore Psalm further!
