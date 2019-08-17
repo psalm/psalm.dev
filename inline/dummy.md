@@ -17,6 +17,8 @@ The updates since 3.0 fall into four categories: [type system improvements](#typ
 
 Lastly I talk about an upcoming security-related feature: [taint analysis](#taint-analysis).
 
+----
+
 ## Type system Improvements
 
 JavaScript and PHP share a bunch of common paradigms, and developers at web-oriented companies often switch between the two. I and others at Vimeo love the thoughtful type system that TypeScript’s authors have created. It helps make sense of JavaScript paradigms, and I want Psalm to be able to offer the same for PHP.
@@ -174,6 +176,8 @@ function makeA(string $s) : A {
 
 The `class-string` annotation [can also be parameterised with templated types](https://psalm.dev/docs/annotating_code/templated_annotations/#param-class-string-t).
 
+----
+
 ## Improved ecosystem compatibility
 
 Version 3.0 launched with a new plugin infrastructure that supported custom stub files. Stub files allow you to provide alternative docblocks for Psalm to consume (replacing those provided by a given package’s maintainer). Those plugin stub files include support for [custom assertion annotations](https://psalm.dev/docs/annotating_code/adding_assertions/) and generic types that help Psalm understand third-party packages.
@@ -181,6 +185,8 @@ Version 3.0 launched with a new plugin infrastructure that supported custom stub
 Recently some of those third-party packages have started to incorporate Psalm assertions and `@template` annotations into their own codebases, removing the need for a separate plugin to understand the codebase.
 
 [PHPUnit](https://github.com/sebastianbergmann/phpunit) recently added [Psalm assertion annotations](https://psalm.dev/docs/annotating_code/adding_assertions/) to its `TestCase::assertXXX` methods, , and Doctrine has added `@template` annotations to its [collections framework](https://github.com/doctrine/collections). There’s also an effort underway to bring Psalm assertions to [webmozart/assert](https://github.com/webmozart/assert).
+
+----
 
 ## Tooling improvements
 
@@ -254,6 +260,8 @@ PHPStorm is a fantastic IDE, and it’s used by a number of Vimeo developers, bu
 It’s possible to add back some of the features you lose by connecting to a Language Server (a daemon that any IDE can query to fetch information about the code you’re writing). Two years ago I started working on a language server for Psalm, and it got released officially as part of Psalm 3 in November.
 
 That language server can now autocomplete class names, method names and properties, and also provides assistance for method and function signatures, leveraging Psalm’s knowledge of your codebase (mostly thanks to superb contributions from Josh Di Fabio and Ilijia Tovilo).
+
+----
 
 ## Future work
 

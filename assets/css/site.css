@@ -926,6 +926,8 @@ div.post {
       border: 0;
       font-size: .8em;
       padding: 5px; }
+  div.post h2, div.post h3, div.post h4 {
+    margin: 1.5em 0 .5em; }
 
 @media all and (min-device-width: 1022px) {
   div.post p {
