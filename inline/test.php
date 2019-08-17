@@ -4,21 +4,15 @@ require_once('../vendor/autoload.php');
 
 use League\CommonMark\CommonMarkConverter;
 
-class AltHeadingParser implements BlockParserInterface
+class AltHeadingParser implements \League\CommonMark\Block\Parser\BlockParserInterface
 {
-    /**
-     * @param ContextInterface $context
-     * @param Cursor           $cursor
-     *
-     * @return bool
-     */
-    public function parse(ContextInterface $context, Cursor $cursor): bool
+    public function parse(\League\CommonMark\ContextInterface $context, \League\CommonMark\Cursor $cursor): bool
     {
         if ($cursor->isIndented()) {
             return false;
         }
 
-        $match = RegexHelper::matchAll('/^#{1,6}(?:[ \t]+|$)/', $cursor->getLine(), $cursor->getNextNonSpacePosition());
+        $match = \League\CommonMark\Util\RegexHelper::matchAll('/^#{1,6}(?:[ \t]+|$)/', $cursor->getLine(), $cursor->getNextNonSpacePosition());
         if (!$match) {
             return false;
         }
@@ -32,13 +26,13 @@ class AltHeadingParser implements BlockParserInterface
         $str = \preg_replace('/^[ \t]*#+[ \t]*$/', '', $str);
         $str = \preg_replace('/[ \t]+#+[ \t]*$/', '', $str);
 
-        $heading = new Heading($level, $str);
+        $heading = new \League\CommonMark\Block\Element\Heading($level, $str);
 
-        $id = preg_replace('/[^a-z\-]/', '', strtolower(preg_replace(' ', '-', $str)));
+        $id = preg_replace('/[^a-z\-]+/', '', strtolower(str_replace(' ', '-', $str)));
 
-        $heading->setData('attributes', ['id' => $id]);
+        $heading->data['attributes'] = ['id' => $id];
 
-        $context->addBlock();
+        $context->addBlock($heading);
         $context->setBlocksParsed(true);
 
         return true;
@@ -46,9 +40,9 @@ class AltHeadingParser implements BlockParserInterface
 }
 
 $environment = League\CommonMark\Environment::createCommonMarkEnvironment();
-//$environment->addBlockParser(new AltHeadingParser());
+$environment->addBlockParser(new AltHeadingParser(), 100);
 
-$converter = new CommonMarkConverter();
+$converter = new CommonMarkConverter([], $environment);
 
 $html = $converter->convertToHtml(file_get_contents('dummy.md'));
 
