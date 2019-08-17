@@ -1,6 +1,6 @@
 It’s been over seven months since version 3 of [Psalm](https://psalm.dev) was released. There have been over a thousand commits to Psalm since then, bringing all sorts of fun features. Time for an update!
 
-**Hey, you:** this blog post includes interactive code snippets - feel free to edit and explore Psalm further!
+This blog post includes interactive code snippets - feel free to edit and explore Psalm further!
 
 ### Preamble: What is Psalm?
 
@@ -74,7 +74,7 @@ function redirect() : void {
   exit();  
 }
 
-function maybeRedirect(bool $some_condition) {  
+function maybeRedirect(bool $some_condition) : void {  
   if ($some_condition) {  
     $i = 5;  
   } else {  
@@ -98,7 +98,7 @@ function redirect() : void {
   exit();  
 }
 
-function maybeRedirect(bool $some_condition) {  
+function maybeRedirect(bool $some_condition) : void {  
   if ($some_condition) {  
     $i = 5;  
   } else {  
@@ -217,12 +217,12 @@ I’ve given Psalter a new skill - the ability to add missing param types to met
 <?php // fix
 
 class A {
-  public function($foo) : void {
-    echo $foo;
+  public function takesString($s) : void {
+    echo $s;
   }
 }
 
-(new A)->foo("hello");
+(new A)->takesString("hello");
 ```
 
 #### Automatic UnusedVariable removal
