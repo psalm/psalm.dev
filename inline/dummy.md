@@ -96,7 +96,7 @@ To solve this problem (without having to totally rewrite the code) we can add a 
  * @psalm-return never-return  
  */  
 function redirect() : void {  
-  header('Location: [https://vimeo.com');](https://vimeo.com%27%29;)  
+  header('Location: https://vimeo.com');
   exit();  
 }
 
