@@ -4,6 +4,50 @@ require_once('../vendor/autoload.php');
 
 use League\CommonMark\CommonMarkConverter;
 
+class AltHeadingParser implements BlockParserInterface
+{
+    /**
+     * @param ContextInterface $context
+     * @param Cursor           $cursor
+     *
+     * @return bool
+     */
+    public function parse(ContextInterface $context, Cursor $cursor): bool
+    {
+        if ($cursor->isIndented()) {
+            return false;
+        }
+
+        $match = RegexHelper::matchAll('/^#{1,6}(?:[ \t]+|$)/', $cursor->getLine(), $cursor->getNextNonSpacePosition());
+        if (!$match) {
+            return false;
+        }
+
+        $cursor->advanceToNextNonSpaceOrTab();
+
+        $cursor->advanceBy(\strlen($match[0]));
+
+        $level = \strlen(\trim($match[0]));
+        $str = $cursor->getRemainder();
+        $str = \preg_replace('/^[ \t]*#+[ \t]*$/', '', $str);
+        $str = \preg_replace('/[ \t]+#+[ \t]*$/', '', $str);
+
+        $heading = new Heading($level, $str);
+
+        $id = preg_replace('/[^a-z\-]/', '', strtolower(preg_replace(' ', '-', $str)));
+
+        $heading->setData('attributes', ['id' => $id]);
+
+        $context->addBlock();
+        $context->setBlocksParsed(true);
+
+        return true;
+    }
+}
+
+$environment = League\CommonMark\Environment::createCommonMarkEnvironment();
+$environment->addBlockParser(new AltHeadingParser());
+
 $converter = new CommonMarkConverter();
 
 $html = $converter->convertToHtml(file_get_contents('dummy.md'));
