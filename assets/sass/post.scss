@@ -40,6 +40,8 @@ div.post {
     max-width: 640px;
 
     h1 {
+        padding-left: 20px;
+        padding-right: 20px;
         margin: 2em 0 0;
     }
 
@@ -84,14 +86,18 @@ div.post {
     }
 
     h2, h3, h4 {
+        padding-left: 20px;
+        padding-right: 20px;
         margin: 1.5em 0 .5em;
     }
 }
 
 @media all and (min-device-width: 1022px) {
-    div.post p {
-        padding-left: 0;
-        padding-right: 0;
+    div.post {
+        p, h1, h2, h3, h4 {
+            padding-left: 0;
+            padding-right: 0;
+        }
     }
 
     .cm_inline_container div.CodeMirror.CodeMirror-focused {

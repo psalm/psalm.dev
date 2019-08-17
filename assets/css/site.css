@@ -906,6 +906,8 @@ div.post {
   margin: 20px auto;
   max-width: 640px; }
   div.post h1 {
+    padding-left: 20px;
+    padding-right: 20px;
     margin: 2em 0 0; }
   div.post hr {
     margin: 2em 0;
@@ -938,10 +940,12 @@ div.post {
       height: 1em;
       vertical-align: text-bottom; }
   div.post h2, div.post h3, div.post h4 {
+    padding-left: 20px;
+    padding-right: 20px;
     margin: 1.5em 0 .5em; }
 
 @media all and (min-device-width: 1022px) {
-  div.post p {
+  div.post p, div.post h1, div.post h2, div.post h3, div.post h4 {
     padding-left: 0;
     padding-right: 0; }
   .cm_inline_container div.CodeMirror.CodeMirror-focused {
