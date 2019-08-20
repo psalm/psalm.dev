@@ -267,9 +267,9 @@ That language server can now autocomplete class names, method names and properti
 
 Whenever I think work on Psalm is basically done, something pops up that spurs new insights.
 
-There’s a lot of great activity on static analysis tools outside the PHP ecosystem - at Facebook work continues on Hack and Pyre (their Python static analysis tool), and Stripe just released Sorbet to the world.
+There’s a lot of great activity on static analysis tools outside the PHP ecosystem - at Facebook work continues on [Hack](https://hacklang.org) and [Pyre](https://pyre-check.org/) (their Python static analysis tool), and Stripe just released [Sorbet](https://sorbet.org/) to the world.
 
-Pyre is especially interesting, as it includes an open-source implementation of the taint analysis system that Facebook has developed for Hack.
+Pyre is especially interesting, as it includes an open-source implementation of the internal taint analysis system that Facebook has developed around Hack.
 
 ### Taint Analysis
 
