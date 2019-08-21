@@ -13,7 +13,7 @@ Psalm’s central component is a type analysis engine that reads in PHP files an
 *   [Automated fixes](https://psalm.dev/docs/fixing_code/) for some of the issues Psalm finds, and class/method moving/renaming.
 *   A [plugin system](https://psalm.dev/docs/authoring_plugins/) that both consumes, and can help inform, Psalm’s type analysis engine.
 
-The updates since 3.0 fall into four categories: [type system improvements](#type-system-improvements), [improved ecosystem compatibility](#improved-ecosystem-compatibility) and [tooling improvements](#tooling-improvements).
+The updates since 3.0 fall into three categories: [type system improvements](#type-system-improvements), [improved ecosystem compatibility](#improved-ecosystem-compatibility) and [tooling improvements](#tooling-improvements).
 
 Lastly I talk about an upcoming security-related feature: [taint analysis](#taint-analysis).
 
