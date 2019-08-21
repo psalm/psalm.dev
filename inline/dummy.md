@@ -120,7 +120,7 @@ Variables that are passed by reference can be hard for static analysis tools to 
 ```php
 <?php
 
-function bar(string &$s) {  
+function changeToClass(string &$s) : void {  
   $s = new \stdClass(); // typechecker error  
 }
 
@@ -139,7 +139,7 @@ You can now use a `@param-out` annotation to tell Psalm that you _intend_ for th
 /**  
  * @param-out \stdClass $s  
  */  
-function bar(string &$s) {  
+function changeToClass(string &$s) : void {  
   $s = new \stdClass(); // no error  
 }
 
