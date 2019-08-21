@@ -29,7 +29,7 @@ A few months ago [I wrote an article](https://medium.com/vimeo-engineering-blog/
 
 I’ve added [a brief introduction to templates](https://psalm.dev/docs/annotating_code/templated_annotations/) to Psalm’s documentation to help you get started!
 
-### key-of and value-of types
+### Enum-like types
 
 Psalm now supports `key-of<...>` and `value-of<...>`. These types enable you to restrict expected input and output based on class constant arrays:
 
@@ -64,7 +64,7 @@ When it’s analysing the code above, Psalm converts `key-of<self::ALL>` into a 
 
 This can also be used with templated arrays—`key-of<T>` where `T` is defined by `@template T as array`.
 
-### never-return types
+### Annotating functions that exit or throw
 
 Some functions are designed to halt execution (either by throwing an exception, or by calling `exit()`). We might call them in our codebase and write code as if they stop the program flow, but our static analysis tool doesn’t know it:
 
@@ -111,7 +111,7 @@ function maybeRedirect(bool $some_condition) : void {
 }
 ```
 
-With that annotation Psalm understands that `$i` is always defined when it’s used.
+With that annotation Psalm understands that `$i` is always defined when it’s used. This feature is stolen from [Hack](https://hacklang.org), which has a comparable `noreturn` type.
 
 ### By-reference parameter output
 
