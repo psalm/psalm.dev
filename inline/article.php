@@ -68,6 +68,7 @@ $html = $converter->convertToHtml(file_get_contents('psalm-3-and-a-half.md'));
 
 <?= $html ?>
 </div>
+<?php require('../includes/footer.php'); ?>
 <script>
 const serializeJSON = function(data) {
     return Object.keys(data).map(function (keyName) {
@@ -242,8 +243,6 @@ var fetchFixedContents = function (code, cm) {
 		}
 	}
 );
-
-
 </script>
 </body>
 </html>
