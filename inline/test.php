@@ -63,9 +63,9 @@ $html = $converter->convertToHtml(file_get_contents('dummy.md'));
 <div class="post">
 <h1>Psalm 3-and-a-half</h1>
 
-<div class="meta">
+<p class="meta">
 	<span class="date">August 23 2019</span> by <a href="https://twitter.com/mattbrowndev" rel="author">Matt Brown</a>
-</div>
+</p>
 
 <?= $html ?>
 </div>
