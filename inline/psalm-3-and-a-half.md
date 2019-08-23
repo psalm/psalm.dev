@@ -312,6 +312,10 @@ class B {
 }
 ```
 
+----
+
 ## Hear me speak!
 
-I'll be speaking at the upcoming [International PHP Conference](https://phpconference.com/testing-quality/php-or-type-safety-pick-any-two/) in October. If you're around, come and say hi!
+I'll be speaking at the upcoming [International PHP Conference](https://phpconference.com/testing-quality/php-or-type-safety-pick-any-two/) in Munich, Germany in late October. If you're around, come and say hi!
+
+
