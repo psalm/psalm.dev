@@ -263,7 +263,7 @@ PHPStorm is a fantastic IDE, and it’s used by a number of Vimeo developers, bu
 
 It’s possible to add back some of the features you lose by connecting to a language server (a daemon that any IDE can query to fetch information about the code you’re writing). Two years ago I started working on a language server for Psalm, and it got released officially as part of Psalm 3.0 in November.
 
-That language server can now autocomplete class names, method names, and properties, and it also provides assistance for method and function signatures, leveraging Psalm’s knowledge of your codebase (mostly thanks to superb contributions from Josh Di Fabio and Ilijia Tovilo).
+That language server can now autocomplete class names, method names, and properties, and it also provides assistance for method and function signatures, leveraging Psalm’s knowledge of your codebase (mostly thanks to superb contributions from [Josh Di Fabio](https://github.com/joshdifabio) and [Ilijia Tovilo](https://github.com/iluuu1994)).
 
 ----
 
