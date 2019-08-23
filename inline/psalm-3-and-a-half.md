@@ -125,7 +125,7 @@ function changeToClass(string &$s) : void {
 }
 
 $a = "hello";  
-bar($a);  
+changeToClass($a);  
 echo strlen($a); // runtime error, no typechecker error
 ```
 
@@ -144,7 +144,7 @@ function changeToClass(string &$s) : void {
 }
 
 $a = "hello";  
-bar($a);  
+changeToClass($a);  
 echo strlen($a); // typechecker error
 ```
 
