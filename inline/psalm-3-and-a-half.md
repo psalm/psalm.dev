@@ -172,6 +172,10 @@ function makeA(string $s) : A {
   $a->bar(); // error  
   return $a;  
 }
+
+makeA(A::class);
+makeA(AChild::class);
+makeA(Exception::class); // error
 ```
 
 The `class-string` annotation [can also be parameterised with templated types](https://psalm.dev/docs/annotating_code/templated_annotations/#param-class-string-t).

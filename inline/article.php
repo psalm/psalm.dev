@@ -44,16 +44,15 @@ $environment->addBlockParser(new AltHeadingParser(), 100);
 
 $converter = new CommonMarkConverter([], $environment);
 
-$html = $converter->convertToHtml(file_get_contents('dummy.md'));
+$html = $converter->convertToHtml(file_get_contents('psalm-3-and-a-half.md'));
 
 ?>
 <html>
 <head>
-<title>Psalm - a static analysis tool for PHP</title>
+<title>Psalm 3-and-a-half</title>
 <script src="/assets/js/fetch.js"></script>
 <script src="/assets/js/codemirror.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cloud.typography.com/751592/7707372/css/fonts.css" />
-<meta property="og:image" content="psalm_preview.png" />
 <link rel="stylesheet" href="/assets/css/site.css?1">
 <link rel="icon" type="image/png" href="favicon.png">
 <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
