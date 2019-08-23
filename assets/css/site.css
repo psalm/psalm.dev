@@ -928,6 +928,8 @@ div.post {
     margin-bottom: .8em; }
   div.post h3 {
     font-size: 20px; }
+  div.post h4 {
+    margin-bottom: -.8em; }
   div.post hr {
     margin: 1.6em 0;
     border: none;
