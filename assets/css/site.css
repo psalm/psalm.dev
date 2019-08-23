@@ -911,7 +911,8 @@ code, pre {
 
 div.post {
   margin: 20px auto 80px;
-  max-width: 640px; }
+  max-width: 640px;
+  font-size: 18px; }
   div.post h1 {
     padding-left: 20px;
     padding-right: 20px;
@@ -928,7 +929,7 @@ div.post {
   div.post h3 {
     font-size: 20px; }
   div.post hr {
-    margin: 2em 0;
+    margin: 1.6em 0;
     border: none;
     height: 4px;
     background-position: 0 0;
