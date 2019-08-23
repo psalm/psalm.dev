@@ -23,6 +23,8 @@ Lastly I talk about an upcoming security-related feature: [taint analysis](#tain
 
 JavaScript and PHP share a bunch of common paradigms, and developers at web-oriented companies often switch between the two. I and others at Vimeo love the thoughtful type system that TypeScript’s authors have created. It helps make sense of JavaScript paradigms, and I want Psalm to be able to offer the same for PHP.
 
+Some of the following ideas are borroed from TypeScript, some from [Hack](https://hacklang.org), and some are fully home-grown.
+
 ### Improved support for @template (generic annotations)
 
 A few months ago [I wrote an article](https://medium.com/vimeo-engineering-blog/uncovering-php-bugs-with-template-a4ca46eb9aeb) about Psalm’s support for `@template`. That article got a lot of attention, but, more importantly, it got a lot of people to add `@template` types to their own codebases, and I’ve fixed over 100 template-related issues over on github.com.
@@ -111,7 +113,7 @@ function maybeRedirect(bool $some_condition) : void {
 }
 ```
 
-With that annotation Psalm understands that `$i` is always defined when it’s used. This feature is stolen from [Hack](https://hacklang.org), which has a comparable `noreturn` type.
+With that annotation Psalm understands that `$i` is always defined when it’s used. This feature is stolen from Hack, which has a comparable `noreturn` type.
 
 ### By-reference parameter output
 
