@@ -198,7 +198,7 @@ Psalm finds bugs in code, but there’s a lot more that it can do with its knowl
 
 ### Improved UX
 
-The latest version of Psalm now comes with a progress bar, created by iluuu1994 with help from weirdan and TysonAndre. It can be optionally disabled with `--no-progress`, and doesn’t show up when running as part of a CI pipeline (Travis, Jenkins, CircleCI etc.).
+The latest version of Psalm now comes with a progress bar, created by [Ilijia Tovilo](https://github.com/iluuu1994) with help from [Bruce Weirdan](https://github.com/weirdan) and [Tyson Andre](https://github.com/TysonAndre). It can be optionally disabled with `--no-progress`, and doesn’t show up when running as part of a CI pipeline (Travis, Jenkins, CircleCI etc.).
 
 ### Fixing bugs
 
