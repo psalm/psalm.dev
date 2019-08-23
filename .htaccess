@@ -41,11 +41,11 @@ Redirect 301 /docs/fixing_code https://psalm.dev/docs/manipulating_code/fixing.m
 
 RewriteEngine On
 RewriteBase /
+RewriteRule ^articles/psalm-3-and-a-half/?$ /inline/article.php [L,NC]
 RewriteRule ^r/([a-z0-9]+)$ /views/snippet.php?r=$1 [L,NC]
 RewriteRule ^quickstart/?$ /docs/installation [R]
 RewriteRule ^$ /views/index.php [L,NC]
 RewriteRule ^schema/config$ /vendor/vimeo/psalm/config.xsd [L,NC]
-RewriteRule ^articles/psalm-3-and-a-half/?$ /inline/article.php [L,NC]
 
 
 RewriteRule ^composer\.*$ - [F,L]
