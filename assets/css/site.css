@@ -934,7 +934,10 @@ div.post {
       background: #f3f3f3;
       border: 0;
       font-size: .8em;
-      padding: 5px; }
+      padding: 5px;
+      border-radius: .3em;
+      color: #000;
+      box-shadow: 0 0 0px 1px inset rgba(0, 0, 0, 0.1); }
     div.post p a[href*="//"]:not([href*="psalm.dev"]):after {
       content: '';
       text-decoration: none;
