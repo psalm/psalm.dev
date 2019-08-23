@@ -89,7 +89,7 @@ div.post {
         margin: 1em 0 3em;
     }
 
-    p {
+    p, ul {
         padding-left: 20px;
         padding-right: 20px;
         hyphens: none;
@@ -116,6 +116,10 @@ div.post {
             vertical-align: text-bottom;
         }
     }
+
+    ul {
+        padding-left: 40px;
+    }
 }
 
 @media all and (min-device-width: 1022px) {
@@ -123,6 +127,10 @@ div.post {
         p, h1, h2, h3, h4 {
             padding-left: 0;
             padding-right: 0;
+        }
+
+        ul {
+            padding-left: 20px;
         }
     }
 
