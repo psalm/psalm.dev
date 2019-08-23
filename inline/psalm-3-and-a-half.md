@@ -62,7 +62,7 @@ Airports::getName('lga'); // good
 Airports::getName('sfo'); // type error
 ```
 
-When it’s analysing the code above, Psalm converts `key-of<self::ALL>` into a [union type](https://psalm.dev/docs/annotating_code/type_syntax/union_types) of `'jfk'|'lga'|'sfo'`, enabling it to complain when passed `'sfo'`.
+When it’s analysing the code above, Psalm converts `key-of<self::ALL>` into a [union type](https://psalm.dev/docs/annotating_code/type_syntax/union_types) of `'jfk'|'lga'|'ewr'`, enabling it to complain when passed `'sfo'`.
 
 This can also be used with templated arrays—`key-of<T>` where `T` is defined by `@template T as array`.
 
