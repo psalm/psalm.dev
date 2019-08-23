@@ -130,12 +130,14 @@ $cached_results = [
     '{"results":[{"severity":"error","line_from":4,"line_to":4,"type":"InvalidReturnStatement","message":"No return values are expected for foo","file_name":"\/src\/somefile.php","file_path":"\/var\/www\/vhosts\/psalm.dev\/httpdocs\/src\/somefile.php","snippet":"    return \"bar\";","selected_text":"\"bar\"","from":53,"to":58,"snippet_from":42,"snippet_to":59,"column_from":12,"column_to":17},{"severity":"info","line_from":3,"line_to":3,"type":"UnusedParam","message":"Param $s is never referenced in this method","file_name":"\/src\/somefile.php","file_path":"\/var\/www\/vhosts\/psalm.dev\/httpdocs\/src\/somefile.php","snippet":"function foo(string $s) : void {","selected_text":"$s","from":29,"to":31,"snippet_from":9,"snippet_to":41,"column_from":21,"column_to":23},{"severity":"error","line_from":3,"line_to":3,"type":"InvalidReturnType","message":"The declared return type \'void\' for foo is incorrect, got \'string\'","file_name":"\/src\/somefile.php","file_path":"\/var\/www\/vhosts\/psalm.dev\/httpdocs\/src\/somefile.php","snippet":"function foo(string $s) : void {","selected_text":"void","from":35,"to":39,"snippet_from":9,"snippet_to":41,"column_from":27,"column_to":31},{"severity":"error","line_from":8,"line_to":8,"type":"InvalidScalarArgument","message":"Argument 1 of foo expects string, int(5) provided","file_name":"\/src\/somefile.php","file_path":"\/var\/www\/vhosts\/psalm.dev\/httpdocs\/src\/somefile.php","snippet":"foo($a[1]);","selected_text":"$a[1]","from":86,"to":91,"snippet_from":82,"snippet_to":93,"column_from":5,"column_to":10},{"severity":"error","line_from":9,"line_to":9,"type":"TooFewArguments","message":"Too few arguments for method foo - expecting 1 but saw 0","file_name":"\/src\/somefile.php","file_path":"\/var\/www\/vhosts\/psalm.dev\/httpdocs\/src\/somefile.php","snippet":"foo();","selected_text":"foo()","from":94,"to":99,"snippet_from":94,"snippet_to":100,"column_from":1,"column_to":6},{"severity":"info","line_from":12,"line_to":12,"type":"PossiblyUndefinedGlobalVariable","message":"Possibly undefined global variable $b, first seen on line 11","file_name":"\/src\/somefile.php","file_path":"\/var\/www\/vhosts\/psalm.dev\/httpdocs\/src\/somefile.php","snippet":"echo $b;","selected_text":"$b","from":131,"to":133,"snippet_from":126,"snippet_to":134,"column_from":6,"column_to":8},{"severity":"error","line_from":15,"line_to":15,"type":"TypeDoesNotContainType","message":"Found a contradiction when evaluating $c and trying to reconcile type \'int(0)\' to !falsy","file_name":"\/src\/somefile.php","file_path":"\/var\/www\/vhosts\/psalm.dev\/httpdocs\/src\/somefile.php","snippet":"if ($c) {} elseif ($c","selected_text":"$c","from":172,"to":174,"snippet_from":153,"snippet_to":174,"column_from":20,"column_to":22}],"version":"dev-master@738ba81185abbdd25d5e99940080c2f713ec1da1","fixed_contents":null,"hash":"fa860c80e3ad05c7c8e76960c35e9ab9"}',
 ];
 
-foreach ($cached_results as $cached_result) {
-    $decoded = json_decode($cached_result, true);
+if (!$fix_file) {
+    foreach ($cached_results as $cached_result) {
+        $decoded = json_decode($cached_result, true);
 
-    if ($decoded['hash'] === $file_hash) {
-        echo $cached_result;
-        exit;
+        if ($decoded['hash'] === $file_hash) {
+            echo $cached_result;
+            exit;
+        }
     }
 }
 
