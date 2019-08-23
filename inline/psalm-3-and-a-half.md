@@ -10,7 +10,7 @@ Psalm’s central component is a type analysis engine that reads in PHP files an
 
 *   Unused code detection — figuring out which variables, properties, methods and classes aren’t used.
 *   [IDE support](https://psalm.dev/docs/language_server/) — identifying bugs and providing suggestions as you type.
-*   [Automated fixes](https://psalm.dev/docs/fixing_code/) for some of the issues Psalm finds, and for moving (and renaming) classes and methods.
+*   [Automated fixes](https://psalm.dev/docs/manipulating_code/fixing/) for some of the issues Psalm finds, and for moving (and renaming) classes and methods.
 *   A [plugin system](https://psalm.dev/docs/authoring_plugins/) that both consumes, and can help inform, Psalm’s type analysis engine.
 
 The updates since 3.0 fall into three categories: [type system improvements](#type-system-improvements), [improved ecosystem compatibility](#improved-ecosystem-compatibility) and [tooling improvements](#tooling-improvements).
