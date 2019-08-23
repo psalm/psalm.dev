@@ -910,7 +910,7 @@ code, pre {
   font-size: .8em; }
 
 div.post {
-  margin: 20px auto;
+  margin: 20px auto 80px;
   max-width: 640px; }
   div.post h1 {
     padding-left: 20px;
