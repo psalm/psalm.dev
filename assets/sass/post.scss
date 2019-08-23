@@ -51,6 +51,23 @@ div.post {
         padding-left: 20px;
         padding-right: 20px;
         margin: 2em 0 0;
+        font-size: 40px;
+        font-weight: normal;
+    }
+
+    h2, h3, h4 {
+        padding-left: 20px;
+        padding-right: 20px;
+        margin: 1.5em 0 .5em;
+    }
+
+    h2 {
+        font-size: 28px;
+        margin-bottom: .8em;
+    }
+
+    h3 {
+        font-size: 20px;
     }
 
     hr {
@@ -94,12 +111,6 @@ div.post {
             height: 1em;
             vertical-align: text-bottom;
         }
-    }
-
-    h2, h3, h4 {
-        padding-left: 20px;
-        padding-right: 20px;
-        margin: 1.5em 0 .5em;
     }
 }
 

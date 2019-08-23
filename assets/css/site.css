@@ -915,7 +915,18 @@ div.post {
   div.post h1 {
     padding-left: 20px;
     padding-right: 20px;
-    margin: 2em 0 0; }
+    margin: 2em 0 0;
+    font-size: 40px;
+    font-weight: normal; }
+  div.post h2, div.post h3, div.post h4 {
+    padding-left: 20px;
+    padding-right: 20px;
+    margin: 1.5em 0 .5em; }
+  div.post h2 {
+    font-size: 28px;
+    margin-bottom: .8em; }
+  div.post h3 {
+    font-size: 20px; }
   div.post hr {
     margin: 2em 0;
     border: none;
@@ -949,10 +960,6 @@ div.post {
       padding-right: 13px;
       height: 1em;
       vertical-align: text-bottom; }
-  div.post h2, div.post h3, div.post h4 {
-    padding-left: 20px;
-    padding-right: 20px;
-    margin: 1.5em 0 .5em; }
 
 @media all and (min-device-width: 1022px) {
   div.post p, div.post h1, div.post h2, div.post h3, div.post h4 {
