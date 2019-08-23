@@ -23,7 +23,7 @@ Lastly I talk about an upcoming security-related feature: [taint analysis](#tain
 
 JavaScript and PHP share a bunch of common paradigms, and developers at web-oriented companies often switch between the two. I and others at Vimeo love the thoughtful type system that TypeScript’s authors have created. It helps make sense of JavaScript paradigms, and I want Psalm to be able to offer the same for PHP.
 
-Some of the following ideas are borroed from TypeScript, some from [Hack](https://hacklang.org), and some are fully home-grown.
+Some of the following ideas are borrowed from TypeScript, some are borrowed from [Hack](https://hacklang.org), and some are fully home-grown.
 
 ### Improved support for @template (generic annotations)
 
