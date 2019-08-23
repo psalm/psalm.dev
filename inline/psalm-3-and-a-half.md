@@ -1,4 +1,4 @@
-It’s been over seven months since version 3.0 of [Psalm](https://psalm.dev) was released. There have been over a thousand commits to Psalm since then, bringing all sorts of fun features. Time for an update!
+It’s been over nine months since version 3.0 of [Psalm](https://psalm.dev) was released. There have been over a thousand commits to Psalm since then, bringing all sorts of fun features. Time for an update!
 
 This blog post includes interactive code snippets—feel free to edit and explore Psalm further!
 
