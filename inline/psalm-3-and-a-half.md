@@ -190,7 +190,7 @@ Version 3.0 launched with a new plugin infrastructure that supports custom stub 
 
 Recently some of those third-party packages have started to incorporate Psalm assertions and `@template` annotations into their own codebases, removing the need for a separate plugin to understand the codebase.
 
-[PHPUnit](https://github.com/sebastianbergmann/phpunit) recently added [Psalm assertion annotations](https://psalm.dev/docs/annotating_code/adding_assertions/) to its `TestCase::assertXXX` methods, and Doctrine has added `@template` annotations to its [collections framework](https://github.com/doctrine/collections). There’s also an effort underway to bring Psalm assertions to [webmozart/assert](https://github.com/webmozart/assert).
+[PHPUnit](https://github.com/sebastianbergmann/phpunit) recently added [Psalm assertion annotations](https://psalm.dev/docs/annotating_code/adding_assertions/) to its `TestCase::assertXXX` methods, and Doctrine has added `@template` annotations to its [collections framework](https://github.com/doctrine/collections). There’s also an effort underway to bring Psalm assertions to [webmozart/assert](https://github.com/webmozart/assert) **Edit** the library now includes them!
 
 ----
 
