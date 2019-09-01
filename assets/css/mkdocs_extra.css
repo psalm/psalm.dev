@@ -162,7 +162,9 @@ nav ul li a {
 
 @media (max-width: 767px) {
   body > .container {
-    margin: 0; } }
+    margin: 0; }
+  nav ul {
+    display: none; } }
 
 h1, h2 {
   font-family: 'Lyon Text Web'; }
