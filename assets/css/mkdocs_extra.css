@@ -134,6 +134,10 @@ nav h1 span {
   font-family: "Operator SSm A", "Operator SSm B";
   font-size: 20px; }
 
+nav ul li a {
+  padding-top: 0;
+  padding-right: 0; }
+
 .navbar {
   background: #FFF;
   box-shadow: none;
