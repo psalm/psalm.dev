@@ -1,38 +1,18 @@
-/*
-        This font software is the property of Commercial Type.
-        You may not modify the font software, use it on another website, or install it on a computer.
-        License information is available at http://commercialtype.com/eula
-        For more information please visit Commercial Type at http://commercialtype.com or email us at info[at]commercialtype.com
-        Copyright (C) 2019 Schwartzco Inc.
-        License: 1905-TEHPRU     
-*/
+@font-face {
+  font-family: 'Tiempos Text';
+  src: url(/extra/TiemposTextWeb-Regular.woff2) format("woff2"), url(/extra/TiemposTextWeb-Regular.woff) format("woff"); }
 
 @font-face {
-  font-family: 'Lyon Text Web';
-  src: url('/extra/LyonText-Semibold-Web.woff2') format('woff2'),
-       url('/extra/LyonText-Semibold-Web.woff') format('woff');
-  font-weight:  600;
-  font-style:   normal;
-  font-stretch: normal;
-}
+  font-family: 'Tiempos Text';
+  font-style: italic;
+  src: url(/extra/TiemposTextWeb-RegularItalic.woff2) format("woff2"), url(/extra/TiemposTextWeb-RegularItalic.woff) format("woff"); }
 
 @font-face {
-  font-family: 'Lyon Text Web';
-  src: url('/extra/LyonText-RegularItalic-Web.woff2') format('woff2'),
-       url('/extra/LyonText-RegularItalic-Web.woff') format('woff');
-  font-weight:  400;
-  font-style:   italic;
-  font-stretch: normal;
-}
+  font-family: 'Tiempos Text';
+  font-weight: 600;
+  src: url(/extra/TiemposTextWeb-Semibold.woff2) format("woff2"), url(/extra/TiemposTextWeb-Semibold.woff) format("woff"); }
 
-@font-face {
-  font-family: 'Lyon Text Web';
-  src: url('/extra/LyonText-Regular-Web.woff2') format('woff2'),
-       url('/extra/LyonText-Regular-Web.woff') format('woff');
-  font-weight:  400;
-  font-style:   normal;
-  font-stretch: normal;
-}nav {
+nav {
   overflow: hidden;
   background-position: 0 100%;
   background-repeat: repeat-x;
@@ -167,20 +147,21 @@ nav ul li a {
     display: none; } }
 
 h1, h2 {
-  font-family: 'Lyon Text Web'; }
+  font-family: 'Tiempos Text'; }
 
 h1 {
-  font-weight: 600;
+  font-weight: 400;
   font-size: 34px;
   margin: .5em 0 .75em; }
 
 h2 {
   margin: .8em 0;
   border-bottom: 1px solid #CCC;
-  line-height: 1.5em; }
+  line-height: 1.6em;
+  font-size: 28px; }
 
 body, h3, h4 {
-  font-family: 'Lyon Text Web'; }
+  font-family: 'Tiempos Text'; }
 
 h3, h4 {
   margin: 1em 0 .8em; }
@@ -194,8 +175,8 @@ h4 {
   font-weight: bold; }
 
 p, ul {
-  font-size: 18px;
-  line-height: 1.5em;
+  font-size: 17px;
+  line-height: 1.6em;
   margin: 0 0 1em; }
 
 [role="main"] ul li {

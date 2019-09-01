@@ -1,4 +1,4 @@
-@import 'lyon_text.css';
+@import 'tiempos_text.scss';
 @import 'nav.scss';
 
 .third-level {
@@ -100,11 +100,11 @@ nav ul li a {
 }
 
 h1, h2 {
-	font-family: 'Lyon Text Web';
+	font-family: 'Tiempos Text';
 }
 
 h1 {
-	font-weight: 600;
+	font-weight: 400;
     font-size: 34px;
     margin: .5em 0 .75em;
 }
@@ -112,11 +112,12 @@ h1 {
 h2 {
 	margin: .8em 0;
 	border-bottom: 1px solid #CCC;
-    line-height: 1.5em;
+    line-height: 1.6em;
+    font-size: 28px;
 }
 
 body, h3, h4 {
-	font-family: 'Lyon Text Web';
+	font-family: 'Tiempos Text';
 }
 
 h3, h4 {
@@ -134,8 +135,8 @@ h4 {
 }
 
 p, ul {
-    font-size: 18px;
-    line-height: 1.5em;
+    font-size: 17px;
+    line-height: 1.6em;
     margin: 0 0 1em;
 }
 

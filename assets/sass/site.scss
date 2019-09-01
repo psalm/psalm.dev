@@ -10,7 +10,7 @@
         License: 1905-TEHPRU     
 */
 
-@import 'lyon_text.css';
+@import 'tiempos_text.scss';
 @import 'codemirror.scss';
 @import 'codemirror_custom.scss';
 @import 'nav.scss';
@@ -18,7 +18,7 @@
 @import 'post.scss';
 
 body {
-    font-family: "Lyon Text Web", Georgia;
+    font-family: "Tiempos Text", Georgia;
     line-height: 1.5em;
     margin: 0;
     padding: 0;

@@ -1,38 +1,4 @@
-/*
-        This font software is the property of Commercial Type.
-        You may not modify the font software, use it on another website, or install it on a computer.
-        License information is available at http://commercialtype.com/eula
-        For more information please visit Commercial Type at http://commercialtype.com or email us at info[at]commercialtype.com
-        Copyright (C) 2019 Schwartzco Inc.
-        License: 1905-TEHPRU     
-*/
-
-@font-face {
-  font-family: 'Lyon Text Web';
-  src: url('/extra/LyonText-Semibold-Web.woff2') format('woff2'),
-       url('/extra/LyonText-Semibold-Web.woff') format('woff');
-  font-weight:  600;
-  font-style:   normal;
-  font-stretch: normal;
-}
-
-@font-face {
-  font-family: 'Lyon Text Web';
-  src: url('/extra/LyonText-RegularItalic-Web.woff2') format('woff2'),
-       url('/extra/LyonText-RegularItalic-Web.woff') format('woff');
-  font-weight:  400;
-  font-style:   italic;
-  font-stretch: normal;
-}
-
-@font-face {
-  font-family: 'Lyon Text Web';
-  src: url('/extra/LyonText-Regular-Web.woff2') format('woff2'),
-       url('/extra/LyonText-Regular-Web.woff') format('woff');
-  font-weight:  400;
-  font-style:   normal;
-  font-stretch: normal;
-}footer {
+footer {
     box-sizing: border-box;
     padding: 37px 15px 30px;
     margin: 0;
@@ -77,6 +43,20 @@ footer a:hover svg path {
         Copyright (C) 2019 Schwartzco Inc.
         License: 1905-TEHPRU     
 */
+@font-face {
+  font-family: 'Tiempos Text';
+  src: url(/extra/TiemposTextWeb-Regular.woff2) format("woff2"), url(/extra/TiemposTextWeb-Regular.woff) format("woff"); }
+
+@font-face {
+  font-family: 'Tiempos Text';
+  font-style: italic;
+  src: url(/extra/TiemposTextWeb-RegularItalic.woff2) format("woff2"), url(/extra/TiemposTextWeb-RegularItalic.woff) format("woff"); }
+
+@font-face {
+  font-family: 'Tiempos Text';
+  font-weight: 600;
+  src: url(/extra/TiemposTextWeb-Semibold.woff2) format("woff2"), url(/extra/TiemposTextWeb-Semibold.woff) format("woff"); }
+
 /* BASICS */
 .CodeMirror {
   /* Set height, width, borders, and global font properties here */
@@ -714,7 +694,7 @@ nav {
 .intro p, .intro ul, .post p, .post ul {
   hyphens: auto;
   margin: 1em 0;
-  font-size: 18px;
+  font-size: 17px;
   line-height: 1.6em; }
 
 .intro ul, .post ul {
@@ -976,7 +956,7 @@ div.post {
     box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.3) inset; } }
 
 body {
-  font-family: "Lyon Text Web", Georgia;
+  font-family: "Tiempos Text", Georgia;
   line-height: 1.5em;
   margin: 0;
   padding: 0;

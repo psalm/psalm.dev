@@ -1,0 +1,19 @@
+@font-face {
+    font-family: 'Tiempos Text';
+    src: url(/extra/TiemposTextWeb-Regular.woff2) format("woff2"),
+        url(/extra/TiemposTextWeb-Regular.woff) format("woff");
+}
+
+@font-face {
+    font-family: 'Tiempos Text';
+    font-style: italic;
+    src: url(/extra/TiemposTextWeb-RegularItalic.woff2) format("woff2"),
+        url(/extra/TiemposTextWeb-RegularItalic.woff) format("woff");
+}
+
+@font-face {
+    font-family: 'Tiempos Text';
+    font-weight: 600;
+    src: url(/extra/TiemposTextWeb-Semibold.woff2) format("woff2"),
+        url(/extra/TiemposTextWeb-Semibold.woff) format("woff");
+}
