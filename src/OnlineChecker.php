@@ -2,7 +2,7 @@
 
 namespace PsalmDotOrg;
 
-require_once(__DIR__ . '../vendor/vimeo/psalm/tests/Internal/Provider/FakeFileProvider.php');
+require_once(__DIR__ . '/../vendor/vimeo/psalm/tests/Internal/Provider/FakeFileProvider.php');
 
 use PhpParser\ParserFactory;
 use Psalm\Config;
@@ -46,13 +46,13 @@ class OnlineChecker
 
 		$infer_types_from_usage = true;
 		$project_checker->checkClassReferences();
-		$file_path = __DIR__ . '/src/somefile.php';
+		$file_path = __DIR__ . '/../src/somefile.php';
 		$file_provider->registerFile(
 		    $file_path,
 		    $file_contents
 		);
 
-		$codebase->scanner->addFileToDeepScan(__DIR__ . '/src/somefile.php');
+		$codebase->scanner->addFileToDeepScan(__DIR__ . '/../src/somefile.php');
 		
 		if (($settings['unused_variables'] ?? false) || ($settings['unused_methods'] ?? false) || $fix_file) {
 		    $codebase->reportUnusedCode();
@@ -145,7 +145,7 @@ class OnlineChecker
 	        '<?xml version="1.0"?>
 	        <psalm cacheDirectory="cache">
 	            <projectFiles>
-	                <directory name="src" />
+	                <directory name="../src" />
 	            </projectFiles>
 	        </psalm>'
 		);
