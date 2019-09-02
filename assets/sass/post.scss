@@ -46,14 +46,12 @@ code, pre {
 div.post {
     margin: 20px auto 80px;
     max-width: 680px;
-    font-size: 19px;
     -webkit-font-smoothing: antialiased;
 
     h1 {
         padding-left: 20px;
         padding-right: 20px;
         margin: 2em 0 0;
-        font-size: 40px;
         font-weight: normal;
         line-height: 1.2em;
     }
@@ -144,6 +142,14 @@ div.post {
         p, h1, h2, h3, h4 {
             padding-left: 0;
             padding-right: 0;
+        }
+
+        h1 {
+            font-size: 40px;
+        }
+
+        p, ul {
+            font-size: 19px;
         }
 
         ul {

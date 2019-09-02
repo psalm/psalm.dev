@@ -896,13 +896,11 @@ code, pre {
 div.post {
   margin: 20px auto 80px;
   max-width: 680px;
-  font-size: 19px;
   -webkit-font-smoothing: antialiased; }
   div.post h1 {
     padding-left: 20px;
     padding-right: 20px;
     margin: 2em 0 0;
-    font-size: 40px;
     font-weight: normal;
     line-height: 1.2em; }
   div.post h2, div.post h3, div.post h4 {
@@ -968,6 +966,10 @@ div.post {
   div.post p, div.post h1, div.post h2, div.post h3, div.post h4 {
     padding-left: 0;
     padding-right: 0; }
+  div.post h1 {
+    font-size: 40px; }
+  div.post p, div.post ul {
+    font-size: 19px; }
   div.post ul {
     padding-left: 20px; }
   .cm_inline_container div.CodeMirror.CodeMirror-focused {
