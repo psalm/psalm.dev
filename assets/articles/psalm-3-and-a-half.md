@@ -1,3 +1,10 @@
+<!--
+  title: Psalm 3-and-a-half
+  date: August 23 2019
+  author: Matt Brown
+  author_link: https://twitter.com/mattbrowndev
+-->
+
 It’s been over six months since version 3.0 of [Psalm](https://psalm.dev) was released. There have been over a thousand commits to Psalm since then, bringing all sorts of fun features. Time for an update!
 
 This blog post includes interactive code snippets—feel free to edit and explore Psalm further!

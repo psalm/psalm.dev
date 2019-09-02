@@ -2,54 +2,13 @@
 
 require_once('../vendor/autoload.php');
 
-use League\CommonMark\CommonMarkConverter;
-
-class AltHeadingParser implements \League\CommonMark\Block\Parser\BlockParserInterface
-{
-    public function parse(\League\CommonMark\ContextInterface $context, \League\CommonMark\Cursor $cursor): bool
-    {
-        if ($cursor->isIndented()) {
-            return false;
-        }
-
-        $match = \League\CommonMark\Util\RegexHelper::matchAll('/^#{1,6}(?:[ \t]+|$)/', $cursor->getLine(), $cursor->getNextNonSpacePosition());
-        if (!$match) {
-            return false;
-        }
-
-        $cursor->advanceToNextNonSpaceOrTab();
-
-        $cursor->advanceBy(\strlen($match[0]));
-
-        $level = \strlen(\trim($match[0]));
-        $str = $cursor->getRemainder();
-        $str = \preg_replace('/^[ \t]*#+[ \t]*$/', '', $str);
-        $str = \preg_replace('/[ \t]+#+[ \t]*$/', '', $str);
-
-        $heading = new \League\CommonMark\Block\Element\Heading($level, $str);
-
-        $id = preg_replace('/[^a-z\-]+/', '', strtolower(str_replace(' ', '-', $str)));
-
-        $heading->data['attributes'] = ['id' => $id];
-
-        $context->addBlock($heading);
-        $context->setBlocksParsed(true);
-
-        return true;
-    }
-}
-
-$environment = League\CommonMark\Environment::createCommonMarkEnvironment();
-$environment->addBlockParser(new AltHeadingParser(), 100);
-
-$converter = new CommonMarkConverter([], $environment);
-
-$html = $converter->convertToHtml(file_get_contents('../assets/articles/psalm-3-and-a-half.md'));
+$title = 'Psalm - article not found';
+$html = PsalmDotOrg\ArticleRepository::getHtml($_GET['name'], $title);
 
 ?>
 <html>
 <head>
-<title>Psalm 3-and-a-half</title>
+<title><?= $title ?></title>
 <script src="/assets/js/fetch.js"></script>
 <script src="/assets/js/codemirror.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cloud.typography.com/751592/7707372/css/fonts.css" />
@@ -60,12 +19,6 @@ $html = $converter->convertToHtml(file_get_contents('../assets/articles/psalm-3-
 <body>
 <?php require('../includes/nav.php'); ?>
 <div class="post">
-<h1>Psalm 3-and-a-half</h1>
-
-<p class="meta">
-	<span class="date">August 23 2019</span> by <a href="https://twitter.com/mattbrowndev" rel="author">Matt Brown</a>
-</p>
-
 <?= $html ?>
 </div>
 <?php require('../includes/footer.php'); ?>
