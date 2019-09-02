@@ -1,8 +1,8 @@
 <?php
 
-require_once('vendor/vimeo/psalm/tests/Internal/Provider/FakeFileProvider.php');
-
 namespace PsalmDotOrg;
+
+require_once('vendor/vimeo/psalm/tests/Internal/Provider/FakeFileProvider.php');
 
 use PhpParser\ParserFactory;
 use Psalm\Config;
