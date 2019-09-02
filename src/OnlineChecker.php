@@ -2,7 +2,7 @@
 
 namespace PsalmDotOrg;
 
-require_once('vendor/vimeo/psalm/tests/Internal/Provider/FakeFileProvider.php');
+require_once(__DIR__ . '../vendor/vimeo/psalm/tests/Internal/Provider/FakeFileProvider.php');
 
 use PhpParser\ParserFactory;
 use Psalm\Config;
