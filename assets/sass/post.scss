@@ -45,8 +45,9 @@ code, pre {
 
 div.post {
     margin: 20px auto 80px;
-    max-width: 640px;
-    font-size: 18px;
+    max-width: 680px;
+    font-size: 19px;
+    -webkit-font-smoothing: antialiased;
 
     h1 {
         padding-left: 20px;
@@ -64,16 +65,19 @@ div.post {
     }
 
     h2 {
-        font-size: 28px;
+        font-size: 30px;
         line-height: 1.3em;
+        font-weight: 500;
     }
 
     h3 {
-        font-size: 20px;
+        font-size: 24px;
+        font-weight: 500;
     }
 
     h4 {
         margin-bottom: -.8em;
+        font-weight: 500;
     }
 
     hr {
@@ -94,6 +98,7 @@ div.post {
         padding-left: 20px;
         padding-right: 20px;
         hyphens: none;
+        font-size: 19px;
 
         code {
             background: #f3f3f3;

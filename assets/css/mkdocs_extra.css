@@ -9,6 +9,11 @@
 
 @font-face {
   font-family: 'Tiempos Text';
+  font-weight: 500;
+  src: url(/extra/TiemposTextWeb-Medium.woff2) format("woff2"), url(/extra/TiemposTextWeb-Medium.woff) format("woff"); }
+
+@font-face {
+  font-family: 'Tiempos Text';
   font-weight: 600;
   src: url(/extra/TiemposTextWeb-Semibold.woff2) format("woff2"), url(/extra/TiemposTextWeb-Semibold.woff) format("woff"); }
 
