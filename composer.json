@@ -7,7 +7,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Psalm\\Tests\\Provider\\": "vendor/vimeo/psalm/tests/Provider"
+            "Psalm\\Tests\\Provider\\": "vendor/vimeo/psalm/tests/Provider",
+            "PsalmDotOrg\\": "src"
         }
     }
 }

@@ -1,6 +1,7 @@
 composer.phar
 /vendor/
 dbconfig.php
+blogconfig.php
 .DS_Store
 */.DS_Store
 /docs/
