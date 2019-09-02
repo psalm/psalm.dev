@@ -36,14 +36,14 @@ if (strlen($code) > 6000) {
     exit();
 }
 
-require_once('vendor/autoload.php');
+require_once('../vendor/autoload.php');
 
 $hash = substr(hash_hmac('sha256', $code . json_encode($settings), 'not much of a secret'), 0, 10);
 
 /**
  * @var array{dsn:string, user:string, password:string}
  */
-$db_config = require_once('dbconfig.php');
+$db_config = require_once('../dbconfig.php');
 
 try {
     $pdo = new PDO($db_config['dsn'], $db_config['user'], $db_config['password']);

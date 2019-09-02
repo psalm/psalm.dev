@@ -53,7 +53,7 @@ var redrawSettings = function() {
 };
 
 var getLink = function() {
-    fetch('/add_code.php', {
+    fetch('/add_code', {
         method: 'POST',
         headers: {
             'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
@@ -87,7 +87,7 @@ var latestFetch = 0;
 var fetchAnnotations = function (code, callback, options, cm) {
     latestFetch++;
     fetchKey = latestFetch;
-    fetch('/check.php', {
+    fetch('/check', {
         method: 'POST',
         headers: {
             'Accept': 'application/json, application/xml, text/plain, text/html, *.*',

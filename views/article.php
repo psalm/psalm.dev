@@ -91,7 +91,7 @@ const settings = {
 var fetchAnnotations = function (code, callback, options, cm) {
     latestFetch++;
     fetchKey = latestFetch;
-    fetch('/check.php', {
+    fetch('/check', {
         method: 'POST',
         headers: {
             'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
@@ -146,7 +146,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
 var fetchFixedContents = function (code, cm) {
     latestFetch++;
     fetchKey = latestFetch;
-    fetch('/check.php', {
+    fetch('/check', {
         method: 'POST',
         headers: {
             'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
