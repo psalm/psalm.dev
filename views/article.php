@@ -44,7 +44,7 @@ $environment->addBlockParser(new AltHeadingParser(), 100);
 
 $converter = new CommonMarkConverter([], $environment);
 
-$html = $converter->convertToHtml(file_get_contents('psalm-3-and-a-half.md'));
+$html = $converter->convertToHtml(file_get_contents('../assets/articles/psalm-3-and-a-half.md'));
 
 ?>
 <html>
