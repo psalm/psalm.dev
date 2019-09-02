@@ -12,7 +12,9 @@ class ArticleRepository
 			return '';
 		}
 
-		$markdown = self::getMarkdown($name);
+		$is_preview = false;
+
+		$markdown = self::getMarkdown($name, $is_preview);
 
 		$alt_heading_parser = new AltHeadingParser();
 		$alt_html_inline_parser = new AltHtmlInlineParser();
@@ -28,12 +30,15 @@ class ArticleRepository
 		$title = (string) $alt_html_inline_parser->getTitle();
 		$attribution = $alt_html_inline_parser->getDate() . ' by ' . $alt_html_inline_parser->getAuthor();
 
-		return '<h1>' . $title . '</h1>'
-			. '<p class="meta">' . $attribution . '</p>'
+		return '<h1>' . $title . '</h1>' . PHP_EOL
+			. '<p class="meta">' . $attribution . '</p>' . PHP_EOL
+			. ($is_preview
+				? '<p class="preview_warning">Article preview - contents subject to change</p>' . PHP_EOL 
+				: '')
 			. $html;
 	}
 
-	private static function getMarkdown(string $name) : string
+	private static function getMarkdown(string $name, bool &$is_preview) : string
 	{
 		$static_file_name = __DIR__ . '/../assets/articles/' . $name . '.md';
 
@@ -44,12 +49,14 @@ class ArticleRepository
 		$blogconfig = require(__DIR__ . '/../blogconfig.php');
 
 		try {
-			return self::getMarkdownFromGithub(
+			$markdown = self::getMarkdownFromGithub(
 				$name,
 				$blogconfig['owner'],
 				$blogconfig['repo'],
 				$blogconfig['github_token']
 			);
+			$is_preview = true;
+			return $markdown;
 		} catch (\Exception $e) {
 			header("HTTP/1.0 404 Not Found");
 

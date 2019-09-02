@@ -952,6 +952,15 @@ div.post {
       padding-right: 13px;
       height: 1em;
       vertical-align: text-bottom; }
+  div.post p.preview_warning {
+    background: #dcecf1;
+    border: 1px solid #68b9d4;
+    border-radius: 5px;
+    padding: 10px;
+    font-family: "Operator SSm A", "Operator SSm B";
+    font-size: 16px;
+    text-align: center;
+    color: #046075; }
   div.post ul {
     padding-left: 40px; }
 
