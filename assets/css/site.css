@@ -898,7 +898,8 @@ div.post {
     padding-right: 20px;
     margin: 2em 0 0;
     font-size: 40px;
-    font-weight: normal; }
+    font-weight: normal;
+    line-height: 1.2em; }
   div.post h2, div.post h3, div.post h4 {
     padding-left: 20px;
     padding-right: 20px;
