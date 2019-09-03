@@ -3,7 +3,8 @@
 require_once('../vendor/autoload.php');
 
 $title = 'Psalm - article not found';
-$html = PsalmDotOrg\ArticleRepository::getHtml($_GET['name'], $title);
+$name = $_GET['name'];
+$html = PsalmDotOrg\ArticleRepository::getHtml($name, $title);
 
 ?>
 <html>
@@ -33,7 +34,7 @@ let fetchKey = null;
 
 const settings = {
     'unused_variables': true,
-    'unused_methods': true,
+    'unused_methods': <?= $name === 'psalm-3-and-a-half' ? 'true' : 'false' ?>,
     'memoize_properties': true,
     'memoize_method_calls': false,
     'check_throws': false,
