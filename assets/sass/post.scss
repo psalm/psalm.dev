@@ -135,6 +135,12 @@ div.post {
     ul {
         padding-left: 40px;
     }
+
+    .cm-s-elegant span.cm-number,
+    .cm-s-elegant span.cm-string,
+    .cm-s-elegant span.cm-atom { color: #701971; }
+    .cm-s-elegant span.cm-dev { color: #191992; }
+    .cm-s-elegant span.cm-keyword { color: #771515; }
 }
 
 @media all and (min-device-width: 1022px) {
