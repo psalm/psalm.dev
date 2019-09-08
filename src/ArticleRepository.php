@@ -27,7 +27,7 @@ class ArticleRepository
 
 		$html = $converter->convertToHtml($markdown);
 
-		$description = substr(strip_tags($html), 0, 50) . '&hellip;';
+		$description = substr(trim(strip_tags($html)), 0, 150) . '…';
 
 		$title = (string) $alt_html_inline_parser->getTitle();
 		$attribution = $alt_html_inline_parser->getDate() . ' by ' . $alt_html_inline_parser->getAuthor();
