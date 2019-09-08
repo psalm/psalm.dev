@@ -20,7 +20,7 @@ $html = PsalmDotOrg\ArticleRepository::getHtml($name, $title);
 <meta name="twitter:site" content="@psalmphp" />
 <meta name="twitter:title" content="<?= $title ?>" />
 <meta name="twitter:creator" content="@mattbrowndev" />
-<meta name="twitter:image" content="/article_thumbnail.png" />
+<meta name="twitter:image" content="https://psalm.dev/article_thumbnail.png" />
 <meta name="og:type" content="article" />
 </head>
 <body>
