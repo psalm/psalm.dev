@@ -20,6 +20,7 @@ $html = PsalmDotOrg\ArticleRepository::getHtml($name, $title);
 <meta name="twitter:site" content="@psalmphp" />
 <meta name="twitter:title" content="<?= $title ?>" />
 <meta name="twitter:creator" content="@mattbrowndev" />
+<meta name="og:type" content="article" />
 </head>
 <body>
 <?php require('../includes/nav.php'); ?>
