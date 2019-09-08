@@ -16,6 +16,10 @@ $html = PsalmDotOrg\ArticleRepository::getHtml($name, $title);
 <link rel="stylesheet" href="/assets/css/site.css?1">
 <link rel="icon" type="image/png" href="favicon.png">
 <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@psalmphp" />
+<meta name="twitter:title" content="<?= $title ?>" />
+<meta name="twitter:creator" content="@mattbrowndev" />
 </head>
 <body>
 <?php require('../includes/nav.php'); ?>
