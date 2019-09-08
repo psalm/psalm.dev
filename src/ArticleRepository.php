@@ -6,7 +6,7 @@ use League\CommonMark\CommonMarkConverter;
 
 class ArticleRepository
 {
-	public static function getHtml(string $name, string &$title) : string
+	public static function getHtml(string $name, string &$title, string &$description) : string
 	{
 		if (!preg_match('/^[a-z0-9\-]+$/', $name)) {
 			return '';
@@ -26,6 +26,8 @@ class ArticleRepository
 		$converter = new CommonMarkConverter([], $environment);
 
 		$html = $converter->convertToHtml($markdown);
+
+		$description = substr(strip_tags($html), 0, 50) . '&hellip;';
 
 		$title = (string) $alt_html_inline_parser->getTitle();
 		$attribution = $alt_html_inline_parser->getDate() . ' by ' . $alt_html_inline_parser->getAuthor();

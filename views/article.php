@@ -4,7 +4,8 @@ require_once('../vendor/autoload.php');
 
 $title = 'Psalm - article not found';
 $name = $_GET['name'];
-$html = PsalmDotOrg\ArticleRepository::getHtml($name, $title);
+$description = '';
+$html = PsalmDotOrg\ArticleRepository::getHtml($name, $title, $description);
 
 ?>
 <html>
@@ -20,6 +21,7 @@ $html = PsalmDotOrg\ArticleRepository::getHtml($name, $title);
 <meta name="twitter:site" content="@psalmphp" />
 <meta name="twitter:title" content="<?= $title ?>" />
 <meta name="twitter:creator" content="@mattbrowndev" />
+<meta name="twitter:description" content=""
 <meta name="twitter:image" content="https://psalm.dev/article_thumbnail.png" />
 <meta name="og:type" content="article" />
 </head>
