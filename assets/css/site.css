@@ -694,7 +694,8 @@ nav {
 .intro {
   max-width: 492px;
   padding: 0 20px 50px;
-  float: left; }
+  float: left;
+  margin-top: -10px; }
 
 .intro p, .intro ul, .post p, .post ul {
   margin: 1.5em 0;
