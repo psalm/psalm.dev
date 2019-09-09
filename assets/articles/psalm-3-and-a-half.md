@@ -1,6 +1,6 @@
 <!--
   title: Psalm 3-and-a-half
-  date: August 23 2019
+  date: 2019-08-23
   author: Matt Brown
   author_link: https://twitter.com/mattbrowndev
 -->

@@ -1,6 +1,6 @@
 <!--
   title: Immutability and beyond: verifying program behaviour with Psalm
-  date: September 10 2019
+  date: 2019-09-10
   author: Matt Brown
   author_link: https://twitter.com/mattbrowndev
 -->
