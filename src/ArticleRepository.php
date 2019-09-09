@@ -6,8 +6,12 @@ use League\CommonMark\CommonMarkConverter;
 
 class ArticleRepository
 {
-	public static function getHtml(string $name, string &$title, string &$description) : string
-	{
+	public static function getHtml(
+		string $name,
+		string &$title,
+		string &$description,
+		string &$canonical
+	) : string {
 		if (!preg_match('/^[a-z0-9\-]+$/', $name)) {
 			return '';
 		}
@@ -29,8 +33,19 @@ class ArticleRepository
 
 		$description = substr(trim(strip_tags($html)), 0, 150) . '…';
 
+		$date = $alt_html_inline_parser->getDate();
+
+		if ($date) {
+			$date = date('F j, Y', strtotime($date)) . ' by ';
+		}
+
 		$title = (string) $alt_html_inline_parser->getTitle();
-		$attribution = $alt_html_inline_parser->getDate() . ' by ' . $alt_html_inline_parser->getAuthor();
+		$canonical = (string) $alt_html_inline_parser->getCanonical();
+		$attribution = $date . $alt_html_inline_parser->getAuthor();
+
+		if ($canonical) {
+			$attribution .= '. <a href="' . $canonical . '">Original article</a>';
+		}
 
 		return '<h1>' . $title . '</h1>' . PHP_EOL
 			. '<p class="meta">' . $attribution . '</p>' . PHP_EOL

@@ -57,7 +57,7 @@ if ($c) {} elseif ($c) {}</textarea>
             <li>guarantee that there won’t be any type-related runtime errors</li>
         </ul>
 
-        <p>Interested in how Psalm came to be? Read <a href="https://medium.com/vimeo-engineering-blog/fixing-code-that-aint-broken-a99e05998c24">this explainer</a>.</p>
+        <p>Interested in how Psalm came to be? Read <a href="/articles/fixing-code-that-aint-broken">this explainer</a>.</p>
     </div>
 </div>
 <script>

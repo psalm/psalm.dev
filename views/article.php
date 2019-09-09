@@ -5,7 +5,8 @@ require_once('../vendor/autoload.php');
 $title = 'Psalm - article not found';
 $name = $_GET['name'];
 $description = '';
-$html = PsalmDotOrg\ArticleRepository::getHtml($name, $title, $description);
+$canonical = '';
+$html = PsalmDotOrg\ArticleRepository::getHtml($name, $title, $description, $canonical);
 
 ?>
 <html>
@@ -16,6 +17,7 @@ $html = PsalmDotOrg\ArticleRepository::getHtml($name, $title, $description);
 <link rel="stylesheet" type="text/css" href="https://cloud.typography.com/751592/7707372/css/fonts.css" />
 <link rel="stylesheet" href="/assets/css/site.css?1">
 <link rel="icon" type="image/png" href="favicon.png">
+<?php if ($canonical): ?><link rel="canonical" href="<?= $canonical ?>" /><?php endif; ?>
 <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@psalmphp" />

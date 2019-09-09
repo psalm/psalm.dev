@@ -21,6 +21,9 @@ class AltHtmlInlineParser implements InlineParserInterface
     /** @var ?string */
     private $date = null;
 
+    /** @var ?string */
+    private $canonical = null;
+
     /**
      * @return string[]
      */
@@ -46,7 +49,7 @@ class AltHtmlInlineParser implements InlineParserInterface
                     $key = array_shift($line_parts);
                     $value = trim(implode(':', $line_parts));
 
-                    if (in_array($key, ['title', 'author', 'author_link', 'date'])) {
+                    if (in_array($key, ['title', 'author', 'author_link', 'date', 'canonical'])) {
                         $this->$key = $value;
                     }
                 }
@@ -78,5 +81,10 @@ class AltHtmlInlineParser implements InlineParserInterface
     public function getDate() : string
     {
         return (string) $this->date;
+    }
+
+    public function getCanonical() : string
+    {
+        return (string) $this->canonical;
     }
 }
