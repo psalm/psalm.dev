@@ -965,11 +965,11 @@ div.post {
   div.post .cm-s-elegant span.cm-number,
   div.post .cm-s-elegant span.cm-string,
   div.post .cm-s-elegant span.cm-atom {
-    color: #701971; }
+    color: #880f8a; }
   div.post .cm-s-elegant span.cm-def {
-    color: #191992; }
+    color: #0b0bb1; }
   div.post .cm-s-elegant span.cm-keyword {
-    color: #771515; }
+    color: #881d1d; }
 
 @media all and (min-device-width: 1022px) {
   div.post p, div.post h1, div.post h2, div.post h3, div.post h4 {
