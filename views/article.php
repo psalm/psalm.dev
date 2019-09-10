@@ -50,7 +50,7 @@ $minutes_taken = round(0.25 + ($word_count / 265));
     <?php if ($article->canonical): ?>
         <a href="<?= $article->canonical ?>">original article</a>
     <?php else: ?>
-        <?= $minutes_taken ?> minute read
+        <?= $minutes_taken ?>&nbsp;minute&nbsp;read
     <?php endif; ?>
 </p>
 <?= $article->html ?>
