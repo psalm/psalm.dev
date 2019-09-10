@@ -936,6 +936,8 @@ div.post {
     color: #666; }
     div.post .meta.inline {
       margin-bottom: -1em; }
+    div.post .meta a {
+      text-decoration: none; }
   div.post p, div.post ul {
     padding-left: 20px;
     padding-right: 20px;

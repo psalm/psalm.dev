@@ -104,6 +104,10 @@ div.post {
         &.inline {
             margin-bottom: -1em;
         }
+
+        a {
+            text-decoration: none;
+        }
     }
 
     p, ul {

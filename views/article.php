@@ -46,11 +46,11 @@ $minutes_taken = round(0.25 + ($word_count / 265));
 <div class="post">
 <h1><?= $article->title ?></h1>
 <p class="meta">
-    <?= date('F j, Y', strtotime($article->date)) ?> by <?= $article->author ?>.
+    <?= date('F j, Y', strtotime($article->date)) ?> by <?= $article->author ?> - 
     <?php if ($article->canonical): ?>
-        <a href="<?= $article->canonical ?>">Original article</a>
+        <a href="<?= $article->canonical ?>">original article</a>
     <?php else: ?>
-        <?= $minutes_taken ?> minute read.
+        <?= $minutes_taken ?> minute read
     <?php endif; ?>
 </p>
 <?= $article->html ?>
