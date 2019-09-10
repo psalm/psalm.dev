@@ -252,7 +252,7 @@ class Arithmetic {
 
 ### Real-world example
 
-We can use immutable classes and pure functions to create [a very simple currency implementation](https://psalm.dev/r/d404685e79).
+We can use immutable classes and pure functions to create [a very simple currency implementation](https://psalm.dev/r/49548b4edd).
 
 There are also examples of immutable classes in PHP’s standard library, including [DateTimeImmutable](https://www.php.net/manual/en/class.datetimeimmutable.php):
 
