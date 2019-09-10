@@ -8,7 +8,7 @@
 
 Today I’m releasing a [Psalm plugin for Laravel](https://github.com/psalm/laravel-psalm-plugin)!
 
-### Background
+## Background
 
 Two months ago [I announced the latest version of Psalm](https://medium.com/vimeo-engineering-blog/announcing-psalm-v3-76ec78e312ce), and discussed how its new plugin framework would make authoring integrations for third-party packages much easier. A bunch of great plugins have sprung up since, but none for [Laravel](https://laravel.com/).
 
@@ -29,11 +29,14 @@ The advantage of this approach is threefold:
 *   Anyone who uses Psalm in a project with a `.phpstorm.meta.php` stub can now benefit from Psalm’s understanding of them, regardless of whether they use Laravel.
 *   Users of other IDEs can benefit from these stubs too, if they use [Psalm’s Language Server functionality](https://psalm.dev/docs/language_server/).
 
-### Installation
+## Installation
 
 If you haven’t already, [install Psalm](https://psalm.dev/quickstart). Then run
 
-    composer require --dev psalm/plugin-laravelvendor/bin/psalm-plugin enable psalm/plugin-laravel
+```
+composer require --dev psalm/plugin-laravel
+vendor/bin/psalm-plugin enable psalm/plugin-laravel
+```
 
 [Head to the plugin’s Github repo](https://github.com/psalm/laravel-psalm-plugin) for all the usual open source stuff.
 

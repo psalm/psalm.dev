@@ -42,7 +42,7 @@ in PHPUnit test files.
 
 To make writing your first plugin easier, Bruce has helpfully [provided a skeleton](https://github.com/weirdan/psalm-plugin-skeleton) for you to start with.
 
-### Baseline support
+## Baseline support
 
 At Vimeo, there are lots of types of issues that Psalm finds in our code. Unfortunately we haven’t the time to fix them all, so we were forced just to ignore those issues [via our Psalm config](https://gist.github.com/muglug/6c6ac543a51d94c62967bd861783ed07).
 

@@ -98,11 +98,11 @@ In each case we’re adding information that the typechecker didn’t know previ
 
 In general, `@template` can be used in most places that you’d use a templated/type parameter in one of the languages mentioned above.
 
-### Going Deeper
+## Going Deeper
 
 Since adding initial support for `@template`, a number of people have requested more comprehensive templating rules that are present in other languages. The following features are available in more recent releases of Psalm.
 
-#### Template type constraints (Psalm-only)
+### Template type constraints (Psalm-only)
 
 What if we want to restrict the creation of `LazyList` instances only to class strings corresponding to a certain type?
 
@@ -119,7 +119,7 @@ class LazyList extends \ArrayObject {...}
 
 Phan has plans for [a similar feature](https://github.com/phan/phan/issues/1666).
 
-#### Combining with @psalm-assert/@phan-assert
+### Combining with @psalm-assert/@phan-assert
 
 Psalm and Phan support assertions in function docblocks in the form of `@psalm-assert`/`@phan-assert`. You can use this annotation to write your own templated `assertInstanceOf` checks like so:
 
@@ -140,7 +140,7 @@ function assertInstanceOf(string $class, object $input) : void {
 }
 ```
 
-#### Combining with `@param-out (Psalm-only)`
+### Combining with `@param-out (Psalm-only)`
 
 Psalm now supports `out` params, in the form of a `@param-out` declaration.
 
@@ -167,7 +167,7 @@ $a = [[1], [2], [3]];
 usort($a, "strcmp");
 ```
 
-#### Going wild with templates
+### Going wild with templates
 
 We can do some weird and wonderful things with the power of templated types.
 
@@ -190,7 +190,7 @@ foo(
 );
 ```
 
-### Towards a future full of types
+## Towards a future full of types
 
 At Vimeo we use a lot of TypeScript, and our developers love it. While part of TypeScript’s success lies in its excellent type checker, I’d argue that its real breakthrough has been the way it enables developers, through its expansive type system, to eloquently describe how their code operates.
 
