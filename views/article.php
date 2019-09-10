@@ -8,7 +8,7 @@ $name = $_GET['name'];
 $article = PsalmDotOrg\ArticleRepository::get($name);
 
 if (!$article) {
-    return '';
+    exit;
 }
 ?>
 <html>

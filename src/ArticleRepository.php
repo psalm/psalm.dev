@@ -137,10 +137,12 @@ class ArticleRepository
         // Submit the POST request
         $response = (string) curl_exec($ch);
 
+        $status = curl_getinfo($ch, \CURLINFO_HTTP_CODE);
+
         // Close cURL session handle
         curl_close($ch);
 
-        if (!$response) {
+        if (!$response || $status === 404) {
             throw new \UnexpectedValueException('Response should exist');
         }
 
