@@ -15,7 +15,15 @@ class ArticleRepository
 
         foreach (scandir($article_dir) as $file) {
             if (strpos($file, '.md') === (strlen($file) - 3)) {
-                $articles[] = self::get(substr($file, 0, -3));
+                $article = self::get(substr($file, 0, -3));
+
+                if ($article) {
+                    $date = new \DateTime($article->date, new \DateTimeZone('America/New_York'));
+                    
+                    if ($date->format('U') < mktime()) {
+                        $articles[] = $article;
+                    }
+                }
             }
         }
 
