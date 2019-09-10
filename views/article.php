@@ -10,6 +10,18 @@ $article = PsalmDotOrg\ArticleRepository::get($name);
 if (!$article) {
     exit;
 }
+
+$word_count = str_word_count(strip_tags(preg_replace('/<pre>(.*?)<\\/pre>/', '', $article->html)));
+
+$word_count += 2 * substr_count($article->html, '<p>');
+
+$word_count += substr_count($article->html, '<h');
+
+$word_count += substr_count($article->html, '<code');
+
+$word_count += substr_count($article->html, '<a href=');
+
+$minutes_taken = round(0.25 + ($word_count / 265));
 ?>
 <html>
 <head>
@@ -34,8 +46,12 @@ if (!$article) {
 <div class="post">
 <h1><?= $article->title ?></h1>
 <p class="meta">
-    <?= date('F j, Y', strtotime($article->date)) ?> by <?= $article->author ?>
-    <?php if ($article->canonical): ?>. <a href="<?= $article->canonical ?>">Original article</a><?php endif; ?>
+    <?= date('F j, Y', strtotime($article->date)) ?> by <?= $article->author ?>.
+    <?php if ($article->canonical): ?>
+        <a href="<?= $article->canonical ?>">Original article</a>
+    <?php else: ?>
+        <?= $minutes_taken ?> minute read.
+    <?php endif; ?>
 </p>
 <?= $article->html ?>
 </div>
