@@ -146,6 +146,17 @@ div.post {
         color: #046075;
     }
 
+    pre {
+        padding: 20px;
+
+        code {
+            font-family: "Operator Mono SSm A", "Operator Mono SSm B";
+            font-style: normal;
+            line-height: 1.7em;
+            font-size: 1.1em;
+        }
+    }
+
     ul {
         padding-left: 40px;
     }

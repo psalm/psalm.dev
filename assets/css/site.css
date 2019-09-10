@@ -968,6 +968,13 @@ div.post {
     font-size: 16px;
     text-align: center;
     color: #046075; }
+  div.post pre {
+    padding: 20px; }
+    div.post pre code {
+      font-family: "Operator Mono SSm A", "Operator Mono SSm B";
+      font-style: normal;
+      line-height: 1.7em;
+      font-size: 1.1em; }
   div.post ul {
     padding-left: 40px; }
   div.post .cm-s-elegant span.cm-number,
