@@ -96,7 +96,7 @@ Fans of functional programming generally prefer to put as much logic into pure f
 
 A quote from [a former colleague](https://twitter.com/twitchard) and fan of functional programming:
 
-> I think immutability is nice because it’s a guarantee that the type signature fully encapsulates the behaviour of your function. Humans are good at reasoning about the local behaviour of functions, but type checkers are _much_ better at reasoning about their global behaviour.
+> Immutability is nice because it’s a guarantee that the type signature fully encapsulates the behaviour of your function. Humans are good at reasoning about the local behaviour of functions, but type checkers are _much_ better at reasoning about their global behaviour.
 
 ---
 
