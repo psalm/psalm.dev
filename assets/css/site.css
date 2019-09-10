@@ -946,7 +946,7 @@ div.post {
     div.post p code, div.post ul code {
       background: #f3f3f3;
       border: 0;
-      font-size: .8em;
+      font-size: 13px;
       padding: 5px;
       border-radius: .3em;
       color: #000; }
@@ -996,6 +996,8 @@ div.post {
     font-size: 40px; }
   div.post p, div.post ul {
     font-size: 19px; }
+    div.post p code, div.post ul code {
+      font-size: 16px; }
   div.post ul {
     padding-left: 20px; }
   .cm_inline_container div.CodeMirror.CodeMirror-focused {
