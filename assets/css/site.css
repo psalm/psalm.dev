@@ -1013,7 +1013,9 @@ body {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  text-rendering: optimizeLegibility; }
+  text-rendering: optimizeLegibility;
+  text-size-adjust: none;
+  -webkit-text-size-adjust: 100%; }
 
 a {
   color: #a75251; }
