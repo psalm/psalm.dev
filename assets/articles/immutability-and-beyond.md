@@ -1,6 +1,6 @@
 <!--
   title: Immutability and beyond: verifying program behaviour with Psalm
-  date: 2019-09-10 06:30:00
+  date: 2019-09-10 07:00:00
   author: Matt Brown
   author_link: https://twitter.com/mattbrowndev
 -->
@@ -110,7 +110,7 @@ This section introduces a bunch of new Psalm annotations:
 
 ### Per-property immutability
 
-Some OOP languages have built-in support for public properties that can be read  anywhere, but only written to once (on initialisation). PHP doesn't support them, but people tend to simulate the idea by making the property private and adding a public `get<PropertyName>` method:
+Some object-oriented languages have built-in support for public properties that can be read anywhere, but only written to once (on initialisation). PHP doesn't support the syntax directly, but developers can simulate the idea by making the property private and adding a public `get<PropertyName>` method:
 
 ```php
 <?php
