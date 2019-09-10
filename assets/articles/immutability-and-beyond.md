@@ -7,7 +7,7 @@
 
 As a language, PHP permits you to do basically anything. There are some built-in runtime constraints (like parameter and return types) that you can opt into, but it’s otherwise pretty free-wheeling. Fans of paradigms that work well in other languages (such as functional programming) can find themselves a little adrift in PHP land.
 
-Psalm adds some strictness to the everyday task of writing PHP. Its strictness is customisable: you can choose to have Psalm complain about only the most basic things (like undefined classes and undefined variables), but you can also choose to have Psalm complain about [every type-related issue it can discover](https://psalm.dev/docs/running_psalm/issues/). Some might consider the latter option unnecessary masochism, but many embrace the challenge of writing code that passes Psalm’s most rigid checks.
+Psalm — a type-checking static analysis tool — adds some strictness to the everyday task of writing PHP. Its strictness is customisable: you can choose to have Psalm complain about only the most basic things (like undefined classes and undefined variables), but you can also choose to have Psalm complain about [every type-related issue it can discover](https://psalm.dev/docs/running_psalm/issues/). Some might consider the latter option unnecessary masochism, but many embrace the challenge of writing code that passes Psalm’s most rigid checks.
 
 I've recently added a raft of annotations that can help functional programming fans better describe their program’s behaviour, along with corresponding Psalm errors when code is deemed to have fallen foul of those annotations.
 
