@@ -52,6 +52,7 @@ Redirect 301 /docs/fixing_code https://psalm.dev/docs/manipulating_code/fixing.m
 RewriteEngine On
 RewriteBase /
 RewriteRule ^articles/([a-z0-9\-]+)/?$ /views/article.php?name=$1 [L,NC]
+RewriteRule ^articles/?$ /views/articles/index.php [L,NC]
 RewriteRule ^articles/auth/save/?$ /views/articles/auth_save.php [L,NC]
 RewriteRule ^articles/auth/init/?$ /views/articles/auth_init.php [L,NC]
 RewriteRule ^r/([a-z0-9]+)$ /views/snippet.php?r=$1 [L,NC]

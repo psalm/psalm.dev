@@ -6,116 +6,136 @@ use League\CommonMark\CommonMarkConverter;
 
 class ArticleRepository
 {
-	public static function getHtml(
-		string $name,
-		string &$title,
-		string &$description,
-		string &$canonical
-	) : string {
-		if (!preg_match('/^[a-z0-9\-]+$/', $name)) {
-			return '';
-		}
+    /** @return Article[] */
+    public static function getAll() : array
+    {
+        $article_dir = __DIR__ . '/../assets/articles/';
 
-		$is_preview = false;
+        $articles = [];
 
-		$markdown = self::getMarkdown($name, $is_preview);
+        foreach (scandir($article_dir) as $file) {
+            if (strpos($file, '.md') === (strlen($file) - 3)) {
+                $articles[] = self::get(substr($file, 0, -3));
+            }
+        }
 
-		$alt_heading_parser = new AltHeadingParser();
-		$alt_html_inline_parser = new AltHtmlInlineParser();
+        usort(
+            $articles,
+            function (Article $a, Article $b) : int {
+                return (int) ($a->date < $b->date);
+            }
+        );
 
-		$environment = \League\CommonMark\Environment::createCommonMarkEnvironment();
-		$environment->addBlockParser($alt_heading_parser, 100);
-		$environment->addInlineParser($alt_html_inline_parser, 100);
+        return $articles;
+    }
+    
+    public static function get(
+        string $name
+    ) : ?Article {
+        if (!preg_match('/^[a-z0-9\-]+$/', $name)) {
+            return null;
+        }
 
-		$converter = new CommonMarkConverter([], $environment);
+        $is_preview = false;
 
-		$html = $converter->convertToHtml($markdown);
+        try {
+            $markdown = self::getMarkdown($name, $is_preview);
+        } catch (\Exception $e) {
+            header("HTTP/1.0 404 Not Found");
+            return null;
+        }
 
-		$description = substr(trim(strip_tags($html)), 0, 150) . '…';
+        $alt_heading_parser = new AltHeadingParser();
+        $alt_html_inline_parser = new AltHtmlInlineParser();
 
-		$date = $alt_html_inline_parser->getDate();
+        $environment = \League\CommonMark\Environment::createCommonMarkEnvironment();
+        $environment->addBlockParser($alt_heading_parser, 100);
+        $environment->addInlineParser($alt_html_inline_parser, 100);
 
-		if ($date) {
-			$date = date('F j, Y', strtotime($date)) . ' by ';
-		}
+        $converter = new CommonMarkConverter([], $environment);
 
-		$title = (string) $alt_html_inline_parser->getTitle();
-		$canonical = (string) $alt_html_inline_parser->getCanonical();
-		$attribution = $date . $alt_html_inline_parser->getAuthor();
+        $html = $converter->convertToHtml($markdown);
 
-		if ($canonical) {
-			$attribution .= '. <a href="' . $canonical . '">Original article</a>';
-		}
+        $description = substr(trim(strip_tags($html)), 0, 150) . '…';
 
-		return '<h1>' . $title . '</h1>' . PHP_EOL
-			. '<p class="meta">' . $attribution . '</p>' . PHP_EOL
-			. ($is_preview
-				? '<p class="preview_warning">Article preview - contents subject to change</p>' . PHP_EOL 
-				: '')
-			. $html;
-	}
+        $date = $alt_html_inline_parser->getDate();
 
-	private static function getMarkdown(string $name, bool &$is_preview) : string
-	{
-		$static_file_name = __DIR__ . '/../assets/articles/' . $name . '.md';
+        $title = $alt_html_inline_parser->getTitle();
+        $canonical = $alt_html_inline_parser->getCanonical();
+        $author = $alt_html_inline_parser->getAuthor();
 
-		if (file_exists($static_file_name)) {
-			return file_get_contents($static_file_name);
-		}
+        if ($is_preview) {
+            $html = '<p class="preview_warning">Article preview - contents subject to change</p>'
+                . PHP_EOL
+                . $html;
+        }
 
-		$blogconfig = require(__DIR__ . '/../blogconfig.php');
+        return new Article(
+            $title,
+            $description,
+            $canonical,
+            $date,
+            $author,
+            $name,
+            $html
+        );
+    }
 
-		try {
-			$markdown = self::getMarkdownFromGithub(
-				$name,
-				$blogconfig['owner'],
-				$blogconfig['repo'],
-				$blogconfig['github_token']
-			);
-			$is_preview = true;
-			return $markdown;
-		} catch (\Exception $e) {
-			header("HTTP/1.0 404 Not Found");
+    private static function getMarkdown(string $name, bool &$is_preview) : string
+    {
+        $static_file_name = __DIR__ . '/../assets/articles/' . $name . '.md';
 
-			return $e->getMessage();
-		}
-	}
+        if (file_exists($static_file_name)) {
+            return file_get_contents($static_file_name);
+        }
 
-	private static function getMarkdownFromGithub(
-		string $name,
-		string $owner,
-		string $repo,
-		string $github_token
-	) : string {
-		$github_api_url = 'https://api.github.com';
+        $blogconfig = require(__DIR__ . '/../blogconfig.php');
 
-		// Prepare new cURL resource
-		$ch = curl_init($github_api_url . '/repos/' . $owner . '/' . $repo . '/contents/' . $name . '.md');
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        $markdown = self::getMarkdownFromGithub(
+            $name,
+            $blogconfig['owner'],
+            $blogconfig['repo'],
+            $blogconfig['github_token']
+        );
+        $is_preview = true;
+        return $markdown;
+    }
 
-		// Set HTTP Header for POST request
-		curl_setopt(
-		    $ch,
-		    CURLOPT_HTTPHEADER,
-		    [
-		        'Accept: application/vnd.github.v3.raw',
-		        'Authorization: token ' . $github_token,
-		        'User-Agent: Psalm Blog crawler',
-		    ]
-		);
+    private static function getMarkdownFromGithub(
+        string $name,
+        string $owner,
+        string $repo,
+        string $github_token
+    ) : string {
+        $github_api_url = 'https://api.github.com';
 
-		// Submit the POST request
-		$response = (string) curl_exec($ch);
+        // Prepare new cURL resource
+        $ch = curl_init($github_api_url . '/repos/' . $owner . '/' . $repo . '/contents/' . $name . '.md');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
-		// Close cURL session handle
-		curl_close($ch);
+        // Set HTTP Header for POST request
+        curl_setopt(
+            $ch,
+            CURLOPT_HTTPHEADER,
+            [
+                'Accept: application/vnd.github.v3.raw',
+                'Authorization: token ' . $github_token,
+                'User-Agent: Psalm Blog crawler',
+            ]
+        );
 
-		if (!$response) {
-		    throw new \UnexpectedValueException('Response should exist');
-		}
+        // Submit the POST request
+        $response = (string) curl_exec($ch);
 
-		return $response;
-	}
+        // Close cURL session handle
+        curl_close($ch);
+
+        if (!$response) {
+            throw new \UnexpectedValueException('Response should exist');
+        }
+
+        return $response;
+    }
 }

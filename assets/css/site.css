@@ -914,7 +914,12 @@ div.post {
     font-weight: 500; }
   div.post h3 {
     font-size: 24px;
-    font-weight: 500; }
+    font-weight: 500;
+    line-height: 1.3em; }
+    div.post h3 a {
+      text-decoration: none; }
+      div.post h3 a:hover {
+        text-decoration: underline; }
   div.post h4 {
     margin-bottom: -.8em;
     font-weight: 500; }
@@ -929,6 +934,8 @@ div.post {
   div.post .meta {
     margin: 0.5em 0 3em;
     color: #666; }
+    div.post .meta.inline {
+      margin-bottom: -1em; }
   div.post p, div.post ul {
     padding-left: 20px;
     padding-right: 20px;

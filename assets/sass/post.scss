@@ -71,6 +71,15 @@ div.post {
     h3 {
         font-size: 24px;
         font-weight: 500;
+        line-height: 1.3em;
+
+        a {
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
     }
 
     h4 {
@@ -91,6 +100,10 @@ div.post {
     .meta {
         margin: 0.5em 0 3em;
         color: #666;
+
+        &.inline {
+            margin-bottom: -1em;
+        }
     }
 
     p, ul {

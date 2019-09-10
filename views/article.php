@@ -4,33 +4,40 @@ require_once('../vendor/autoload.php');
 
 $title = 'Psalm - article not found';
 $name = $_GET['name'];
-$description = '';
-$canonical = '';
-$html = PsalmDotOrg\ArticleRepository::getHtml($name, $title, $description, $canonical);
 
+$article = PsalmDotOrg\ArticleRepository::get($name);
+
+if (!$article) {
+    return '';
+}
 ?>
 <html>
 <head>
-<title><?= $title ?></title>
+<title><?= $article->title ?></title>
 <script src="/assets/js/fetch.js"></script>
 <script src="/assets/js/codemirror.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cloud.typography.com/751592/7707372/css/fonts.css" />
 <link rel="stylesheet" href="/assets/css/site.css?1">
 <link rel="icon" type="image/png" href="favicon.png">
-<?php if ($canonical): ?><link rel="canonical" href="<?= $canonical ?>" /><?php endif; ?>
+<?php if ($article->canonical): ?><link rel="canonical" href="<?= $article->canonical ?>" /><?php endif; ?>
 <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@psalmphp" />
-<meta name="twitter:title" content="<?= $title ?>" />
+<meta name="twitter:title" content="<?= $article->title ?>" />
 <meta name="twitter:creator" content="@mattbrowndev" />
-<meta name="twitter:description" content="<?= $description ?>" />
+<meta name="twitter:description" content="<?= $article->description ?>" />
 <meta name="twitter:image" content="https://psalm.dev/article_thumbnail.png" />
 <meta name="og:type" content="article" />
 </head>
 <body>
 <?php require('../includes/nav.php'); ?>
 <div class="post">
-<?= $html ?>
+<h1><?= $article->title ?></h1>
+<p class="meta">
+    <?= date('F j, Y', strtotime($article->date)) ?> by <?= $article->author ?>
+    <?php if ($article->canonical): ?>. <a href="<?= $article->canonical ?>">Original article</a><?php endif; ?>
+</p>
+<?= $article->html ?>
 </div>
 <?php require('../includes/footer.php'); ?>
 <script>
