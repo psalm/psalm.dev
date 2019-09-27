@@ -152,6 +152,7 @@ class OnlineChecker
 		$config->cache_directory = '';
 		$config->allow_includes = false;
 		$config->totally_typed = true;
+		$config->ensure_array_string_offsets_exist = true;
 		$config->check_for_throws_docblock = $settings['check_throws'] ?? true;
 		$config->remember_property_assignments_after_call = $settings['memoize_properties'] ?? true;;
 		$config->memoize_method_calls = $settings['memoize_method_calls'] ?? false;
