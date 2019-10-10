@@ -98,10 +98,10 @@ class OnlineChecker
 		    $file_checker->analyze($context);
 
 		    $i = 0;
-	        while ($codebase->taint->hasNewSinksAndSources() && ++$i < 4) {
+	        /*while ($codebase->taint->hasNewSinksAndSources() && ++$i < 4) {
 	            $codebase->taint->clearNewSinksAndSources();
 	            $file_checker->analyze($context);
-	        }
+	        }*/
 
 		    if (($settings['unused_methods'] ?? false) || $fix_file) {
 		        $project_checker->checkClassReferences();
