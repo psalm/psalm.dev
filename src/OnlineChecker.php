@@ -93,7 +93,7 @@ class OnlineChecker
 		        $codebase->classlikes->addClassAlias($new_class, $aliased_class);
 		    }
 		    
-		    $codebase->taint = new \Psalm\Internal\Codebase\Taint();
+		    // $codebase->taint = new \Psalm\Internal\Codebase\Taint();
 		    
 		    $file_checker->analyze($context);
 
