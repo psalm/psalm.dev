@@ -173,12 +173,15 @@ var fetchFixedContents = function (code, cm) {
 [...document.querySelectorAll('pre code.language-php')].forEach(
 	function (code_element) {
 		code_element = code_element.parentNode;
+		const text = code_element.innerText;
+		if (text.indexOf('<?php') !== 0) {
+			return;
+		}
 		const parent = code_element.parentNode;
 		const container = document.createElement('div');
 		const textarea = document.createElement('textarea');
 		textarea.value = code_element.innerText;
-
-		const text = code_element.innerText;
+	
 		container.appendChild(textarea);
 		container.className = 'cm_inline_container';
 
