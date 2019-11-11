@@ -180,6 +180,8 @@ class OnlineChecker
 		$config->setCustomErrorLevel('DeprecatedMethod', Config::REPORT_INFO);
 		$config->setCustomErrorLevel('PossiblyUndefinedGlobalVariable', Config::REPORT_INFO);
 		$config->setCustomErrorLevel('PossiblyUndefinedVariable', Config::REPORT_INFO);
+		$config->setCustomErrorLevel('PossiblyUndefinedStringIntOffset', Config::REPORT_INFO);
+		$config->setCustomErrorLevel('PossiblyUndefinedStringArrayOffset', Config::REPORT_INFO);
 		$config->setCustomErrorLevel('NonStaticSelfCall', Config::REPORT_INFO);
 
 		if (($settings['unused_variables'] ?? false) || $fix_file) {
