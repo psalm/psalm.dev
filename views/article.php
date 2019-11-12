@@ -47,7 +47,7 @@ $minutes_taken = round(0.25 + ($word_count / 265));
 <body>
 <?php require('../includes/nav.php'); ?>
 <div class="post">
-<h1><?= PsalmDotOrg\AltHeadingParser::preventOrphans($article_title) ?></h1>
+<h1><?= PsalmDotOrg\AltHeadingParser::preventOrphans($article->title) ?></h1>
 <p class="meta">
     <?= date('F j, Y', strtotime($article->date)) ?> by <?= $article->author ?> - 
     <?php if ($article->canonical): ?>
