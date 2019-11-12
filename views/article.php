@@ -11,6 +11,15 @@ if (!$article) {
     exit;
 }
 
+$article_title_parts = explode(' ', $article->title);
+
+if (count($article_title_parts) > 1) {
+    $last_word = array_pop($article_title_parts);
+    $article_title = implode(' ', $article_title_parts) . '&nbsp;' . $last_word;
+} else {
+    $article_title = $article->title;
+}
+
 $word_count = str_word_count(strip_tags(preg_replace('/<pre>(.*?)<\\/pre>/', '', $article->html)));
 
 $word_count += 2 * substr_count($article->html, '<p>');
@@ -44,7 +53,7 @@ $minutes_taken = round(0.25 + ($word_count / 265));
 <body>
 <?php require('../includes/nav.php'); ?>
 <div class="post">
-<h1><?= $article->title ?></h1>
+<h1><?= $article_title ?></h1>
 <p class="meta">
     <?= date('F j, Y', strtotime($article->date)) ?> by <?= $article->author ?> - 
     <?php if ($article->canonical): ?>
