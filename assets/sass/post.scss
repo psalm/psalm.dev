@@ -64,13 +64,13 @@ div.post {
     }
 
     h2 {
-        font-size: 30px;
+        font-size: 24px;
         line-height: 1.3em;
         font-weight: 500;
     }
 
     h3 {
-        font-size: 24px;
+        font-size: 20px;
         font-weight: 500;
         line-height: 1.3em;
 
@@ -111,7 +111,7 @@ div.post {
         }
     }
 
-    p, ul {
+    p, ul, blockquote {
         padding-left: 20px;
         padding-right: 20px;
         hyphens: none;
@@ -127,15 +127,25 @@ div.post {
         }
 
         a[href*="//"]:not([href*="psalm.dev"]) {
-            content: '';
-            text-decoration: none;
-            padding-left: 0.1em;
             background-position: center right;
             background-repeat: no-repeat;
             background-image: linear-gradient(transparent,transparent),url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22%3E %3Cpath fill=%22%23fff%22 stroke=%22%23a75251%22 d=%22M1.5 4.518h5.982V10.5H1.5z%22/%3E %3Cpath fill=%22%23a75251%22 d=%22M5.765 1H11v5.39L9.427 7.937l-1.31-1.31L5.393 9.35l-2.69-2.688 2.81-2.808L4.2 2.544z%22/%3E %3Cpath fill=%22%23fff%22 d=%22M9.995 2.004l.022 4.885L8.2 5.07 5.32 7.95 4.09 6.723l2.882-2.88-1.85-1.852z%22/%3E %3C/svg%3E");
-            padding-right: 13px;
-            height: 1em;
-            vertical-align: text-bottom;
+            padding-right: 15px;
+        }
+    }
+
+    blockquote {
+        background-position: 0 0;
+        background-repeat: repeat-y;
+        background-size: 4px 11px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 32'%3E%3Cpath fill='none' stroke='%23D08685' stroke-width='4' d='M2 0c0 8 7 8 7 16-1 8-8 8-8 16s7 8 7 16-7 8-7 16'/%3E%3C/svg%3E");
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-bottom: 1em;
+        padding: 0 0 0 20px;
+
+        > p {
+            padding: 0;
         }
     }
 
@@ -150,10 +160,13 @@ div.post {
         color: #046075;
     }
 
-    pre {
-        padding: 20px;
+    > pre {
+        overflow: auto;
+        max-width: 100vw;
 
-        code {
+        > code {
+            display: block;
+            padding: 20px;
             font-family: "Operator Mono SSm A", "Operator Mono SSm B";
             font-style: normal;
             line-height: 1.7em;
@@ -179,6 +192,12 @@ div.post {
             padding-right: 0;
         }
 
+        blockquote {
+            margin-left: 0;
+            margin-right: 0;
+            padding-left: 30px;
+        }
+
         h1 {
             font-size: 40px;
         }
@@ -189,6 +208,14 @@ div.post {
             code {
                 font-size: 16px;
             }
+        }
+
+        h2 {
+            font-size: 30px;
+        }
+
+        h3 {
+            font-size: 24px;
         }
 
         ul {

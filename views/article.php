@@ -29,7 +29,7 @@ $minutes_taken = round(0.25 + ($word_count / 265));
 <script src="/assets/js/fetch.js"></script>
 <script src="/assets/js/codemirror.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cloud.typography.com/751592/7707372/css/fonts.css" />
-<link rel="stylesheet" href="/assets/css/site.css?2">
+<link rel="stylesheet" href="/assets/css/site.css?6">
 <link rel="icon" type="image/png" href="favicon.png">
 <?php if ($article->canonical): ?><link rel="canonical" href="<?= $article->canonical ?>" /><?php endif; ?>
 <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
