@@ -37,7 +37,7 @@ class AltHeadingParser implements \League\CommonMark\Block\Parser\BlockParserInt
         return true;
     }
 
-    public function preventOrphans(string $text): string
+    public static function preventOrphans(string $text): string
     {
         $article_title_parts = explode(' ', $text);
 
