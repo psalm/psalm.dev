@@ -24,7 +24,7 @@ class AltHeadingParser implements \League\CommonMark\Block\Parser\BlockParserInt
         $str = \preg_replace('/^[ \t]*#+[ \t]*$/', '', $str);
         $str = \preg_replace('/[ \t]+#+[ \t]*$/', '', $str);
 
-        $heading = new \League\CommonMark\Block\Element\Heading($level, $str);
+        $heading = new \League\CommonMark\Block\Element\Heading($level, self::preventOrphans($str));
 
         $id = preg_replace('/[^a-z\-]+/', '', strtolower(str_replace(' ', '-', $str)));
 
@@ -35,5 +35,17 @@ class AltHeadingParser implements \League\CommonMark\Block\Parser\BlockParserInt
         $context->setBlocksParsed(true);
 
         return true;
+    }
+
+    public function preventOrphans(string $text): string
+    {
+        $article_title_parts = explode(' ', $text);
+
+        if (count($article_title_parts) > 1) {
+            $last_word = array_pop($article_title_parts);
+            return implode(' ', $article_title_parts) . '&nbsp;' . $last_word;
+        }
+
+        return $text;
     }
 }
