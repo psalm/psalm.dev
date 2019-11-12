@@ -951,10 +951,9 @@ div.post {
       padding: 5px;
       border-radius: .3em;
       color: #000; }
-    div.post p a[href*="//"]:not([href*="psalm.dev"]):after, div.post ul a[href*="//"]:not([href*="psalm.dev"]):after {
+    div.post p a[href*="//"]:not([href*="psalm.dev"]), div.post ul a[href*="//"]:not([href*="psalm.dev"]) {
       content: '';
       text-decoration: none;
-      display: inline-block;
       padding-left: 0.1em;
       background-position: center right;
       background-repeat: no-repeat;

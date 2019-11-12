@@ -126,10 +126,9 @@ div.post {
             color: #000;
         }
 
-        a[href*="//"]:not([href*="psalm.dev"]):after {
+        a[href*="//"]:not([href*="psalm.dev"]) {
             content: '';
             text-decoration: none;
-            display: inline-block;
             padding-left: 0.1em;
             background-position: center right;
             background-repeat: no-repeat;
