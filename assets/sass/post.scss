@@ -26,6 +26,7 @@ div.cm_inline_container {
         background: #fff;
         padding: 10px;
         box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.3) inset;
+        transition: box-shadow 0.2s;
         max-width: 100vw;
         box-sizing: border-box;
 
@@ -35,10 +36,12 @@ div.cm_inline_container {
             position: absolute;
             top: 0;
             right: 0;
-            transition: opacity 0.3s;
-            background: rgba(0, 0, 0, 0.05);
+            transition: opacity 0.2s;
+            background: rgba(0, 0, 0, 0.04);
             padding: 5px 8px;
-            color: rgba(0, 0, 0, 0.5);
+            color: rgba(0, 0, 0, 0.4);
+            border-left: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
         }
     }
 
@@ -236,10 +239,10 @@ div.post {
     }
 
     .cm_inline_container div.CodeMirror.CodeMirror-focused {
-        box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.6) inset;
+        box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.6) inset, 0 0 0 3px rgba(0, 0, 0, 0.1) inset;
 
         &::after {
-            opacity: 0;
+            opacity: 0.5;
         }
     }
 }

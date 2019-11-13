@@ -177,7 +177,7 @@ var fetchFixedContents = function (code, cm) {
 	function (code_element) {
 		code_element = code_element.parentNode;
 		const text = code_element.innerText;
-		if (text.indexOf('<?php') !== 0) {
+		if (text.indexOf('<?= '<?' ?>php') !== 0) {
 			return;
 		}
 		const parent = code_element.parentNode;
