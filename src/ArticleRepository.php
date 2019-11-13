@@ -72,12 +72,6 @@ class ArticleRepository
         $canonical = $alt_html_inline_parser->getCanonical();
         $author = $alt_html_inline_parser->getAuthor();
 
-        if ($is_preview) {
-            $html = '<p class="preview_warning">Article preview - contents subject to change</p>'
-                . PHP_EOL
-                . $html;
-        }
-
         return new Article(
             $title,
             $description,
@@ -85,7 +79,8 @@ class ArticleRepository
             $date,
             $author,
             $name,
-            $html
+            $html,
+            $is_preview
         );
     }
 
