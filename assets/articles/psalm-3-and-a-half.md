@@ -295,7 +295,7 @@ The basic mechanics of Psalm’s implementation are working, and it has already 
 For now, you can play with a toy example:
 
 ```php
-<?php
+<?php // checkTaintedInput
 
 class A {
   public string $userId;

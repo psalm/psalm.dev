@@ -73,7 +73,7 @@ let fetchKey = null;
 
 const settings = {
     'unused_variables': true,
-    'unused_methods': <?= $name === 'psalm-3-and-a-half' ? 'true' : 'false' ?>,
+    'unused_methods': false,
     'memoize_properties': true,
     'memoize_method_calls': false,
     'check_throws': false,
@@ -147,7 +147,7 @@ var fetchFixedContents = function (code, cm) {
         },
         body: serializeJSON({
             code: code,
-            settings: JSON.stringify(settings),
+            settings: JSON.stringify({...settings, ...{unused_methods: true}}),
             fix: true,
         })
     })

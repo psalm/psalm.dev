@@ -17,7 +17,7 @@ class OnlineChecker
 		array $settings,
 		bool $fix_file
 	) : array {
-		$config = self::getPsalmConfig($settings, $fix_file);
+		$config = self::getPsalmConfig($settings, $fix_file, $file_contents);
 
 		$psalm_version = (string) \PackageVersions\Versions::getVersion('vimeo/psalm');
 		$parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
@@ -54,7 +54,10 @@ class OnlineChecker
 
 		$codebase->scanner->addFileToDeepScan(__DIR__ . '/../src/somefile.php');
 		
-		if (($settings['unused_variables'] ?? false) || ($settings['unused_methods'] ?? false) || $fix_file) {
+		if (($settings['unused_variables'] ?? false)
+			|| ($settings['unused_methods'] ?? false)
+			|| strpos($file_contents, '<?php // findUnusedCode') === 0
+		) {
 		    $codebase->reportUnusedCode();
 		}
 		
@@ -92,18 +95,25 @@ class OnlineChecker
 		    foreach ($class_aliases as $aliased_class => $new_class) {
 		        $codebase->classlikes->addClassAlias($new_class, $aliased_class);
 		    }
+
+		    $track_taints = strpos($file_contents, '<?php // checkTaintedInput') === 0;
 		    
-		    // $codebase->taint = new \Psalm\Internal\Codebase\Taint();
+		    if ($track_taints) {
+		    	$codebase->taint = new \Psalm\Internal\Codebase\Taint();
+		    }
 		    
 		    $file_checker->analyze($context);
 
 		    $i = 0;
-	        /*while ($codebase->taint->hasNewSinksAndSources() && ++$i < 4) {
-	            $codebase->taint->clearNewSinksAndSources();
-	            $file_checker->analyze($context);
-	        }*/
 
-		    if (($settings['unused_methods'] ?? false) || $fix_file) {
+		    if ($codebase->taint) {
+		    	while ($codebase->taint->hasNewSinksAndSources() && ++$i < 4) {
+		            $codebase->taint->clearNewSinksAndSources();
+		            $file_checker->analyze($context);
+		        }
+		    }
+
+		    if (($settings['unused_methods'] ?? false) || strpos($file_contents, '<?php // findUnusedCode') === 0) {
 		        $project_checker->checkClassReferences();
 		    }
 		    $issue_data = IssueBuffer::getIssuesData();
@@ -136,7 +146,7 @@ class OnlineChecker
 		}
 	}
 
-	private static function getPsalmConfig(array $settings, bool $fix_file) : \Psalm\Config
+	private static function getPsalmConfig(array $settings, bool $fix_file, string $file_contents) : \Psalm\Config
 	{
 		$config = Config::loadFromXML(
 	        (string)getcwd(),
@@ -184,7 +194,7 @@ class OnlineChecker
 		$config->setCustomErrorLevel('PossiblyUndefinedStringArrayOffset', Config::REPORT_INFO);
 		$config->setCustomErrorLevel('NonStaticSelfCall', Config::REPORT_INFO);
 
-		if (($settings['unused_variables'] ?? false) || $fix_file) {
+		if (($settings['unused_variables'] ?? false) || strpos($file_contents, '<?php // findUnusedCode') === 0) {
 		    $config->setCustomErrorLevel('UnusedParam', Config::REPORT_INFO);
 		    $config->setCustomErrorLevel('PossiblyUnusedParam', Config::REPORT_INFO);
 		    $config->setCustomErrorLevel('UnusedVariable', Config::REPORT_INFO);
@@ -194,7 +204,7 @@ class OnlineChecker
 		    $config->setCustomErrorLevel('UnusedVariable', Config::REPORT_SUPPRESS);
 		}
 
-		if (($settings['unused_methods'] ?? false) || $fix_file) {
+		if (($settings['unused_methods'] ?? false) || strpos($file_contents, '<?php // findUnusedCode') === 0) {
 		    $config->setCustomErrorLevel('UnusedClass', Config::REPORT_INFO);
 		    $config->setCustomErrorLevel('UnusedMethod', Config::REPORT_INFO);
 		    $config->setCustomErrorLevel('PossiblyUnusedMethod', Config::REPORT_INFO);
@@ -207,7 +217,6 @@ class OnlineChecker
 		    $config->setCustomErrorLevel('PossiblyUnusedProperty', Config::REPORT_SUPPRESS);
 		    $config->setCustomErrorLevel('UnusedProperty', Config::REPORT_SUPPRESS);
 		}
-
 
 		$config->setCustomErrorLevel('MoreSpecificReturnType', Config::REPORT_INFO);
 		$config->setCustomErrorLevel('LessSpecificReturnStatement', Config::REPORT_INFO);
