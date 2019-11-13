@@ -879,11 +879,20 @@ div.cm_inline_container {
       background: #eee;
       color: #000; }
   div.cm_inline_container .CodeMirror {
-    background: #f3f3f3;
+    background: #fff;
     padding: 10px;
-    box-shadow: 0 -1px 0px rgba(0, 0, 0, 0.3) inset;
+    box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.3) inset;
     max-width: 100vw;
     box-sizing: border-box; }
+    div.cm_inline_container .CodeMirror::after {
+      content: 'interactive';
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.05);
+      padding: 5px 8px;
+      color: rgba(0, 0, 0, 0.5); }
   div.cm_inline_container .CodeMirror-scroll {
     height: auto; }
 
@@ -1018,8 +1027,7 @@ div.post {
   div.post ul {
     padding-left: 20px; }
   .cm_inline_container div.CodeMirror.CodeMirror-focused {
-    background: #fff;
-    box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.3) inset; } }
+    box-shadow: 0 0 0px 2px rgba(0, 0, 0, 0.5) inset; } }
 
 body {
   font-family: "Tiempos Text", Georgia;
