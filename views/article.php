@@ -47,9 +47,9 @@ $minutes_taken = round(0.25 + ($word_count / 265));
 <body>
 <?php require('../includes/nav.php'); ?>
 <div class="post">
-<? if ($article->is_preview) : ?>
+<?php if ($article->is_preview) : ?>
     <p class="preview_warning">Article preview - contents subject to change</p>
-<? endif ?>
+<?php endif ?>
 <h1><?= PsalmDotOrg\AltHeadingParser::preventOrphans($article->title) ?></h1>
 <p class="meta">
     <?= date('F j, Y', strtotime($article->date)) ?> by <?= $article->author ?> - 
