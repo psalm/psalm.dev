@@ -126,7 +126,7 @@ div.post {
         }
     }
 
-    p, ul, blockquote {
+    p, ul, ol, blockquote {
         padding-left: 20px;
         padding-right: 20px;
         hyphens: none;
@@ -189,7 +189,7 @@ div.post {
         }
     }
 
-    ul {
+    ul, ol {
         padding-left: 40px;
     }
 
@@ -217,7 +217,7 @@ div.post {
             font-size: 40px;
         }
 
-        p, ul {
+        p, ul, ol, blockquote {
             font-size: 19px;
 
             code {
@@ -233,7 +233,7 @@ div.post {
             font-size: 24px;
         }
 
-        ul {
+        ul, ol {
             padding-left: 20px;
         }
     }
