@@ -1001,6 +1001,8 @@ div.post {
       font-size: 1.1em; }
   div.post ul, div.post ol {
     padding-left: 40px; }
+    div.post ul li, div.post ol li {
+      margin-bottom: .5em; }
   div.post .cm-s-elegant span.cm-number,
   div.post .cm-s-elegant span.cm-string,
   div.post .cm-s-elegant span.cm-atom {
