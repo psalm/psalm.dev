@@ -32,6 +32,8 @@ class OnlineChecker
 		    ),
 		    $output_options
 		);
+		
+		$project_checker->setPhpVersion('7.4');
 
 		$codebase = $project_checker->getCodebase();
 		$codebase->collect_references = true;
