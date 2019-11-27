@@ -87,16 +87,23 @@ var latestFetch = 0;
 var fetchAnnotations = function (code, callback, options, cm) {
     latestFetch++;
     fetchKey = latestFetch;
+
+    var submitData = {
+        code: code,
+        settings: JSON.stringify(settings)
+    };
+
+    if (urlParams.has('php')) {
+        submitData.php = urlParams.get('php');
+    }
+
     fetch('/check', {
         method: 'POST',
         headers: {
             'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
             'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
         },
-        body: serializeJSON({
-            code: code,
-            settings: JSON.stringify(settings),
-        })
+        body: serializeJSON(submitData)
     })
     .then(function (response) {
         return response.json();
