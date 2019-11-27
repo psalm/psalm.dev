@@ -23,7 +23,7 @@ Psalm has best-in-class support for verifying docblock-provided property types, 
 
 Psalm provides a number of property checks that other packages do not:
 
-### Preventing property access before initialisation
+### Prevent property access before initialisation
 
 In PHP 7.4, accessing a property with an explicit type causes a fatal error in PHP if that property has not yet been defined. Psalm detects those errors for you:
 
@@ -40,7 +40,7 @@ class A {
 }
 ```
 
-###  Preventing uninitialised properties in the constructor
+###  Warn about properties not initialised within constructors
 
 Psalm will also warn you about properties that weren’t assigned a value inside the constructor:
 
