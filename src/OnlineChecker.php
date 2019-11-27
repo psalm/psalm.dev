@@ -33,7 +33,21 @@ class OnlineChecker
 		    $output_options
 		);
 		
-		$project_checker->setPhpVersion('7.4');
+		$php_version = $_GET['php'] ?? '7.4';
+		
+		if (!preg_match('/^[57]\.\d$/', $php_version)) {
+			return [
+		        'error' => [
+		            'message' => 'Usupported PHP version ' . $php_version,
+		            'line_from' => 1,
+		            'from' => 0,
+		            'to' => 0,
+		            'type' => 'user_error'
+		        ]
+		    ];
+		}
+		
+		$project_checker->setPhpVersion($php_version);
 
 		$codebase = $project_checker->getCodebase();
 		$codebase->collect_references = true;
