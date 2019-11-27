@@ -15,7 +15,8 @@ class OnlineChecker
 	public static function getResults(
 		string $file_contents,
 		array $settings,
-		bool $fix_file
+		bool $fix_file,
+		string $php_version = '7.4'
 	) : array {
 		$config = self::getPsalmConfig($settings, $fix_file, $file_contents);
 
@@ -32,20 +33,6 @@ class OnlineChecker
 		    ),
 		    $output_options
 		);
-		
-		$php_version = $_GET['php'] ?? '7.4';
-		
-		if (!preg_match('/^[57]\.\d$/', $php_version)) {
-			return [
-		        'error' => [
-		            'message' => 'Usupported PHP version ' . $php_version,
-		            'line_from' => 1,
-		            'from' => 0,
-		            'to' => 0,
-		            'type' => 'user_error'
-		        ]
-		    ];
-		}
 		
 		$project_checker->setPhpVersion($php_version);
 
