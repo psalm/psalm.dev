@@ -71,4 +71,11 @@ if (strlen($file_contents) > 10000) {
     exit;
 }
 
-echo json_encode(PsalmDotOrg\OnlineChecker::getResults($file_contents, $settings, $fix_file));
+$php_version = $_POST['php'] ?? '7.4';
+		
+if (!preg_match('/^[57]\.\d$/', $php_version)) {
+    echo json_encode(['error' => 'PHP version ' . $php_version . ' not supported']);
+    exit;
+}
+
+echo json_encode(PsalmDotOrg\OnlineChecker::getResults($file_contents, $settings, $fix_file, $php_version));
