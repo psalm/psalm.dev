@@ -59,6 +59,9 @@ $minutes_taken = round(0.25 + ($word_count / 265));
         <?= $minutes_taken ?>&nbsp;minute&nbsp;read
     <?php endif; ?>
 </p>
+<?php if ($article->notice) : ?>
+    <div class="notice"><?= $article->notice ?></div>
+<?php endif ?>
 <?= $article->html ?>
 </div>
 <?php require('../includes/footer.php'); ?>

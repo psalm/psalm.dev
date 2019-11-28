@@ -12,6 +12,7 @@ class Article
 	public $date;
 	public $author;
 	public $slug;
+	public $notice;
 	public $is_preview;
 
 	public function __construct(
@@ -22,6 +23,7 @@ class Article
 		string $author,
 		string $slug,
 		string $html,
+		string $notice,
 		bool $is_preview
 	) {
 		$this->title = $title;
@@ -32,5 +34,6 @@ class Article
 		$this->author = $author;
 		$this->slug = $slug;
 		$this->is_preview = $is_preview;
+		$this->notice = $notice;
 	}
 }

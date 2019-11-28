@@ -71,6 +71,7 @@ class ArticleRepository
         $title = $alt_html_inline_parser->getTitle();
         $canonical = $alt_html_inline_parser->getCanonical();
         $author = $alt_html_inline_parser->getAuthor();
+        $notice = $converter->convertToHtml($alt_html_inline_parser->getNotice());
 
         return new Article(
             $title,
@@ -80,6 +81,7 @@ class ArticleRepository
             $author,
             $name,
             $html,
+            $notice,
             $is_preview
         );
     }
