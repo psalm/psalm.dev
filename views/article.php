@@ -61,6 +61,7 @@ $minutes_taken = round(0.25 + ($word_count / 265));
 </p>
 <?php if ($article->notice) : ?>
     <div class="notice"><?= $article->notice ?></div>
+    <hr />
 <?php endif ?>
 <?= $article->html ?>
 </div>
