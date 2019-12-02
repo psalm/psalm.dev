@@ -117,7 +117,7 @@ class OnlineChecker
 		    }
 
 		    if (($settings['unused_methods'] ?? false) || strpos($file_contents, '<?php // findUnusedCode') === 0) {
-		        $project_checker->checkClassReferences();
+		        $project_checker->consolidateAnalyzedData();
 		    }
 		    $issue_data = IssueBuffer::getIssuesData();
 
