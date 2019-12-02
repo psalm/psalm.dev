@@ -48,7 +48,7 @@ class OnlineChecker
 		}
 
 		$infer_types_from_usage = true;
-		$project_checker->checkClassReferences();
+		$project_checker->consolidateAnalyzedData();
 		$file_path = __DIR__ . '/../src/somefile.php';
 		$file_provider->registerFile(
 		    $file_path,
