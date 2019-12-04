@@ -186,6 +186,7 @@ class OnlineChecker
 		$config->setCustomErrorLevel('MixedPropertyAssignment', Config::REPORT_INFO);
 		$config->setCustomErrorLevel('MixedInferredReturnType', Config::REPORT_INFO);
 		$config->setCustomErrorLevel('MixedReturnStatement', Config::REPORT_INFO);
+		$config->setCustomErrorLevel('MixedArrayAssignment', Config::REPORT_INFO);
 		$config->setCustomErrorLevel('MissingPropertyType', Config::REPORT_INFO);
 		$config->setCustomErrorLevel('MissingReturnType', Config::REPORT_INFO);
 		$config->setCustomErrorLevel('MissingClosureReturnType', Config::REPORT_INFO);
