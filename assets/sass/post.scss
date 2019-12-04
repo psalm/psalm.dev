@@ -23,9 +23,9 @@ div.cm_inline_container {
     }
 
     .CodeMirror {
-        background: #fff;
+        background: #f5f5f5;
         padding: 10px;
-        box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.3) inset;
+        box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.2) inset;
         transition: box-shadow 0.2s;
         max-width: 100vw;
         box-sizing: border-box;
@@ -158,7 +158,7 @@ div.post {
         background-position: 0 0;
         background-repeat: repeat-y;
         background-size: 4px 11px;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 32'%3E%3Cpath fill='none' stroke='%23D08685' stroke-width='4' d='M2 0c0 8 7 8 7 16-1 8-8 8-8 16s7 8 7 16-7 8-7 16'/%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 32'%3E%3Cpath fill='none' stroke='%23666666' stroke-width='4' d='M2 0c0 8 7 8 7 16-1 8-8 8-8 16s7 8 7 16-7 8-7 16'/%3E%3C/svg%3E");
         margin-left: 20px;
         margin-right: 20px;
         margin-bottom: 1em;
