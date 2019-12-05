@@ -29,7 +29,6 @@ $minutes_taken = round(0.25 + ($word_count / 265));
 <html>
 <head>
 <title><?= $article->title ?></title>
-<script src="/assets/js/fetch.js"></script>
 <script src="/assets/js/codemirror.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cloud.typography.com/751592/7707372/css/fonts.css" />
 <link rel="stylesheet" href="/assets/css/site.css?6">

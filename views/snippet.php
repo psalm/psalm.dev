@@ -41,7 +41,6 @@ $created_on->setTimezone(new DateTimeZone("UTC"));
 <html>
 <head>
 <title>Psalm - a static analysis tool for PHP</title>
-<script src="/assets/js/fetch.js"></script>
 <script src="/assets/js/codemirror.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cloud.typography.com/751592/7707372/css/fonts.css" />
 <link rel="stylesheet" href="/assets/css/site.css">
