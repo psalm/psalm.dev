@@ -64,6 +64,11 @@ if (isset($_GET['format'])) {
         header('Content-Type: application/json');
         echo json_encode(PsalmDotOrg\OnlineChecker::getResults($code, $settings, false));
         exit;
+    } else {
+        header('HTTP/1.1 400 Bad Request');
+        header('Content-Type: text/plain');
+        echo 'Unrecognized format';
+        exit;
     }
 }
 
