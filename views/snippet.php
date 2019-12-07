@@ -54,7 +54,9 @@ if (isset($_GET['format'])) {
         header('Content-Type: text/plain');
         echo $code;
         exit;
-    } elseif ($_GET['format'] === 'results') {
+    }
+    
+    if ($_GET['format'] === 'results') {
         $settings = array_intersect_key(
             array_map(function (string $val): bool {
                 return (bool) intval($val);
@@ -64,12 +66,12 @@ if (isset($_GET['format'])) {
         header('Content-Type: application/json');
         echo json_encode(PsalmDotOrg\OnlineChecker::getResults($code, $settings, false));
         exit;
-    } else {
-        header('HTTP/1.1 400 Bad Request');
-        header('Content-Type: text/plain');
-        echo 'Unrecognized format';
-        exit;
     }
+    
+    header('HTTP/1.1 400 Bad Request');
+    header('Content-Type: text/plain');
+    echo 'Unrecognized format';
+    exit;
 }
 
 
