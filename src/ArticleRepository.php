@@ -3,6 +3,7 @@
 namespace PsalmDotOrg;
 
 use League\CommonMark\CommonMarkConverter;
+use League\CommonMark\Ext\Table\TableExtension;
 
 class ArticleRepository
 {
@@ -57,6 +58,9 @@ class ArticleRepository
         $alt_html_inline_parser = new AltHtmlInlineParser();
 
         $environment = \League\CommonMark\Environment::createCommonMarkEnvironment();
+
+        // Add this extension
+        $environment->addExtension(new TableExtension());
         $environment->addBlockParser($alt_heading_parser, 100);
         $environment->addInlineParser($alt_html_inline_parser, 100);
 
