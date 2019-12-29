@@ -21,20 +21,8 @@ if (!is_array($settings)) {
 
 const PHP_PARSER_VERSION = '4.0.0';
 
-function jsonExceptionHandler($exception) {
-    $message = str_replace(__DIR__, '', $exception->getFile() . ': ' . $exception->getMessage());
-    echo json_encode([
-        'error' => [
-            'message' => $message,
-            'line_from' => $exception->getLine(),
-            'type' => 'psalm_error'
-        ]
-    ]);
-    exit;
-}
-
 // Set user-defined error handler function
-set_exception_handler("jsonExceptionHandler");
+set_exception_handler([\PsalmDotOrg\ExceptionHandler::class, 'json']);
 
 $file_contents = $_POST['code'];
 

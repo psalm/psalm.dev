@@ -64,6 +64,7 @@ if (isset($_GET['format'])) {
             array_flip($settings_fields)
         );
         header('Content-Type: application/json');
+        set_exception_handler([\PsalmDotOrg\ExceptionHandler::class, 'json']);
         echo json_encode(PsalmDotOrg\OnlineChecker::getResults($code, $settings, false));
         exit;
     }
