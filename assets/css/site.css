@@ -989,7 +989,9 @@ div.post {
     div.post table th {
       padding: 0 0 0.5em 0;
       font-weight: 500;
-      border-bottom: 1px solid #CCC; }
+      border-bottom: 1px solid #CCC;
+      text-align: left;
+      vertical-align: bottom; }
     div.post table td {
       padding: 0.5em 0 0; }
   div.post p.preview_warning {
