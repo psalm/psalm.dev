@@ -126,7 +126,7 @@ div.post {
         }
     }
 
-    p, ul, ol, blockquote {
+    p, ul, ol, blockquote, table {
         padding-left: 20px;
         padding-right: 20px;
         hyphens: none;
@@ -166,6 +166,20 @@ div.post {
 
         > p {
             padding: 0;
+        }
+    }
+
+    table {
+        width: 90%;
+        margin: 0 auto;
+        
+        th {
+            padding: 0 0 0.5em 0;
+            border-bottom: 1px solid #CCC;
+        }
+
+        td {
+            padding: 0.5em 0 0;
         }
     }
 
@@ -230,7 +244,7 @@ div.post {
             font-size: 40px;
         }
 
-        p, ul, ol, blockquote {
+        p, ul, ol, blockquote, table {
             font-size: 19px;
 
             code {
