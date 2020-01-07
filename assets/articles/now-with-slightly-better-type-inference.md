@@ -42,6 +42,8 @@ function getOwnerName(
 }
 ```
 
+If you're interested in this analysis, check out [my talk](https://docs.google.com/presentation/d/1BW9Xe1VFKtjqskcrRQ2m29f4oxeVFL-fL5Gww_JOPgE/edit?usp=sharing) from slide 81 onwards.
+
 ## The new (ever so slightly better) type inference
 
 The improved system builds on that analysis, adding better handling for strings and callable types.
