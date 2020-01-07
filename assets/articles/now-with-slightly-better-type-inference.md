@@ -13,7 +13,7 @@ If you’re not an ardent fan, you might be wondering why you should care, but h
 
 ## The existing (really quite good) type inference
 
-Psalm does some fairly intricate handling of conditionals, allowing it to understand the following code (that’s rejected by other static analysis tools):
+Psalm does some fairly intricate handling of conditionals, allowing it to understand the following code rejected by other static analysis tools:
 
 ```php
 <?php
