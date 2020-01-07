@@ -35,7 +35,9 @@ function getOwnerName(
   if ($file_owner) {
     return $file_owner->name;
   }
-    
+
+  // Psalm understands that $folder_owner
+  // cannot be null here
   return $folder_owner->name;
 }
 ```
