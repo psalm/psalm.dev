@@ -20,7 +20,8 @@ final class ExceptionHandler
                     'line_from' => $throwable->getLine(),
                     'type' => 'psalm_error'
                 ]
-            ]
+            ],
+            JSON_THROW_ON_ERROR
         );
         exit;
     }
