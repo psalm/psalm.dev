@@ -68,7 +68,7 @@ class ArticleRepository
 
         $html = $converter->convertToHtml($markdown);
 
-        $description = substr(trim(strip_tags($html)), 0, 150) . '…';
+        $description = mb_substr(trim(strip_tags($html)), 0, 150) . '…';
 
         $date = $alt_html_inline_parser->getDate();
 
