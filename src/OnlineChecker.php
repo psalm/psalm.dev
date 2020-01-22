@@ -122,7 +122,7 @@ class OnlineChecker
 
 		    $issues = IssueBuffer::getIssuesData();
 		    
-		    $issue_data = reset($issues);
+		    $issue_data = reset($issues) ?: [];
 
 		    $fixed_file_contents = null;
 
