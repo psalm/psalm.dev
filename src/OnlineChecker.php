@@ -119,7 +119,10 @@ class OnlineChecker
 		    if (($settings['unused_methods'] ?? false) || strpos($file_contents, '<?php // findUnusedCode') === 0) {
 		        $project_checker->consolidateAnalyzedData();
 		    }
-		    $issue_data = reset(IssueBuffer::getIssuesData());
+
+		    $issues = IssueBuffer::getIssuesData();
+		    
+		    $issue_data = reset($issues);
 
 		    $fixed_file_contents = null;
 
