@@ -177,7 +177,7 @@ class OnlineChecker
 		$config->ignore_internal_nullable_issues = !($settings['strict_internal_functions'] ?? false);
 		$config->ignore_internal_falsable_issues = !($settings['strict_internal_functions'] ?? false);
 		
-		$config->addStubFile('vendor/vimeo/psalm/src/Psalm/Internal/Stubs/ext-ds.php');
+		$config->addStubFile(dirname(__DIR__) . '/vendor/vimeo/psalm/src/Psalm/Internal/Stubs/ext-ds.php');
 		
 		$config->setCustomErrorLevel('MixedArrayAccess', Config::REPORT_INFO);
 		$config->setCustomErrorLevel('MixedArrayOffset', Config::REPORT_INFO);
