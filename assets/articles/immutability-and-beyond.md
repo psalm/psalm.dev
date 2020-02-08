@@ -15,7 +15,7 @@ I've recently added a raft of annotations that can help functional programming f
 
 There are already plenty of ways to think about how you structure your code (one example: [cyclomatic complexity](https://en.wikipedia.org/wiki/Cyclomatic_complexity)). Functional programming, with its focus on immutability and functional purity, gives you yet another way to rate your code’s architecture. It’s one that many find helpful when figuring out how to improve their code-writing skills.
 
-If you're only dimly aware of what functional programming is, and how it can be useful in an object-oriented language like PHP, [this is a good introductory video](https://vimeo.com/180287057#t=51).
+If you're only dimly aware of what functional programming is, and how it can be useful in an object-oriented language like PHP, [this is a good introductory video](https://www.youtube.com/watch?v=US8QG9I1XW0#t=51).
 
 This article isn't designed to get everyone using these patterns, but I hope it'll pique your interest. 
 
