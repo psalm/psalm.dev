@@ -46,17 +46,17 @@ if ($c) {} elseif ($c) {}</textarea>
     <div class="intro">
         <p>Psalm is a static analysis tool that’s designed to improve large PHP codebases by identifying both obvious and hard-to-spot bugs.</p>
 
-        <p>Psalm comes with a fixer that allows you to improve your code automatically, too.</p>
+        <hr />
+        
+        <p><a href="https://psalm.dev/docs/manipulating_code/fixing/">Psalm comes with a fixer</a> that allows you to improve your code automatically, too.</p>
 
         <p>You should use Psalm if you want to</p>
 
         <ul>
             <li>prevent errors in a big refactor</li>
             <li>maintain a consistent level of quality across a large team</li>
-            <li>guarantee that there won’t be any type-related runtime errors</li>
+            <li>guarantee that there won’t be any <a href="https://psalm.dev/articles/php-or-type-safety-pick-any-two">type-related runtime errors</a></li>
         </ul>
-
-        <p>Interested in how Psalm came to be? Read <a href="/articles/fixing-code-that-aint-broken">this explainer</a>.</p>
     </div>
 </div>
 <script>
