@@ -50,7 +50,7 @@ if ($c) {} elseif ($c) {}</textarea>
         
         <p>Psalm <a href="https://psalm.dev/docs/manipulating_code/fixing/">comes with a fixer</a> that allows you to improve your code automatically, too.</p>
 
-        <p>You should use Psalm if you want to prevent errors in a big refactor, maintain a consistent
+        <p>You should use Psalm if you want to prevent errors in a big refactor and/or maintain a consistent
             level of quality across a large team. If you use it at its strictest you can virtually guarantee that there won’t be any
             <a href="https://psalm.dev/articles/php-or-type-safety-pick-any-two">type-related runtime errors</a>,
             and write PHP code <a href="https://psalm.dev/articles/immutability-and-beyond">that’s guaranteed to be safe</a>.
