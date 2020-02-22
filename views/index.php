@@ -54,7 +54,7 @@ if ($c) {} elseif ($c) {}</textarea>
             level of quality across a large team. If you use it at its strictest you can virtually guarantee that there won’t be any
             <a href="https://psalm.dev/articles/php-or-type-safety-pick-any-two">type-related runtime errors</a>,
             and <a href="https://psalm.dev/articles/immutability-and-beyond">write PHP code that has a number of useful safety guarantees</a>.
-        </ul>
+        </p>
     </div>
 </div>
 <script>
