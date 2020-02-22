@@ -44,7 +44,7 @@ if ($c) {} elseif ($c) {}</textarea>
     
 
     <div class="intro">
-        <p>Psalm is a static analysis tool that’s designed to improve large PHP codebases by identifying both obvious and hard-to-spot bugs.</p>
+        <p>Psalm is a static analysis tool for PHP that’s designed to help you improve large codebases by identifying both obvious and hard-to-spot bugs.</p>
 
         <hr />
         
