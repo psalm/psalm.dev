@@ -1,5 +1,11 @@
 .container.front {
     padding-top: 50px;
+
+    @media all and (max-width: 1021px) {
+        & {
+            padding-top: 20px;
+        }
+    }
 }
 
 .intro {

@@ -690,6 +690,9 @@ nav {
 
 .container.front {
   padding-top: 50px; }
+  @media all and (max-width: 1021px) {
+    .container.front {
+      padding-top: 20px; } }
 
 .intro {
   max-width: 492px;
