@@ -48,7 +48,7 @@ if ($c) {} elseif ($c) {}</textarea>
 
         <hr />
         
-        <p><a href="https://psalm.dev/docs/manipulating_code/fixing/">Psalm comes with a fixer</a> that allows you to improve your code automatically, too.</p>
+        <p>Psalm <a href="https://psalm.dev/docs/manipulating_code/fixing/">comes with a fixer</a> that allows you to improve your code automatically, too.</p>
 
         <p>You should use Psalm if you want to prevent errors in a big refactor, maintain a consistent
             level of quality across a large team. If you use it at its strictest you can virtually guarantee that there won’t be any
