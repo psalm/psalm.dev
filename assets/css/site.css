@@ -647,7 +647,7 @@ nav {
     list-style: none;
     float: right;
     margin-top: 25px;
-    margin: 25px 20px 0 0; }
+    margin: 25px 10px 0 0; }
     nav ul li {
       display: inline-block;
       margin-left: 25px; }
@@ -694,8 +694,8 @@ nav {
       padding-top: 20px; } }
 
 .intro {
-  max-width: 492px;
-  padding: 0 20px 50px;
+  max-width: 472px;
+  padding: 0 40px 60px 20px;
   float: left;
   margin-top: -10px; }
 
