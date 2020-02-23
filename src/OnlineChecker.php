@@ -130,6 +130,8 @@ class OnlineChecker
 
 		    $transformed_type_map = [];
 
+		    ksort($type_map);
+
 		    foreach ($type_map as $start => $rest) {
 		    	$transformed_type_map[] = ['from' => $start, 'to' => $rest[0], 'type' => $rest[1]];
 		    }
