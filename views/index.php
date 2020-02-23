@@ -18,12 +18,9 @@
         
         <p>Psalm <a href="https://psalm.dev/docs/manipulating_code/fixing/">comes with a fixer</a> that allows you to improve your code automatically, too.</p>
 
-        <p>You should use Psalm if you want to prevent errors in a big refactor and/or maintain a consistent
-            level of quality across a large team.</p>
+        <p>Psalm is designed to be useful on both large legacy codebases and small, modern ones.</p>
 
-        <p>If you use the tool at its strictest setting you can virtually guarantee that there won’t be any
-            <a href="https://psalm.dev/articles/php-or-type-safety-pick-any-two">type-related runtime errors</a>.
-            Psalm also allows you to write PHP code <a href="https://psalm.dev/articles/immutability-and-beyond">with immutability guarantees</a>.
+        <p><a href="articles/php-or-type-safety-pick-any-two">It can help you prevent</a> the vast majority type-related runtime errors, and it allows you to experiment with <a href="articles/immutability-and-beyond">a variety of safe coding patterns</a> found in other languages.
         </p>
     </div>
     <div class="cm_container">
