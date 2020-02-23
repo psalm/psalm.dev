@@ -141,7 +141,7 @@ class OnlineChecker
 		    		$next_type_data = $transformed_type_map[$i + 1];
 
 		    		if ($next_type_data['from'] < $type_data['to']) {
-		    			$type_data['to'] = $next_type_data['from'];
+		    			$type_data['to'] = $next_type_data['from'] - 1;
 
 		    			$transformed_type_map[$i] = $type_data;
 		    		}
