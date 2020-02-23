@@ -115,6 +115,7 @@ div.cm_container {
     overflow: hidden;
     transition: 0.2s linear border-color, 0.2s linear box-shadow;
     position: relative;
+    max-width: 100vw;
 }
 
 .code_expanded {
