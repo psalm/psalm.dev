@@ -612,9 +612,12 @@ span.CodeMirror-selectedtext {
   top: 2px; }
 
 .CodeMirror-lint-message-error,
-.CodeMirror-lint-message-warning {
-  background-position-y: 2px;
-  padding-left: 20px; }
+.CodeMirror-lint-message-warning,
+.CodeMirror-lint-message-type,
+.CodeMirror-lint-message-reference {
+  padding-left: 20px;
+  background-position: top left;
+  background-repeat: no-repeat; }
 
 .CodeMirror-lint-markers {
   width: 24px; }
