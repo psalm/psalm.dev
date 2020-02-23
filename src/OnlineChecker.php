@@ -26,11 +26,13 @@ class OnlineChecker
 		$output_options = new \Psalm\Report\ReportOptions();
 		$output_options->format = \Psalm\Report::TYPE_JSON;
 
+		$providers = new \Psalm\Internal\Provider\Providers(
+	        $file_provider
+	    );
+
 		$project_checker = new ProjectAnalyzer(
 		    $config,
-		    new \Psalm\Internal\Provider\Providers(
-		        $file_provider
-		    ),
+		    $providers,
 		    $output_options
 		);
 		
@@ -46,6 +48,8 @@ class OnlineChecker
 		    );
 		    $project_checker->setAllIssuesToFix();
 		}
+
+		$codebase->store_node_types = true;
 
 		$infer_types_from_usage = true;
 		$project_checker->consolidateAnalyzedData();
@@ -121,6 +125,8 @@ class OnlineChecker
 		    }
 
 		    $issues = IssueBuffer::getIssuesData();
+
+		    $type_map = $providers->file_reference_provider->getFileMaps();
 		    
 		    $issue_data = reset($issues) ?: [];
 
@@ -136,6 +142,7 @@ class OnlineChecker
 		    	'version' => $psalm_version,
 		    	'fixed_contents' => $fixed_file_contents, 
 		    	'hash' => md5($file_contents),
+		    	'type_map' => $type_map
 		    ];
 		} catch (\PhpParser\Error $e) {
 		    $attributes = $e->getAttributes();
