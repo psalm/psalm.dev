@@ -12,7 +12,7 @@
 <?php require('../includes/nav.php'); ?>
 <div class="container front" id="page_container">
     <div class="intro">
-        <p>Psalm is a static analysis tool for PHP that’s designed to help you improve codebases by identifying both obvious and hard-to-spot bugs.</p>
+        <p>Psalm is an open-source static analysis tool for PHP that helps you identify both obvious and hard-to-spot bugs in your code.</p>
 
         <hr />
         
