@@ -191,9 +191,20 @@ div.cm_container {
         width: auto;
     }
 
+    .cm_container div.CodeMirror,
+    #psalm_output,
+    #settings_panel {
+        border-left: 0;
+        border-right: 0;
+    }
+
+    .cm_container div.CodeMirror {
+        border-bottom: 0;
+    }
+
     .code_expanded .cm_container {
         box-sizing: border-box;
-        padding: 0 10px 70px;
+        padding: 0 0 70px;
     }
 
     #expander {
