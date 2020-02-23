@@ -77,6 +77,10 @@ div.cm_container {
             display: none;
         }
     }
+
+    #psalm_output {
+        white-space: pre-wrap;
+    }
 }
 
 #psalm_output,

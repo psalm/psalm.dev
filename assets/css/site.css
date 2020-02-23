@@ -742,6 +742,8 @@ div.cm_container {
         top: 3px; }
     div.cm_container button#shrinker {
       display: none; }
+  div.cm_container #psalm_output {
+    white-space: pre-wrap; }
 
 #psalm_output,
 #settings_panel {
