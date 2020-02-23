@@ -127,6 +127,12 @@ class OnlineChecker
 		    $issues = IssueBuffer::getIssuesData();
 
 		    $type_map = $codebase->analyzer->getFileMaps()[$file_path][1];
+
+		    $transformed_type_map = [];
+
+		    foreach ($type_map as $start => $rest) {
+		    	$transformed_type_map[] = [$start, $rest[0], $rest[1]];
+		    }
 		    
 		    $issue_data = reset($issues) ?: [];
 
@@ -142,7 +148,7 @@ class OnlineChecker
 		    	'version' => $psalm_version,
 		    	'fixed_contents' => $fixed_file_contents, 
 		    	'hash' => md5($file_contents),
-		    	'type_map' => $type_map
+		    	'type_map' => $transformed_type_map
 		    ];
 		} catch (\PhpParser\Error $e) {
 		    $attributes = $e->getAttributes();
