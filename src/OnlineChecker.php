@@ -126,7 +126,7 @@ class OnlineChecker
 
 		    $issues = IssueBuffer::getIssuesData();
 
-		    $type_map = $providers->file_reference_provider->getFileMaps();
+		    $type_map = $codebase->analyzer->getFileMaps();
 		    
 		    $issue_data = reset($issues) ?: [];
 
