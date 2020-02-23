@@ -837,7 +837,7 @@ div.cm_container {
 @media all and (max-width: 500px) {
   .intro {
     padding-bottom: 20px; }
-  .cm_container {
+  div.cm_container {
     padding-bottom: 80px; } }
 
 @media all and (min-device-width: 1022px) {
