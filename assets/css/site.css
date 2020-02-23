@@ -836,12 +836,12 @@ div.cm_container {
     padding: 0 25px 50px;
     max-width: 492px;
     width: auto; }
-  .cm_container div.CodeMirror,
-  #psalm_output,
-  #settings_panel {
+  .code_expanded .cm_container div.CodeMirror,
+  .code_expanded #psalm_output,
+  .code_expanded #settings_panel {
     border-left: 0;
     border-right: 0; }
-  .cm_container div.CodeMirror {
+  .code_expanded .cm_container div.CodeMirror {
     border-bottom: 0; }
   .code_expanded .cm_container {
     box-sizing: border-box;
