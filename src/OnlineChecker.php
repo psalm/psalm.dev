@@ -133,6 +133,18 @@ class OnlineChecker
 		    foreach ($type_map as $start => $rest) {
 		    	$transformed_type_map[] = ['from' => $start, 'to' => $rest[0], 'type' => $rest[1]];
 		    }
+
+		    foreach ($transformed_type_map as $i => $type_data) {
+		    	if (isset($transformed_type_map[$i + 1])) {
+		    		$next_type_data = $transformed_type_map[$i + 1];
+
+		    		if ($next_type_data['from'] < $type_data['to']) {
+		    			$type_data['to'] = $next_type_data['from'];
+
+		    			$transformed_type_map[$i] = $type_data;
+		    		}
+		    	}
+		    }
 		    
 		    $issue_data = reset($issues) ?: [];
 
