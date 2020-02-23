@@ -30,20 +30,19 @@
             id="code"
             rows="20" style="visibility: hidden; font-family: monospace; font-size: 14px; max-width: 900px; min-width: 320px;"
         >&lt;<?='?'?>php
-  
-function foo(string $s) : void {
-    return "bar";
+
+/**
+ * @return array<string>
+ */
+function takesAnInt(int $i) : array {
+    return [$i, "hello"];
 }
 
-$a = ["hello", 5];
-foo($a[1]);
-foo();
+$data = ["some text", 5];
+takesAnInt($data[0]);
 
-if (rand(0, 1)) $b = 5;
-echo $b;
-
-$c = rand(0, 5);
-if ($c) {} elseif ($c) {}</textarea>
+$condition = rand(0, 5);
+if ($condition) {} elseif ($condition) {}</textarea>
         <div id="psalm_output"></div>
         <div id="settings_panel" class="hidden"></div>
         <div class="button_bar">
