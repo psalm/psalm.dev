@@ -107,34 +107,29 @@ var fetchAnnotations = function (code, callback, options, cm) {
         }
 
         if ('results' in response) {
-            if (response.results.length === 0) {
-                callback([]);
-            }
-            else {
-               callback(
-                    response.results.map(
-                        function (issue) {
+            callback(
+                response.results.map(
+                    function (issue) {
+                        return {
+                            severity: issue.severity === 'error' ? 'error' : 'warning',
+                            message: issue.message,
+                            from: cm.posFromIndex(issue.from),
+                            to: cm.posFromIndex(issue.to)
+                        };
+                    }
+                ).concat(
+                    response.type_map.map(
+                        function (type_data) {
                             return {
-                                severity: issue.severity === 'error' ? 'error' : 'warning',
-                                message: issue.message,
-                                from: cm.posFromIndex(issue.from),
-                                to: cm.posFromIndex(issue.to)
+                                severity: 'type',
+                                message: type_data.type,
+                                from: cm.posFromIndex(type_data.from),
+                                to: cm.posFromIndex(type_data.to)
                             };
                         }
-                    ).concat(
-                        response.type_map.map(
-                            function (type_data) {
-                                return {
-                                    severity: 'type',
-                                    message: type_data.type,
-                                    from: cm.posFromIndex(type_data.from),
-                                    to: cm.posFromIndex(type_data.to)
-                                };
-                            }
-                        )
                     )
-                );
-            }  
+                )
+            );
         }
         else if ('error' in response) {
             callback({

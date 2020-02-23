@@ -125,7 +125,18 @@ var fetchAnnotations = function (code, callback, options, cm) {
             if (response.results.length === 0) {
                 document.getElementById('psalm_output').innerText = psalm_header + 'No issues!';
 
-                callback([]);
+                callback(
+                    response.type_map.map(
+                        function (type_data) {
+                            return {
+                                severity: 'type',
+                                message: type_data.type,
+                                from: cm.posFromIndex(type_data.from),
+                                to: cm.posFromIndex(type_data.to)
+                            };
+                        }
+                    )
+                );
             }
             else {
                 var text = response.results.map(
