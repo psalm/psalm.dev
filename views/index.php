@@ -12,16 +12,15 @@
 <?php require('../includes/nav.php'); ?>
 <div class="container front" id="page_container">
     <div class="intro">
-        <p>Psalm is a static analysis tool for PHP that’s designed to help you improve large codebases by identifying both obvious and hard-to-spot bugs.</p>
+        <p>Psalm is a static analysis tool for PHP that’s designed to help you improve codebases by identifying both obvious and hard-to-spot bugs.</p>
 
         <hr />
         
-        <p>Psalm <a href="https://psalm.dev/docs/manipulating_code/fixing/">comes with a fixer</a> that allows you to improve your code automatically, too.</p>
-
         <p>Psalm is designed to be useful on both large legacy codebases and small, modern ones.</p>
 
-        <p><a href="articles/php-or-type-safety-pick-any-two">Psalm can help you prevent</a> the vast majority of type-related runtime errors, and it enables you to make use of <a href="articles/immutability-and-beyond">a variety of safe coding patterns</a> found in other languages.
-        </p>
+        <p><a href="articles/php-or-type-safety-pick-any-two">Psalm can help you prevent</a> the vast majority of type-related runtime errors, and it also enables you to take advantage of <a href="articles/immutability-and-beyond">a variety of safe coding patterns</a> found in other languages.</p>
+
+        <p>Lastly, Psalm <a href="https://psalm.dev/docs/manipulating_code/fixing/">can fix a number of the errors it finds</a>, allowing you to improve your code without breaking a sweat.</p>
     </div>
     <div class="cm_container">
         <textarea
