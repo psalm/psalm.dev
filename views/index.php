@@ -20,7 +20,7 @@
 
         <p>Psalm is designed to be useful on both large legacy codebases and small, modern ones.</p>
 
-        <p><a href="articles/php-or-type-safety-pick-any-two">It can help you prevent</a> the vast majority type-related runtime errors, and it allows you to experiment with <a href="articles/immutability-and-beyond">a variety of safe coding patterns</a> found in other languages.
+        <p><a href="articles/php-or-type-safety-pick-any-two">Psalm can help you prevent</a> the vast majority of type-related runtime errors, and it enables you to make use of <a href="articles/immutability-and-beyond">a variety of safe coding patterns</a> found in other languages.
         </p>
     </div>
     <div class="cm_container">
