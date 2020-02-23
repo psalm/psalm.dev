@@ -131,7 +131,7 @@ class OnlineChecker
 		    $transformed_type_map = [];
 
 		    foreach ($type_map as $start => $rest) {
-		    	$transformed_type_map[] = [$start, $rest[0], $rest[1]];
+		    	$transformed_type_map[] = ['from' => $start, 'to' => $rest[0], 'type' => $rest[1]];
 		    }
 		    
 		    $issue_data = reset($issues) ?: [];

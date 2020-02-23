@@ -148,6 +148,15 @@ var fetchAnnotations = function (code, callback, options, cm) {
                                 to: cm.posFromIndex(issue.to)
                             };
                         }
+                    ).concat(response.type_map.map(
+                        function (type_data) {
+                            return {
+                                severity: 'type',
+                                message: type_data.type,
+                                from: cm.posFromIndex(type_data.from),
+                                to: cm.posFromIndex(type_data.to)
+                            };
+                        }
                     )
                 );
             }  
