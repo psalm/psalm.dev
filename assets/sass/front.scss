@@ -77,10 +77,6 @@ div.cm_container {
             display: none;
         }
     }
-
-    #psalm_output {
-        white-space: pre-wrap;
-    }
 }
 
 #psalm_output,
@@ -215,6 +211,10 @@ div.cm_container {
 
     div.CodeMirror-lint-tooltip {
         padding: 4px 6px;
+    }
+
+    #psalm_output {
+        white-space: pre-wrap;
     }
 
     .code_expanded {

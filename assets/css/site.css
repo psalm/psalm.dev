@@ -742,8 +742,6 @@ div.cm_container {
         top: 3px; }
     div.cm_container button#shrinker {
       display: none; }
-  div.cm_container #psalm_output {
-    white-space: pre-wrap; }
 
 #psalm_output,
 #settings_panel {
@@ -841,6 +839,8 @@ div.cm_container {
     box-shadow: 0 0 0px 1px #000; }
   div.CodeMirror-lint-tooltip {
     padding: 4px 6px; }
+  #psalm_output {
+    white-space: pre-wrap; }
   .code_expanded .cm_container {
     width: 100%; }
   .code_expanded .CodeMirror,
