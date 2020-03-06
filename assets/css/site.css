@@ -535,13 +535,11 @@ span.CodeMirror-selectedtext {
   color: #000; }
 
 .cm-s-elegant span.cm-comment {
-  color: #888;
-  line-height: 1em; }
+  color: #888; }
 
 .cm-s-elegant span.cm-meta {
   color: #000;
-  font-style: italic;
-  line-height: 1em; }
+  font-style: italic; }
 
 .cm-s-elegant span.cm-variable {
   color: #000; }
