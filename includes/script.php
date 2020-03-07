@@ -199,7 +199,8 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     lineNumbers: true,
     matchBrackets: true,
     mode: "text/x-php",
-    indentUnit: 2,
+    indentWithTabs: true,
+    indentUnit: 4,
     theme: 'elegant',
     lint: {
         getAnnotations: fetchAnnotations,
