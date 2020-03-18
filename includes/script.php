@@ -201,7 +201,7 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     lineSeparator: "\n",
     mode: 'application/x-httpd-php',
     inputStyle: 'contenteditable',
-    indentWithTabs: true,
+    indentWithTabs: false,
     indentUnit: 4,
     theme: 'elegant',
     lint: {

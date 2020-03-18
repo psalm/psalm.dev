@@ -14,5 +14,8 @@
     "sass-loader": "^7.1.0",
     "webpack": "^4.35.3",
     "webpack-cli": "^3.3.6"
+  },
+  "dependencies": {
+    "codemirror": "^5.52.0"
   }
 }

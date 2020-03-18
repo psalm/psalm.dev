@@ -60,12 +60,16 @@ nav ul li a {
     padding-right: 0;
 }
 
+.bgprimary {
+    background: #FFF;
+}
+
 .navbar {
-	background: #FFF;
 	box-shadow: none;
 	border: none;
 	font-family: "Operator SSm A", "Operator SSm B";
 	z-index: 10;
+    background: #FFF;
 }
 
 .navbar .navbar-nav>li>a {
@@ -79,7 +83,7 @@ nav ul li a {
 
 @media (min-width: 992px) {
 	.navbar .navbar-nav {
-		margin-left: -30px;
+		margin-left: -0.5rem;
 	}
 
 	.navbar .navbar-tools {
@@ -97,6 +101,10 @@ nav ul li a {
     nav ul {
         display: none;
     }
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #000;
 }
 
 h1, h2 {
@@ -157,15 +165,20 @@ ul.nav .main {
     top: 0;
 }
 
-button.navbar-toggle {
+button.navbar-toggler {
 	border: 1px solid #943b3a;
 }
 
-button.navbar-toggle .icon-bar {
-	background: #943b3a;
+button.navbar-toggler .navbar-toggler-icon {
+	background-image:url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='%23943b3a' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+.bs-sidebar .nav {
+    display: block;
 }
 
 .bs-sidebar .nav > li > a {
+    font-weight: normal;
     padding: 2px 20px;
     font-family: "Operator SSm A", "Operator SSm B";
     font-size: 14px;
@@ -177,10 +190,12 @@ button.navbar-toggle .icon-bar {
 	border-right: none;
 	border-left: 3px solid #943b3a;
 	padding-left: 17px;
+    font-weight: normal;
 }
 
 .bs-sidebar .nav > li > a:hover,
 .bs-sidebar .nav > li > a:focus {
+    font-weight: normal;
 	border-right: none;
 	border-left: 3px solid #943b3a;
 	padding-left: 17px;
@@ -230,7 +245,6 @@ button.navbar-toggle .icon-bar {
 .bs-sidebar .nav > .active > a,
 .bs-sidebar .nav > .active:hover > a,
 .bs-sidebar .nav > .active:focus > a {
-	font-weight: normal;
 	color: #943b3a;
 	background: #FFF;
 }
