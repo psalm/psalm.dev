@@ -250,10 +250,8 @@ button.navbar-toggler .navbar-toggler-icon {
 }
 
 .col-md-8 {
-    max-width: 100vw;
-
-    @media (min-width: 992px) {
-        max-width: auto;
+    @media (max-width: 992px) {
+        max-width: 100vw;
     }
 
     a {
