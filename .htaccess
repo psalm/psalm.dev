@@ -62,6 +62,7 @@ RewriteRule ^add_code$ /views/add_code.php [L,NC]
 RewriteRule ^quickstart/?$ /docs/installation [R]
 RewriteRule ^$ /views/index.php [L,NC]
 RewriteRule ^schema/config$ /vendor/vimeo/psalm/config.xsd [L,NC]
+RewriteRule ^[0-9]{3}$ /views/issue_redirect.php [L,NC]
 
 
 RewriteRule ^composer\.*$ - [F,L]
