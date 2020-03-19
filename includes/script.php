@@ -120,10 +120,10 @@ var fetchAnnotations = function (code, callback, options, cm) {
                 psalm_version = psalm_version.split('@')[1];
             }
 
-            var psalm_header = 'Psalm output (using commit ' + psalm_version.substring(0, 7) + '): \n\n'
+            var psalm_header = 'Psalm output (using commit ' + psalm_version.substring(0, 7) + '): <br><br>'
 
             if (response.results.length === 0) {
-                document.getElementById('psalm_output').innerText = psalm_header + 'No issues!';
+                document.getElementById('psalm_output').innerHtml = psalm_header + 'No issues!';
 
                 callback(
                     response.type_map.map(
@@ -143,11 +143,11 @@ var fetchAnnotations = function (code, callback, options, cm) {
                     function (issue) {
                         return (issue.severity === 'error' ? 'ERROR' : 'INFO') + ': '
                             + issue.type + ' - ' + issue.line_from + ':'
-                            + issue.column_from + ' - ' + issue.message;
+                            + issue.column_from + ' - ' + issue.message + '(see <a href="' + issue.link + '">' + issue.link + '</a>)';
                     }
                 );
 
-                document.getElementById('psalm_output').innerText = psalm_header + text.join('\n\n');
+                document.getElementById('psalm_output').innerHtml = psalm_header + text.join('<br><br>');
 
                 callback(
                     response.results.map(
