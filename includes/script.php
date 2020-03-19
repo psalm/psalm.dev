@@ -143,7 +143,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
                     function (issue) {
                         return (issue.severity === 'error' ? 'ERROR' : 'INFO') + ': '
                             + issue.type + ' - ' + issue.line_from + ':'
-                            + issue.column_from + ' - ' + issue.message + '(see <a href="' + issue.link + '">' + issue.link + '</a>)';
+                            + issue.column_from + ' - ' + issue.message + ' (see <a href="' + issue.link + '">' + issue.link + '</a>)';
                     }
                 );
 
