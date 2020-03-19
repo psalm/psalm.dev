@@ -272,6 +272,9 @@ button.navbar-toggler .navbar-toggler-icon {
 
 .col-md-8 {
   max-width: 100vw; }
+  @media (min-width: 992px) {
+    .col-md-8 {
+      max-width: auto; } }
   .col-md-8 a {
     text-decoration: underline; }
   .col-md-8 a[href*="//"]:not([href*="psalm.dev"]) {
