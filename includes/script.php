@@ -147,7 +147,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
                     }
                 );
 
-                document.getElementById('psalm_output').innerHTML = psalm_header + text.join('<br><br>');
+                document.getElementById('psalm_output').innerHTML = psalm_header + text.join('<br><br>' + '<br>&nbsp;');
 
                 callback(
                     response.results.map(
