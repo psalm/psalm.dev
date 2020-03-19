@@ -123,7 +123,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
             var psalm_header = 'Psalm output (using commit ' + psalm_version.substring(0, 7) + '): <br><br>'
 
             if (response.results.length === 0) {
-                document.getElementById('psalm_output').innerHtml = psalm_header + 'No issues!';
+                document.getElementById('psalm_output').innerHTML = psalm_header + 'No issues!';
 
                 callback(
                     response.type_map.map(
@@ -147,7 +147,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
                     }
                 );
 
-                document.getElementById('psalm_output').innerHtml = psalm_header + text.join('<br><br>');
+                document.getElementById('psalm_output').innerHTML = psalm_header + text.join('<br><br>');
 
                 callback(
                     response.results.map(
