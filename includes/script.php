@@ -142,8 +142,8 @@ var fetchAnnotations = function (code, callback, options, cm) {
                 var text = response.results.map(
                     function (issue) {
                         return (issue.severity === 'error' ? 'ERROR' : 'INFO') + ': '
-                            + issue.type + ' - ' + issue.line_from + ':'
-                            + issue.column_from + ' - ' + issue.message + ' (see <a href="' + issue.link + '">' + issue.link + '</a>)';
+                            + '<a href="' + issue.link + '">' + issue.type + '</a> - ' + issue.line_from + ':'
+                            + issue.column_from + ' - ' + issue.message;
                     }
                 );
 
