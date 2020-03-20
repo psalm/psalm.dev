@@ -1,6 +1,12 @@
+@import 'tiempos_text.scss';
+
+body {
+	font-family: 'Tiempos Text', 'Times New Roman', serif;
+}
+
 .md-header {
 	color: #000;
-	
+
 	background-color: #FFF;
 	background-position: 0 100%;
 	background-repeat: repeat-x;
@@ -8,10 +14,48 @@
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 10'%3E%3Cpath fill='none' stroke='%23c42020' stroke-width='3' d='M0 8.5c8 0 8-7 16-7s8 7 16 7 8-7 16-7 8 7 16 7' class='st0'/%3E%3C/svg%3E");
 
 	nav {
-		background: #FFF;
+		background: none;
 	}
 }
 
 .md-header[data-md-state="shadow"] {
-	background: #FFF;
+	box-shadow: none;
+}
+
+.md-nav {
+	font-family: "Operator SSm A", "Operator SSm B";
+}
+
+code, pre {
+    font-family: "Operator Mono SSm A", "Operator Mono SSm B";
+    font-style: normal;
+    background: #f5f5f5;
+    border: 0;
+    font-size: .8em;
+}
+
+pre {
+    margin: 0 0 1.5em;
+    font-size: .825em;
+}
+
+pre code {
+	font-family: "Operator Mono SSm A", "Operator Mono SSm B";
+	font-style: normal;
+	line-height: 1.7em;
+	font-size: 1em;
+}
+
+a,
+a code,
+.md-typeset a {
+	color: #943b3a;
+	cursor: pointer;
+}
+
+a:hover,
+.md-nav__link--active,
+.md-nav__link:active,
+.md-nav__link:hover {
+	color: #943b3a;
 }
