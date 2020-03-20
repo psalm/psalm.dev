@@ -5,12 +5,11 @@ repo_name: GitHub
 site_dir: docs
 docs_dir: vendor/vimeo/psalm/docs
 theme:
-  name: 'mkdocs'
-  custom_dir: 'theme_overrides'
+  name: 'material'
 markdown_extensions:
   - codehilite
 extra_css:
-  - '../assets/css/mkdocs_extra.css'
+  - '../assets/css/mkdocs_material_extra.css'
   - 'https://cloud.typography.com/751592/7707372/css/fonts.css'
 nav:
   - Home: README.md
