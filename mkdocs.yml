@@ -1,4 +1,4 @@
-site_name: Psalm Documentation
+site_name: Documentation
 site_url: https://psalm.dev
 repo_url: https://github.com/vimeo/psalm
 repo_name: GitHub
@@ -13,7 +13,7 @@ extra_css:
   - '../assets/css/mkdocs_material_extra.css'
   - 'https://cloud.typography.com/751592/7707372/css/fonts.css'
 nav:
-  - Home: README.md
+  - Index: README.md
   - Running Psalm:
     - Installation: running_psalm/installation.md
     - Configuration: running_psalm/configuration.md
