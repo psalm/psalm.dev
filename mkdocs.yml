@@ -6,14 +6,14 @@ site_dir: docs
 docs_dir: vendor/vimeo/psalm/docs
 theme:
   name: 'material'
-  custom_dir: 'theme_overrides'
+  custom_dir: 'theme'
 markdown_extensions:
   - codehilite
 extra_css:
   - '../assets/css/mkdocs_material_extra.css'
   - 'https://cloud.typography.com/751592/7707372/css/fonts.css'
 nav:
-  - Index: README.md
+  - Documentation Home: README.md
   - Running Psalm:
     - Installation: running_psalm/installation.md
     - Configuration: running_psalm/configuration.md
