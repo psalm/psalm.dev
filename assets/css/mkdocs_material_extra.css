@@ -33,8 +33,12 @@ body {
 .md-header[data-md-state="shadow"] {
   box-shadow: none; }
 
-.md-nav {
+.md-nav,
+.md-source {
   font-family: "Operator SSm A", "Operator SSm B"; }
+
+.md-source__repository {
+  font-weight: normal; }
 
 code, pre {
   font-family: "Operator Mono SSm A", "Operator Mono SSm B";
@@ -74,6 +78,7 @@ p a[href*="//"]:not([href*="psalm.dev"]), ul a[href*="//"]:not([href*="psalm.dev
 @media only screen and (min-width: 60em) {
   .md-header .md-search__input {
     background-color: #FFF;
-    color: #000; }
+    color: #000;
+    font-family: 'Tiempos Text'; }
     .md-header .md-search__input + .md-search__icon, .md-header .md-search__input::placeholder {
       color: #000; } }

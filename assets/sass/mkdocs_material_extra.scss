@@ -22,8 +22,13 @@ body {
 	box-shadow: none;
 }
 
-.md-nav {
+.md-nav,
+.md-source {
 	font-family: "Operator SSm A", "Operator SSm B";
+}
+
+.md-source__repository {
+	font-weight: normal;
 }
 
 code, pre {
@@ -72,6 +77,7 @@ p, ul, table {
 	.md-header .md-search__input {
 		background-color: #FFF;
 		color: #000;
+		font-family: 'Tiempos Text';
 
 		& + .md-search__icon,
 		&::placeholder {
