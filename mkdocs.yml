@@ -1,5 +1,5 @@
 site_name: Psalm Documentation
-site_url: https://psalm.dev/docs
+site_url: https://psalm.dev
 repo_url: https://github.com/vimeo/psalm
 repo_name: GitHub
 site_dir: docs
