@@ -5,11 +5,9 @@
   author_link: https://twitter.com/mattbrowndev
 -->
 
-Creating Psalm has involved learning a lot about PHP and about type systems in general, making me a better developer in the process.
+For some of its users Psalm can seem mysterious – I often see commit messages along the lines of “make Psalm happy”, like it’s some sort of vengeful deity.
 
-For some of its users, though, Psalm can seem mysterious – I often see commit messages along the lines of “make Psalm happy”, like it’s some sort of vengeful deity.
-
-Ideally Psalm should instead provide clarity and help developers improve their understanding of PHP and programming languages in general. So the latest version now includes links (in its default output) that you can follow to understand why Psalm thinks something is problematic.
+I think Psalm can do better, so the latest version now includes links (in the tool‘s default output) that you can follow to understand why Psalm thinks something is problematic.
 
 The links look like this:
 
