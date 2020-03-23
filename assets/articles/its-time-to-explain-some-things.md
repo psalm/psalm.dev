@@ -7,7 +7,7 @@
 
 For some of its users Psalm can seem mysterious – I often see commit messages along the lines of “make Psalm happy”, like it’s some sort of vengeful deity.
 
-I think Psalm can do better, so the latest version now includes links (in the tool‘s default output) that you can follow to understand why Psalm thinks something is problematic.
+That’s obviously not great – Psalm should provide clarity, not sow confusion, so the latest version now includes links (in the tool‘s default output) that you can follow to understand why Psalm thinks something is problematic.
 
 The links look like this:
 
