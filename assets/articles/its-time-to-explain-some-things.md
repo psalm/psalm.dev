@@ -9,7 +9,7 @@ Creating Psalm has involved learning a lot about PHP and about type systems in g
 
 For some of its users, though, Psalm can seem mysterious – I often see commit messages along the lines of “make Psalm happy”, like it’s some sort of vengeful deity.
 
-Instead, Psalm should provide clarity – ideally it can help developers improve their understanding of PHP and programming languages in general. So, the latest version now includes links (in its default output) that you can follow to understand why Psalm thinks something is problematic.
+Instead, Psalm should provide clarity – ideally helping developers improve their understanding of PHP and programming languages in general. So the latest version now includes links (in its default output) that you can follow to understand why Psalm thinks something is problematic.
 
 The links look like this:
 
