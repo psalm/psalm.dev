@@ -143,7 +143,9 @@ var fetchAnnotations = function (code, callback, options, cm) {
                     function (issue) {
                         return (issue.severity === 'error' ? 'ERROR' : 'INFO') + ': '
                             + '<a href="' + issue.link + '">' + issue.type + '</a> - ' + issue.line_from + ':'
-                            + issue.column_from + ' - ' + issue.message;
+                            + issue.column_from + ' - ' + issue.message.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
+   return '&#'+i.charCodeAt(0)+';';
+});
                     }
                 );
 
