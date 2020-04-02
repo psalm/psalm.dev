@@ -28,8 +28,9 @@ nav:
       - Issue Types: running_psalm/issues.md
     - Checking non-PHP files: running_psalm/checking_non_php_files.md
   - Annotating types:
-    - Docblock Type Syntax: annotating_code/docblock_type_syntax.md
-    - Atomic Type Reference: annotating_code/type_syntax/atomic_types.md
+    - Union Types: annotating_code/type_syntax/union_types.md
+    - All Atomic Types: annotating_code/type_syntax/atomic_types.md
+    - Intersection Types: annotating_code/type_syntax/intersection_types.md
     - Using Type Annotations: annotating_code/typing_in_psalm.md
   - Other annotations:
     - Supported Annotations: annotating_code/supported_annotations.md
