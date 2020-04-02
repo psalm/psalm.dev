@@ -28,10 +28,10 @@ nav:
       - Issue Types: running_psalm/issues.md
     - Checking non-PHP files: running_psalm/checking_non_php_files.md
   - Annotating types:
-    - Union Types: annotating_code/type_syntax/union_types.md
-    - All Atomic Types: annotating_code/type_syntax/atomic_types.md
-    - Intersection Types: annotating_code/type_syntax/intersection_types.md
     - Using Type Annotations: annotating_code/typing_in_psalm.md
+    - Union Types: annotating_code/type_syntax/union_types.md
+    - Atomic Type Reference: annotating_code/type_syntax/atomic_types.md
+    - Intersection Types: annotating_code/type_syntax/intersection_types.md
   - Other annotations:
     - Supported Annotations: annotating_code/supported_annotations.md
     - Template Annotations: annotating_code/templated_annotations.md
