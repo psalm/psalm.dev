@@ -27,12 +27,14 @@ nav:
       - Dealing with code issues: running_psalm/dealing_with_code_issues.md
       - Issue Types: running_psalm/issues.md
     - Checking non-PHP files: running_psalm/checking_non_php_files.md
-  - Annotating code:
-    - Typing in Psalm: annotating_code/typing_in_psalm.md
-    - Docblock type syntax: annotating_code/docblock_type_syntax.md
+  - Annotating types:
+    - Docblock Type Syntax: annotating_code/type_syntax/docblock_type_syntax.md
+    - Atomic Type Reference: annotating_code/type_syntax/atomic_types.md
+    - Using Type Annotations: annotating_code/typing_in_psalm.md
+  - Other annotations:
     - Supported Annotations: annotating_code/supported_annotations.md
     - Template Annotations: annotating_code/templated_annotations.md
-    - Assertions: annotating_code/adding_assertions.md
+    - Assert Annotations: annotating_code/adding_assertions.md
   - Manipulating code:
     - Fixing code with Psalter: manipulating_code/fixing.md
     - Refactoring code: manipulating_code/refactoring.md
