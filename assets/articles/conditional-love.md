@@ -43,7 +43,7 @@ At the time the only solution to avoid all the false-positives was to use the ty
 
 ---
 
-A lot has changed since then – the aforementioned method has been split in two, and Psalm now [offers a plugin API](https://psalm.dev/docs/running_psalm/plugins/authoring_plugins/) that allows users to provide their own return types for specific functions, so this custom behaviour can easily be accounted for.
+A lot has changed since then – the aforementioned method has been split in two, and Psalm now [offers a plugin API](https://psalm.dev/docs/running_psalm/plugins/authoring_plugins/) that allows users to provide their own return types for specific functions, so this custom behaviour can be accounted for.
 
 Plugins are really useful for some projects but, for simple cases like the one above, code should ideally carry enough information for a static analysis tool to do its job – and that’s where conditional return types come in!
 
