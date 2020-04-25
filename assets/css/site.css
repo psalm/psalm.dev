@@ -531,8 +531,11 @@ span.CodeMirror-selectedtext {
   width: 100%;
   height: 100%; }
 
-.cm-s-elegant span.cm-number, .cm-s-elegant span.cm-string, .cm-s-elegant span.cm-atom {
+.cm-s-elegant span.cm-number, .cm-s-elegant span.cm-atom {
   color: #000; }
+
+.cm-s-elegant span.cm-string {
+  color: #c42020; }
 
 .cm-s-elegant span.cm-comment {
   color: #888; }
@@ -550,7 +553,7 @@ span.CodeMirror-selectedtext {
   color: #000; }
 
 .cm-s-elegant span.cm-keyword {
-  color: #000; }
+  color: #c42020; }
 
 .cm-s-elegant span.cm-builtin {
   color: #000; }
