@@ -43,7 +43,7 @@ if (!$fix_file) {
     }
 }
 
-if (strlen($file_contents) > 10000) {
+if (strlen($file_contents) > 100000) {
     header(sprintf('HTTP/1.0 %s', 418));
     echo json_encode(['error' => 'Code too long']);
     exit;
