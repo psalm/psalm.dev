@@ -56,4 +56,8 @@ if (!preg_match('/^[57]\.\d$/', $php_version)) {
     exit;
 }
 
-echo json_encode(PsalmDotOrg\OnlineChecker::getResults($file_contents, $settings, $fix_file, $php_version));
+echo str_replace(
+	"/var/www/vhosts/psalm.dev/httpdocs/src/../",
+	"",
+	json_encode(PsalmDotOrg\OnlineChecker::getResults($file_contents, $settings, $fix_file, $php_version))
+);
