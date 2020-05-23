@@ -114,11 +114,8 @@ class OnlineChecker
 		    $i = 0;
 
 		    if ($codebase->taint) {
-		    	while ($codebase->taint->hasNewSinksAndSources() && ++$i < 4) {
-		            $codebase->taint->clearNewSinksAndSources();
-		            $file_checker->analyze($context);
-		        }
-		    }
+            	$codebase->taint->connectSinksAndSources();
+        	}
 
 		    if (($settings['unused_methods'] ?? false) || strpos($file_contents, '<?php // findUnusedCode') === 0) {
 		        $project_checker->consolidateAnalyzedData();
