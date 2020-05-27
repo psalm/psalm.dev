@@ -55,8 +55,10 @@ class ArticleRepository
         }
         
         $alt_html_inline_parser = new AltHtmlInlineParser();
+        
+        $notice = '';
 
-        $html = self::convertMarkdownToHtml($markdown, $alt_html_inline_parser);
+        $html = self::convertMarkdownToHtml($markdown, $alt_html_inline_parser, $notice);
 
         $snippet = mb_substr(trim(strip_tags($html)), 0, 150);
 
@@ -66,7 +68,6 @@ class ArticleRepository
         $title = $alt_html_inline_parser->getTitle();
         $canonical = $alt_html_inline_parser->getCanonical();
         $author = $alt_html_inline_parser->getAuthor();
-        $notice = '';//$converter->convertToHtml($alt_html_inline_parser->getNotice());
 
         return new Article(
             $title,
@@ -81,8 +82,11 @@ class ArticleRepository
         );
     }
     
-    public static function convertMarkdownToHtml(string $markdown, ?AltHtmlInlineParser $alt_html_inline_parser)
-    {
+    public static function convertMarkdownToHtml(
+        string $markdown,
+        ?AltHtmlInlineParser $alt_html_inline_parser,
+        string &$notice = ''
+    ) : string {
         $alt_heading_parser = new AltHeadingParser();
 
         $environment = \League\CommonMark\Environment::createCommonMarkEnvironment();
@@ -96,8 +100,12 @@ class ArticleRepository
         }
 
         $converter = new CommonMarkConverter([], $environment);
-
-        return $converter->convertToHtml($markdown);
+        
+        $html = $converter->convertToHtml($markdown);
+        
+        $notice = $converter->convertToHtml($alt_html_inline_parser->getNotice());
+        
+        return $html;
     }
 
     private static function getMarkdown(string $name, bool &$is_preview) : string
