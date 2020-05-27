@@ -8,6 +8,12 @@ If you know PHP, you can probably be useful. Psalm is written in PHP, and much o
 
 Whether it’s adding a feature, fixing a bug, or just cleaning up the codebase a bit, every little helps.
 
+### Where to get started
+
+I’ve added a GitHub tag called [Easy problems](https://github.com/vimeo/psalm/issues?q=is%3Aissue+is%3Aopen+label%3A%22easy+problems%22) that should provide you some low-hanging fruit.
+
+There’s also a [contributing guide](https://github.com/vimeo/psalm/blob/master/CONTRIBUTING.md) that tells you how to test your code and, if you need, [a short guide to Psalm’s internals](https://github.com/vimeo/psalm/blob/master/docs/how_psalm_works.md).
+
 ### Don’t be afraid!
 
 One great thing about working on Psalm is that it’s _very_ hard to introduce any sort of type error in Psalm’s codebase. There are almost 5,000 PHPUnit tests, so the risk of you messing up (without the CI system noticing) is very small.
