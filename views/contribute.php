@@ -5,10 +5,7 @@ error_reporting(E_ALL);
 ini_set('html_errors', '1');
 ini_set('display_errors', '1');
 
-$title = 'Psalm - article not found';
-$name = $_GET['name'];
-
-$contribution_markdown = file_get_contents(dirname(__DIR__) . '/assets/pages/contribute.md'), 
+$contribution_markdown = file_get_contents(dirname(__DIR__) . '/assets/pages/contribute.md');
 
 $article = PsalmDotOrg\ArticleRepository::convertMarkdownToHtml($contribution_markdown);
 ?>
