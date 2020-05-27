@@ -24,7 +24,7 @@ If you need another reason to help, the problem space is just thoroughly interes
 
 Day-to-day PHP programming involves solving concrete problems, but they're rarely very complex. Psalm, on the other hand, attempts to solve a pretty hard collection of problems, which then allows it to detect a ton of bugs in PHP code without actually executing that code.
 
-There's a lot of interesting theory behind the things Psalm does, too. If you want you can go very deep (though you don't need to know really any theory to improve Psalm).
+There's a lot of interesting theory behind the things Psalm does, too. If you want you can go very deep, though you don't need to know really any theory to improve Psalm.
 
 Lastly, working to improve static analysis tools will also make you a better PHP developer – it'll help you think more about how values flow through your program. 
 
