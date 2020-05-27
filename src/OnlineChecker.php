@@ -92,7 +92,7 @@ class OnlineChecker
 		    $file_checker = new FileAnalyzer(
 		        $project_checker,
 		        $file_path,
-		        $config->shortenFileName($file_path)
+		        'somefile.php'
 		    );
 		    
 		    $context = new \Psalm\Context();
