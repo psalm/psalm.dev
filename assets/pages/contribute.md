@@ -22,9 +22,9 @@ There's a lot of interesting theory behind the things Psalm does, too. If you wa
 
 Lastly, working to improve static analysis tools will also make you a better PHP developer – it'll help you think more about how values flow through your program. 
 
-## "Why can't I pay you?"
+## “Why can’t I pay you?”
 
-Money's great, but that's not what I'm after. There are a bunch of other PHP developers whose work I rely on, though – if you don't have time to support Psalm with code, you support Psalm indirectly by sponsoring these developers.
+Money’s great, but that's not what I'm after. There are a bunch of other PHP developers whose work I rely on, though – if you don't have time to support Psalm with code, you support Psalm indirectly by sponsoring these developers.
 
 Also if you work at a company that uses Psalm regularly, consider encouraging your developers to contribute to its development.
 
