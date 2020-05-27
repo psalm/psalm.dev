@@ -30,10 +30,10 @@ Lastly, working to improve static analysis tools will also make you a better PHP
 
 ## “Why can’t I pay you?”
 
-Money’s great, but that's not what I'm after. There are a bunch of other PHP developers whose work I rely on, though – if you don't have time to support Psalm with code, you support Psalm indirectly by sponsoring these developers.
-
-Also if you work at a company that uses Psalm regularly, consider encouraging your developers to contribute to its development.
+Money’s great, but that's not what I'm after. There are a bunch of other PHP developers whose work I rely on, though – if you don't have time to support Psalm with code, you support Psalm indirectly by sponsoring these developers:
 
 - [Sara Golemon](https://github.com/sponsors/sgolemon) - core PHP contributor & v8 release manager
 - [Sebastian Bergmann](https://github.com/sponsors/sebastianbergmann) - creator of PHPUnit
 - [Marco Pivetta](https://github.com/sponsors/Ocramius) - prolific userland developer who helps push Psalm forward
+
+Lastly, if you work at a large company that uses Psalm regularly, consider encouraging your colleagues to contribute to its development!
