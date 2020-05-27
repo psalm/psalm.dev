@@ -22,7 +22,7 @@ $html = PsalmDotOrg\ArticleRepository::convertMarkdownToHtml($contribution_markd
 <?php require('../includes/nav.php'); ?>
 <div class="post">
 <h1><?= PsalmDotOrg\AltHeadingParser::preventOrphans('Contribute to Psalm!') ?></h1>
-<div class="intro">
+<div class="contribute_intro">
   <p><img src="https://psalm.dev/assets/images/beardy_me.jpg" alt="" width="150" height="200" style="align: right;padding-left: 20px;">
     Hi, I'm Matt, the creator of Psalm.
     I work at Vimeo, and part of my job there involves maintaining Psalm (I spend a lot of non-work time on Psalm as well).
