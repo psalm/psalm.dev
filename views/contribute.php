@@ -7,9 +7,7 @@ ini_set('display_errors', '1');
 
 $contribution_markdown = file_get_contents(dirname(__DIR__) . '/assets/pages/contribute.md');
 
-var_dump($contribution_markdown);
-
-$article = PsalmDotOrg\ArticleRepository::convertMarkdownToHtml($contribution_markdown, null);
+$html = PsalmDotOrg\ArticleRepository::convertMarkdownToHtml($contribution_markdown, null);
 ?>
 <html>
 <head>
@@ -24,7 +22,7 @@ $article = PsalmDotOrg\ArticleRepository::convertMarkdownToHtml($contribution_ma
 <?php require('../includes/nav.php'); ?>
 <div class="post">
 <h1><?= PsalmDotOrg\AltHeadingParser::preventOrphans('Contribute to Psalm!') ?></h1>
-<?= $article->html ?>
+<?= $html ?>
 </div>
 <?php require('../includes/footer.php'); ?>
 </body>
