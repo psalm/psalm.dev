@@ -103,7 +103,9 @@ class ArticleRepository
         
         $html = $converter->convertToHtml($markdown);
         
-        $notice = $converter->convertToHtml($alt_html_inline_parser->getNotice());
+        if ($alt_html_inline_parser) {
+            $notice = $converter->convertToHtml($alt_html_inline_parser->getNotice());
+        }
         
         return $html;
     }
