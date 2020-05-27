@@ -53,27 +53,16 @@ class ArticleRepository
             header("HTTP/1.0 404 Not Found");
             return null;
         }
-
-        $alt_heading_parser = new AltHeadingParser();
+        
         $alt_html_inline_parser = new AltHtmlInlineParser();
 
-        $environment = \League\CommonMark\Environment::createCommonMarkEnvironment();
-
-        // Add this extension
-        $environment->addExtension(new TableExtension());
-        $environment->addBlockParser($alt_heading_parser, 100);
-        $environment->addInlineParser($alt_html_inline_parser, 100);
-
-        $converter = new CommonMarkConverter([], $environment);
-
-        $html = $converter->convertToHtml($markdown);
+        $html = self::convertMarkdownToHtml($markdown, $alt_html_inline_parser);
 
         $snippet = mb_substr(trim(strip_tags($html)), 0, 150);
 
         $description = substr($snippet, 0, strrpos($snippet, ' ')) . '…';
-
+        
         $date = $alt_html_inline_parser->getDate();
-
         $title = $alt_html_inline_parser->getTitle();
         $canonical = $alt_html_inline_parser->getCanonical();
         $author = $alt_html_inline_parser->getAuthor();
@@ -90,6 +79,25 @@ class ArticleRepository
             $notice,
             $is_preview
         );
+    }
+    
+    public static function convertMarkdownToHtml(string $markdown, ?AltHtmlInlineParser $alt_html_inline_parser)
+    {
+        $alt_heading_parser = new AltHeadingParser();
+
+        $environment = \League\CommonMark\Environment::createCommonMarkEnvironment();
+
+        // Add this extension
+        $environment->addExtension(new TableExtension());
+        $environment->addBlockParser($alt_heading_parser, 100);
+        
+        if ($alt_html_inline_parser) {
+            $environment->addInlineParser($alt_html_inline_parser, 100);
+        }
+
+        $converter = new CommonMarkConverter([], $environment);
+
+        return $converter->convertToHtml($markdown);
     }
 
     private static function getMarkdown(string $name, bool &$is_preview) : string
