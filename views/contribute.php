@@ -7,7 +7,7 @@ ini_set('display_errors', '1');
 
 $contribution_markdown = file_get_contents(dirname(__DIR__) . '/assets/pages/contribute.md');
 
-$article = PsalmDotOrg\ArticleRepository::convertMarkdownToHtml($contribution_markdown);
+$article = PsalmDotOrg\ArticleRepository::convertMarkdownToHtml($contribution_markdown, null);
 ?>
 <html>
 <head>
