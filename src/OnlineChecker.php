@@ -201,7 +201,7 @@ class OnlineChecker
 		$config->allow_phpstorm_generics = $settings['allow_phpstorm_generics'] ?? false;
 		$config->ignore_internal_nullable_issues = !($settings['strict_internal_functions'] ?? false);
 		$config->ignore_internal_falsable_issues = !($settings['strict_internal_functions'] ?? false);
-		$config->base_dir = __DIR__;
+		$config->base_dir = __DIR__ . '/';
 		
 		$config->addStubFile(dirname(__DIR__) . '/vendor/vimeo/psalm/src/Psalm/Internal/Stubs/ext-ds.php');
 		
