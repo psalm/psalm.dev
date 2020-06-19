@@ -53,13 +53,13 @@ class OnlineChecker
 
 		$infer_types_from_usage = true;
 		$project_checker->consolidateAnalyzedData();
-		$file_path = __DIR__ . '/../src/somefile.php';
+		$file_path = realpath(__DIR__ . '/../src/somefile.php');
 		$file_provider->registerFile(
 		    $file_path,
 		    $file_contents
 		);
 
-		$codebase->scanner->addFileToDeepScan(__DIR__ . '/../src/somefile.php');
+		$codebase->scanner->addFileToDeepScan($file_path);
 		
 		if (($settings['unused_variables'] ?? false)
 			|| ($settings['unused_methods'] ?? false)
