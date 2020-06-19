@@ -91,7 +91,7 @@ class OnlineChecker
 		try {
 		    $file_checker = new FileAnalyzer(
 		        $project_checker,
-		        'somefile.php',
+		        $file_path,
 		        'somefile.php'
 		    );
 		    
