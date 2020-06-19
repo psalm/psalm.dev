@@ -53,7 +53,7 @@ class OnlineChecker
 
 		$infer_types_from_usage = true;
 		$project_checker->consolidateAnalyzedData();
-		$file_path = realpath(__DIR__ . '/../src/somefile.php');
+		$file_path = __DIR__ . '/somefile.php';
 		$file_provider->registerFile(
 		    $file_path,
 		    $file_contents
