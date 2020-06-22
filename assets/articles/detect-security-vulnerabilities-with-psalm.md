@@ -91,7 +91,7 @@ Example sinks:
 
 As above, [you can define your own taint sinks](https://psalm.dev/docs/security_analysis/custom_taint_sinks) with Psalm annotations.
 
-## The catch
+## Configuration is key
 
 Psalm’s regular bug detection mode is akin to an unflashy car with a full tank of petrol – you can rely on to get you from A to B, as long as the roads are well-paved.
 
