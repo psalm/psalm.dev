@@ -6,11 +6,9 @@
   notice: TL;DR: this article describes a new Psalm utility for detecting security vulnerabilities in PHP code
 -->
 
-Security vulnerabilities are normally much harder to spot than regular bugs. Whereas a bug often makes itself known the second you run the code, you can execute code for a decade without noticing that it contains a serious vulnerability.
+Security vulnerabilities are normally pretty hard to spot. While a null-pointer error can make itself known the second you run your application, you can execute code for a decade without noticing that it contains a serious vulnerability.
 
-Most developers don’t go looking for vulnerabilities either, because they’re normally pretty hard to spot (some companies offload that responsibility onto bug bounty programs like HackerOne).
-
-Just as static type-checking has helped a lot of developers find bugs in their code, it turns out that a lot of security vulnerabilities can be discovered statically too, through a technique called _taint analysis_.
+But just as static type-checking has helped a lot of developers find bugs in their code, a lot of security vulnerabilities can be discovered statically too, through a technique called _taint analysis_.
 
 There are a couple of commercial tools that perform taint analysis for PHP. We tried one at Vimeo a couple of years ago but the results were disappointing, as none of the reported issues were actually exploitable. While the tool was looking for the right sorts of things (SQL injection, cross-site-scripting vulnerabilities etc.) a lot of the false-positives were the result of poor type inference — something that Psalm is pretty good at.
 
