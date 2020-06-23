@@ -48,10 +48,6 @@ class User {
 }
 
 class UserUpdater {
-    public static function doDelete(PDO $pdo, User $user) : void {
-        self::deleteUser($pdo, $user->id);
-    }
-
     public static function deleteUser(PDO $pdo, string $userId) : void {
         $pdo->exec("delete from users where user_id = " . $userId);
     }
@@ -60,7 +56,7 @@ class UserUpdater {
 $userObj = new User((string) $_GET["user_id"]);
 
 // remove the next line to fix issue
-UserUpdater::doDelete(new PDO(), $userObj);
+UserUpdater::deleteUser(new PDO(), $userObj);
 ```
 
 ## How does it work?
