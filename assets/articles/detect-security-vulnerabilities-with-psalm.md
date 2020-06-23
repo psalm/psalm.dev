@@ -5,13 +5,13 @@
   author_link: https://twitter.com/mattbrowndev
 -->
 
-Security vulnerabilities are normally pretty hard to spot. While a null-pointer error can make itself known the second you run your application, you can execute code for a decade without noticing that it contains a serious vulnerability.
+Security vulnerabilities are often pretty hard to spot manually. While a null-pointer error can make itself known very quickly, you can execute code for a decade without noticing the serious vulnerability within.
 
-But just as static type-checking has helped a lot of developers find bugs in their code, a lot of security vulnerabilities can be discovered statically too, through a technique called _taint analysis_.
+But just as static type-checking helps developers find bugs in their code, a lot of security vulnerabilities can be discovered statically too, through a technique called _taint analysis_. Taint analysis attempts to find connections between user-controlled input (like `$_GET['name']`) and places that we don’t want unescaped user-controlled input to end up (like `echo "<h1>$name</h1>"`) by examining how data flows through your application.
 
 There are a couple of commercial tools that perform taint analysis for PHP. We tried one at Vimeo a couple of years ago but the results were disappointing, as none of the reported issues were actually exploitable. While the tool was looking for the right sorts of things (SQL injection, cross-site-scripting vulnerabilities etc.) a lot of the false-positives were the result of poor type inference — something that Psalm is pretty good at.
 
-I started work on Psalm’s taint analysis engine last year, trialling the feature on Vimeo’s codebase (where it discovered a decent number of exploitable cross-site-scripting vulnerabilities) and now it’s ready for everyone else to use!
+I started work on Psalm’s taint analysis engine last year, trialling the feature on Vimeo’s codebase (where it discovered an embarassingly-large number of exploitable cross-site-scripting vulnerabilities) and now it’s ready for everyone else to use.
 
 Here are two example vulnerabilities that it spots:
 
@@ -59,9 +59,9 @@ UserUpdater::deleteUser(new PDO(), $userObj);
 
 ## How does it work?
 
-Psalm’s taint analysis attempts to find connections between user-controlled input (like `$_GET['name']`) and places that we don’t want unescaped user-controlled input to end up (like `echo "<h1>$name</h1>"` by looking at the ways that data flows through your application (via assignments, function/method calls and array/property access).
+When you run Psalm with `--taint-analysis` it slowly builds up a graph of data flows in your application due to assignments, property/array access, function calls and more.
 
-When you run Psalm with `--taint-analysis` it stops caring about regular bugs, and instead tries to identify problematic paths.
+Once it has mapped out all potential connections, Psalm attempts to identify problematic paths between user-controlled input and statements like `echo`.
 
 ### Taint sources
 
@@ -87,7 +87,7 @@ As above, [you can define your own taint sinks](https://psalm.dev/docs/security_
 
 ## Configuration is key
 
-Psalm’s regular bug detection mode is akin to an unflashy car with a full tank of petrol – you can rely on to get you from A to B, as long as the roads are well-paved.
+Psalm’s regular bug detection mode is akin to an unflashy car with a full tank of petrol – you can rely on it to get you from A to B, as long as the roads are well-paved.
 
 Psalm’s security analysis, on the other hand, is like an off-road vehicle with half a tank of petrol: it’ll get you to places regular Psalm can‘t reach, but to make the most of it you’ll need to give it quite a bit of extra fuel (in the form of annotations and, if necessary, plugin code). If you put in the effort, you’ll hopefully get some really useful results.
 
