@@ -1,5 +1,5 @@
 <!--
-  title: Detect security vulnerabilities with Psalm
+  title: Detect PHP security vulnerabilities with Psalm
   date: 2020-06-23 07:20:00
   author: Matt Brown
   author_link: https://twitter.com/mattbrowndev
