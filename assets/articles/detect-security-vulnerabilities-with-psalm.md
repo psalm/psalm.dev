@@ -52,7 +52,7 @@ class UserUpdater {
     }
 }
 
-$userObj = new User((string) $_GET["user_id"]);
+$userObj = new User($_GET["user_id"]);
 
 // remove the next line to fix issue
 UserUpdater::deleteUser(new PDO(), $userObj);
