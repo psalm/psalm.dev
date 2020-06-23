@@ -11,7 +11,7 @@ But just as static type-checking helps developers find bugs in their code, a lot
 
 There are a couple of commercial tools that perform taint analysis for PHP. We tried one at Vimeo a couple of years ago but the results were disappointing, as none of the reported issues were actually exploitable. While the tool was looking for the right sorts of things (SQL injection, cross-site-scripting vulnerabilities etc.) a lot of the false-positives were the result of poor type inference — something that Psalm is pretty good at.
 
-I started work on Psalm’s taint analysis engine last year, trialling the feature on Vimeo’s codebase (where it discovered an embarassingly-large number of exploitable cross-site-scripting vulnerabilities) and now it’s ready for everyone else to use.
+I started work on Psalm’s taint analysis engine last year, trialling the feature on Vimeo’s codebase (where it discovered an embarassingly-large number of exploitable vulnerabilities) and now it’s ready for everyone else to use.
 
 Here are two example vulnerabilities that it spots:
 
