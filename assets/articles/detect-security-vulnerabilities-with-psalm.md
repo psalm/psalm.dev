@@ -7,7 +7,7 @@
 
 Security vulnerabilities are often pretty hard to spot manually. While a null-pointer error can make itself known very quickly, you can execute code for a decade without noticing it has a serious vulnerability.
 
-But just as static type-checking helps developers find bugs in their code, a lot of security vulnerabilities can be discovered statically too, through a technique called _taint analysis_. Taint analysis attempts to find connections between user-controlled input (like `$_GET['name']`) and places that we don’t want unescaped user-controlled input to end up (like `echo "<h1>$name</h1>"`) by examining how data flows through your application.
+But just as static type-checking helps developers find bugs in their code, a lot of security vulnerabilities can be discovered statically too, through a technique called _taint analysis_. Taint analysis attempts to find connections between user-controlled input (like `$_GET['name']`) and places that we don’t want unescaped user-controlled input to end up (like `<h1><?=$name?></h1>`) by examining how data flows through your application.
 
 There are a couple of commercial tools that perform taint analysis for PHP. We tried one at Vimeo a couple of years ago but the results were disappointing, as none of the reported issues were actually exploitable. While the tool was looking for the right sorts of things (SQL injection, cross-site-scripting vulnerabilities etc.) a lot of the false-positives were the result of poor type inference — something that Psalm is pretty good at.
 
