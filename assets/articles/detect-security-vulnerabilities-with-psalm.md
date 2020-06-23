@@ -39,16 +39,15 @@ function sayHello() : string {
 
 /** @psalm-immutable */
 class User {
-    public string $id;
-
-    public function __construct(string $userId) {
+    public $id;
+    public function __construct($userId) {
         $this->id = $userId;
     }
 }
 
 class UserUpdater {
-    public static function deleteUser(PDO $pdo, string $userId) : void {
-        $pdo->exec("delete from users where user_id = " . $userId);
+    public static function deleteUser(PDO $pdo, User $user) : void {
+        $pdo->exec("delete from users where user_id = " . $user->id);
     }
 }
 
