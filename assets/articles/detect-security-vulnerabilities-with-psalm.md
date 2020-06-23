@@ -3,7 +3,6 @@
   date: 2020-06-23 07:20:00
   author: Matt Brown
   author_link: https://twitter.com/mattbrowndev
-  notice: TL;DR: this article describes a new Psalm utility for detecting security vulnerabilities in PHP code
 -->
 
 Security vulnerabilities are normally pretty hard to spot. While a null-pointer error can make itself known the second you run your application, you can execute code for a decade without noticing that it contains a serious vulnerability.
