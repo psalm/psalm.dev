@@ -103,7 +103,7 @@ class OnlineChecker
 		        $codebase->classlikes->addClassAlias($new_class, $aliased_class);
 		    }
 
-            $track_taints = preg_match($file_contents, '/^<?php\s*//\s*(--taint-analysis|checkTaintedInput|trackTaints)\b/') > 0;
+            $track_taints = preg_match($file_contents, '/^\<?php\s*//\s*(--taint-analysis|checkTaintedInput|trackTaints)\b/') > 0;
 
 		    if ($track_taints) {
 		    	$codebase->taint = new \Psalm\Internal\Codebase\Taint();
