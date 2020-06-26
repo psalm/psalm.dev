@@ -35,7 +35,7 @@ class OnlineChecker
 		    $providers,
 		    $output_options
 		);
-		
+
 		$project_checker->setPhpVersion($php_version);
 
 		$codebase = $project_checker->getCodebase();
@@ -60,21 +60,21 @@ class OnlineChecker
 		);
 
 		$codebase->scanner->addFileToDeepScan($file_path);
-		
+
 		if (($settings['unused_variables'] ?? false)
 			|| ($settings['unused_methods'] ?? false)
 			|| strpos($file_contents, '<?php // findUnusedCode') === 0
 		) {
 		    $codebase->reportUnusedCode();
 		}
-		
+
 		$codebase->addFilesToAnalyze([$file_path => $file_path]);
-		
+
 		try {
 		    $codebase->scanFiles();
 		} catch (\PhpParser\Error $e) {
 		    $attributes = $e->getAttributes();
-		    
+
 		    return [
 		        'error' => [
 		            'message' => $e->getRawMessage(),
@@ -94,23 +94,21 @@ class OnlineChecker
 		        $file_path,
 		        'somefile.php'
 		    );
-		    
+
 		    $context = new \Psalm\Context();
 		    $context->collect_references = true;
 		    $class_aliases = $codebase->file_storage_provider->get($file_path)->classlike_aliases;
-		    
+
 		    foreach ($class_aliases as $aliased_class => $new_class) {
 		        $codebase->classlikes->addClassAlias($new_class, $aliased_class);
 		    }
 
-            $track_taints = strpos($file_contents, '<?php // checkTaintedInput') === 0
-                || strpos($file_contents, '<?php // trackTaints') === 0
-                || strpos($file_contents, '<?php // --taint-analysis') === 0;
-		    
+            $track_taints = preg_match($file_contents, '^<?php\s*//\s*(--taint-analysis|checkTaintedInput|trackTaints)\b') > 0;
+
 		    if ($track_taints) {
 		    	$codebase->taint = new \Psalm\Internal\Codebase\Taint();
 		    }
-		    
+
 		    $file_checker->analyze($context);
 
 		    $i = 0;
@@ -146,7 +144,7 @@ class OnlineChecker
 		    		}
 		    	}
 		    }
-		    
+
 		    $issue_data = reset($issues) ?: [];
 
 		    $fixed_file_contents = null;
@@ -159,13 +157,13 @@ class OnlineChecker
 		    return [
 		    	'results' => $issue_data,
 		    	'version' => $psalm_version,
-		    	'fixed_contents' => $fixed_file_contents, 
+		    	'fixed_contents' => $fixed_file_contents,
 		    	'hash' => md5($file_contents),
 		    	'type_map' => $transformed_type_map
 		    ];
 		} catch (\PhpParser\Error $e) {
 		    $attributes = $e->getAttributes();
-		    
+
 		    return [
 		        'error' => [
 		            'message' => $e->getRawMessage(),
@@ -203,9 +201,9 @@ class OnlineChecker
 		$config->ignore_internal_nullable_issues = !($settings['strict_internal_functions'] ?? false);
 		$config->ignore_internal_falsable_issues = !($settings['strict_internal_functions'] ?? false);
 		$config->base_dir = __DIR__ . '/';
-		
+
 		$config->addStubFile(dirname(__DIR__) . '/vendor/vimeo/psalm/src/Psalm/Internal/Stubs/ext-ds.php');
-		
+
 		$config->setCustomErrorLevel('MixedArrayAccess', Config::REPORT_INFO);
 		$config->setCustomErrorLevel('MixedArrayOffset', Config::REPORT_INFO);
 		$config->setCustomErrorLevel('MixedAssignment', Config::REPORT_INFO);
