@@ -53,7 +53,7 @@ That’s because, though the interface has a `$sqlString` parameter, the actual 
 
 ## Psalm now detects this…
 
-The latest version of Psalm will alert you to these parameter name mismatches with a `MismatchingParamName` issue, so it's easy to see which methods won't be compatible with named-argument calling.
+The latest version of Psalm will alert you to these parameter name mismatches with a `ParamNameMismatch` issue, so it's easy to see which methods won't be compatible with named-argument calling.
 
 ## …and can fix it automatically
 
