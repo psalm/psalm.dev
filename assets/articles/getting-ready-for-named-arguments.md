@@ -13,7 +13,7 @@ Named Arguments will make many developers very happy, but they come with a prett
 
 Let’s say we have an interface on an existing third-party library, and we want to query it. In PHP 7 the code is simple:
 
-```php
+```
 interface IQueryable {
     public function fetchValue(string $sqlString, bool $cache);
 }
@@ -38,7 +38,7 @@ executeSql(new MySqlQueryable());
 
 In PHP 8 the same code will work just fine unless we decide to call the method with named arguments, where we’ll run into an Error:
 
-```php
+```
 function executeSQL(IQueryable $queryable) {
     return $queryable->fetchValue(
         sqlString: "SELECT count(*) from foo",
@@ -99,7 +99,7 @@ If you don’t have complete control over how your code is called, things can ge
 
 If you have a published API like
 
-```php
+```
 interface IQueryable {
   function fetchValue(string $sqlString, bool $cache);
 }
@@ -109,7 +109,7 @@ You’re now prevented from being allowed to change the param name to `$queryStr
 
 Psalm ([followed by more tools in the near future](https://github.com/Roave/BackwardCompatibilityCheck/issues/264)) now supports a `@no-named-arguments` docblock annotation that you can add to methods:
 
-```php
+```
 interface IQueryable {
   /** @no-named-arguments */
   function fetchValue(string $sqlString);
@@ -124,7 +124,7 @@ Psalm also supports a second config flag `allowInternalNamedArgumentCalls="false
 
 With that flag added to the Psalm config, this is now allowed:
 
-```php
+```
 /** @internal */
 interface IQueryable {
     public function fetchValue(string $sqlString, bool $cache);
