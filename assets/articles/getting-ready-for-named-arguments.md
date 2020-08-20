@@ -36,7 +36,7 @@ function executeSQL(IQueryable $queryable) {
 executeSql(new MySqlQueryable());
 ```
 
-In PHP 8 the same code will work just fine unless we decide to call the method with named arguments, where we’ll run into a fatal error:
+In PHP 8 the same code will work just fine unless we decide to call the method with named arguments, where we’ll run into an Error:
 
 ```
 function executeSQL(IQueryable $queryable) {
@@ -46,7 +46,7 @@ function executeSQL(IQueryable $queryable) {
     );
 }
 
-// Fatal Error: Unknown named parameter $sqlString
+// Uncaught Error: Unknown named parameter $sqlString
 ```
 
 That’s because, though the interface has a `$sqlString` parameter, the actual implementing class does not (it’s instead named `$queryString`) and PHP doesn’t know what to do. We could fix the issue by renaming `$queryString` to `$sqlString`.
