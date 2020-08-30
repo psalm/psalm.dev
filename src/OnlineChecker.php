@@ -16,7 +16,7 @@ class OnlineChecker
 		string $file_contents,
 		array $settings,
 		bool $fix_file,
-		string $php_version = '7.4'
+		string $php_version = '8.0'
 	) : array {
 		$config = self::getPsalmConfig($settings, $fix_file, $file_contents);
 
