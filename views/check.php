@@ -51,7 +51,7 @@ if (strlen($file_contents) > 100000) {
 
 $php_version = $_POST['php'] ?? '8.0';
 		
-if (!preg_match('/^[57]\.\d$/', $php_version)) {
+if (!preg_match('/^[578]\.\d$/', $php_version)) {
     echo json_encode(['error' => 'PHP version ' . $php_version . ' not supported']);
     exit;
 }
