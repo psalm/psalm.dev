@@ -73,3 +73,4 @@ RewriteCond %{REQUEST_URI} !^/vendor/vimeo/psalm/config\.xsd
 RewriteRule ^vendor/?.*$ - [F,L]
 RewriteRule ^.git/?.*$ - [F,L]
 RewriteRule ^dbconfig.php.*$ - [F,L]
+RewriteRule ^bin/?.*$ - [F,L]

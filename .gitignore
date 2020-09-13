@@ -7,3 +7,5 @@ blogconfig.php
 /docs/
 /extra/
 /assets/fonts
+composer.lock
+assets/plugins/list.json
