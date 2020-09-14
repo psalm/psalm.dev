@@ -51,4 +51,35 @@ hr {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 10'%3E%3Cpath fill='none' stroke='%23bbbbbb' stroke-width='3' d='M0 8.5c8 0 8-7 16-7s8 7 16 7 8-7 16-7 8 7 16 7' class='st0'/%3E%3C/svg%3E");
 }
 
+div.plugin_list {
+    margin: 20px auto 80px;
+    max-width: 680px;
+
+    h1 {
+        padding-left: 20px;
+        padding-right: 20px;
+        margin: 2em 0 0;
+        font-weight: normal;
+        line-height: 1.2em;
+    }
+
+    h2, h3, h4 {
+        padding-left: 20px;
+        padding-right: 20px;
+        margin: 1.5em 0 .5em;
+    }
+
+    h2 {
+        font-size: 24px;
+        line-height: 1.3em;
+        font-weight: 500;
+        color: rgb(167, 82, 81);
+    }
+    section > p {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+}
+
 @import url('footer.scss');

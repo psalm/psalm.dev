@@ -1,5 +1,10 @@
 <?php
+
+use PsalmDotOrg\PluginRepository;
+
 require_once __DIR__ . "/../vendor/autoload.php";
+
+$plugins = PluginRepository::getAll();
 ?>
 <html>
 
@@ -12,9 +17,20 @@ require_once __DIR__ . "/../vendor/autoload.php";
 </head>
 
 <body>
-<?php require __DIR__ . "/../includes/nav.php" ?>
-
-<?php require __DIR__ . "/../includes/footer.php" ?>
+    <?php require __DIR__ . "/../includes/nav.php" ?>
+    <div class="plugin_list">
+        <h1>Psalm plugins</h1>
+        <?php if ($plugins) : ?>
+            <?php foreach ($plugins as $plugin) : ?>
+                <section id="<?= $plugin->name ?>">
+                    <h2><a href="https://packagist.org/packages/<?= $plugin->name ?>"><?= $plugin->name ?></a></h2>
+                    <p><?= $plugin->description ?></p>
+                </section>
+            <?php endforeach; ?>
+        <?php else : ?>
+        <?php endif; ?>
+    </div>
+    <?php require __DIR__ . "/../includes/footer.php" ?>
 </body>
 
 </html>

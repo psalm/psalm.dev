@@ -9,3 +9,5 @@ blogconfig.php
 /assets/fonts
 composer.lock
 assets/plugins/list.json
+node_modules
+package-lock.json
