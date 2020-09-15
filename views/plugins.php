@@ -24,6 +24,10 @@ $plugins = PluginRepository::getAll();
             <?php foreach ($plugins as $plugin) : ?>
                 <section id="<?= $plugin->name ?>">
                     <h2><a href="https://packagist.org/packages/<?= $plugin->name ?>"><?= $plugin->name ?></a></h2>
+                    <p class="meta">
+                        <span title="Monthly downloads" class="downloads"> <?= $plugin->monthly_downloads ?></span>
+                        <span title="Stars on Github" class="stars"> <?= $plugin->stars ?></span>
+                    </p>
                     <p><?= $plugin->description ?></p>
                 </section>
             <?php endforeach; ?>
