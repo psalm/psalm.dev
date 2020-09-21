@@ -7,8 +7,6 @@
 
 	        <li class="doc_link"><a href="/docs">Documentation</a></li>
 
-	        <li class="plugins_link"><a href="/plugins">Plugins</a></li>
-
 	        <li class="articles_link"><a href="/articles">Articles</a></li>
 
 		<li class="contribute_link"><a href="/contribute">Contribute</a></li>
