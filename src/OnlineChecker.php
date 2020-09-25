@@ -106,7 +106,7 @@ class OnlineChecker
             $track_taints = preg_match('/^\<\?php\s*\/\/\s*(--taint-analysis|checkTaintedInput|trackTaints)\b/', $file_contents) > 0;
 
 		    if ($track_taints) {
-		    	$codebase->taint_flow_graph = new \Psalm\Internal\Codebase\ControlFlowGraph();
+		    	$codebase->taint_flow_graph = new \Psalm\Internal\Codebase\TaintFlowGraph();
 		    }
 
 		    $file_checker->analyze($context);
@@ -114,7 +114,7 @@ class OnlineChecker
 		    $i = 0;
 
 		    if ($codebase->taint_flow_graph) {
-            	$codebase-taint_flow_graph->connectSinksAndSources();
+            	$codebase->taint_flow_graph->connectSinksAndSources();
         	}
 
 		    if (($settings['unused_methods'] ?? false) || strpos($file_contents, '<?php // findUnusedCode') === 0) {
