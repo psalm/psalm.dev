@@ -51,7 +51,7 @@ $minutes_taken = round(0.25 + ($word_count / 265));
 <?php if ($article->is_preview) : ?>
     <p class="preview_warning">Article preview - contents subject to change</p>
 <?php endif ?>
-<h1><?= PsalmDotOrg\AltHeadingParser::preventOrphans($article->title) ?></h1>
+<h1><?= Muglug\Blog\AltHeadingParser::preventOrphans($article->title) ?></h1>
 <p class="meta">
     <?= date('F j, Y', strtotime($article->date)) ?> by <?= $article->author ?> - 
     <?php if ($article->canonical): ?>
