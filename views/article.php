@@ -23,17 +23,6 @@ try {
     exit;
 }
 
-$word_count = str_word_count(strip_tags(preg_replace('/<pre>(.*?)<\\/pre>/', '', $article->html)));
-
-$word_count += 2 * substr_count($article->html, '<p>');
-
-$word_count += substr_count($article->html, '<h');
-
-$word_count += substr_count($article->html, '<code');
-
-$word_count += substr_count($article->html, '<a href=');
-
-$minutes_taken = round(0.25 + ($word_count / 265));
 ?>
 <html>
 <head>
@@ -64,7 +53,7 @@ $minutes_taken = round(0.25 + ($word_count / 265));
     <?php if ($article->canonical): ?>
         <a href="<?= $article->canonical ?>">original article</a>
     <?php else: ?>
-        <?= $minutes_taken ?>&nbsp;minute&nbsp;read
+        <?= $article->getReadingMinutes() ?>&nbsp;minute&nbsp;read
     <?php endif; ?>
 </p>
 <?php if ($article->notice) : ?>
