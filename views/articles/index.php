@@ -2,7 +2,7 @@
 
 require_once('../../vendor/autoload.php');
 
-$blog = new Muglug\Blog\MarkdownBlog(dirname(__DIR__, 3) . '/assets/articles/');
+$blog = new Muglug\Blog\MarkdownBlog(dirname(__DIR__, 2) . '/assets/articles/');
 
 $articles = $blog->articles->getAll();
 
