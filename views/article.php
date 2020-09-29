@@ -8,7 +8,12 @@ ini_set('display_errors', '1');
 $title = 'Psalm - article not found';
 $name = $_GET['name'];
 
-$blog = new Muglug\Blog\MarkdownBlog(dirname(__DIR__) . '/assets/articles/');
+$blogconfig = require(dirname(__DIR__) . '/blogconfig.php');
+
+$blog = new Muglug\Blog\MarkdownBlog(
+    dirname(__DIR__) . '/assets/articles/',
+    new Muglug\Blog\GithubConfig($blogconfig['owner'], $blogconfig['repo'], $blogconfig['github_token'])
+);
 
 $article = $blog->articles->get($name);
 
