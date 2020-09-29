@@ -8,7 +8,7 @@ ini_set('display_errors', '1');
 $title = 'Psalm - article not found';
 $name = $_GET['name'];
 
-$blog = new Muglug\Blog\MarkdownBlog(__DIR__ . '/assets/articles/');
+$blog = new Muglug\Blog\MarkdownBlog(dirname(__DIR__) . '/assets/articles/');
 
 $article = $blog->articles->get($name);
 
