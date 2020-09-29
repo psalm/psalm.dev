@@ -15,9 +15,11 @@ $blog = new Muglug\Blog\MarkdownBlog(
     new Muglug\Blog\GithubConfig($blogconfig['owner'], $blogconfig['repo'], $blogconfig['github_token'])
 );
 
-$article = $blog->articles->get($name);
-
-if (!$article) {
+try {
+    $article = $blog->articles->get($name);
+} catch (\Exception $e) {
+    header("HTTP/1.0 404 Not Found");
+    echo $e->getMessage();
     exit;
 }
 
