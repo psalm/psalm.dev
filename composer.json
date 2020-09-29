@@ -3,8 +3,7 @@
     "type": "project",
     "require": {
         "vimeo/psalm": "dev-master",
-        "league/commonmark": "^1.0",
-        "league/commonmark-ext-table": "^2.1"
+        "muglug/simple-markdown-blog": "dev-main"
     },
     "autoload": {
         "psr-4": {

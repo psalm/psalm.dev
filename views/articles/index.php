@@ -2,7 +2,9 @@
 
 require_once('../../vendor/autoload.php');
 
-$articles = PsalmDotOrg\ArticleRepository::getAll();
+$blog = new Muglug\Blog\MarkdownBlog(dirname(__DIR__, 3) . '/assets/articles/');
+
+$articles = $blog->articles->getAll();
 
 ?>
 <html>
