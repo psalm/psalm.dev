@@ -25,8 +25,8 @@ $plugins = PluginRepository::getAll();
                 <section id="<?= $plugin->name ?>">
                     <h2><a href="https://packagist.org/packages/<?= $plugin->name ?>"><?= $plugin->name ?></a></h2>
                     <p class="meta">
-                        <span title="Monthly downloads" class="downloads"> <?= $plugin->monthly_downloads ?></span>
-                        <span title="Stars on Github" class="stars"> <?= $plugin->stars ?></span>
+                        <span title="Monthly downloads" class="downloads"> <?= number_format($plugin->monthly_downloads) ?></span>
+                        <span title="Stars on Github" class="stars"> <?= number_format($plugin->stars) ?></span>
                     </p>
                     <p><?= $plugin->description ?></p>
                 </section>
