@@ -130,6 +130,19 @@ label.md-nav__title {
 	display: none;
 }
 
+.md-header {
+	height: 3.4rem;
+}
+
+.md-header-nav {
+	margin-top: 0.5rem;
+	margin-top: 0.4rem;
+}
+
+.md-sidebar[data-md-state=lock] {
+	top: 3.2rem;
+}
+
 .md-header-nav__title {
 	font-size: 1rem;
     font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
