@@ -1,7 +1,10 @@
 @import 'tiempos_text.scss';
+@import 'national.scss';
 
 body {
 	font-family: 'Tiempos Text', 'Times New Roman', serif;
+	-webkit-font-smoothing: subpixel-antialiased;
+	-moz-osx-font-smoothing: inherit;
 }
 
 .md-header {
@@ -84,5 +87,13 @@ p, ul, table {
 		&::placeholder {
 			color: #000;
 		}
+	}
+}
+
+.md-typeset {
+	h1, h2 {
+		font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
+    	color: #000;
+    	font-weight: 600;
 	}
 }
