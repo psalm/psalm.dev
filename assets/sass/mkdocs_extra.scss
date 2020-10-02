@@ -1,4 +1,5 @@
 @import 'tiempos_text.scss';
+@import 'national.scss';
 @import 'nav.scss';
 
 .third-level {
@@ -51,7 +52,7 @@ nav h1 span {
 	display: inline-block;
     position: relative;
     top: 6px;
-    font-family: "Operator SSm A", "Operator SSm B";
+    font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
     font-size: 20px;
 }
 
@@ -71,7 +72,7 @@ nav ul li a {
 .navbar {
 	box-shadow: none;
 	border: none;
-	font-family: "Operator SSm A", "Operator SSm B";
+	font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
 	z-index: 10;
     background: #FFF;
 }
@@ -112,11 +113,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1, h2 {
-	font-family: 'Tiempos Text';
+	font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
+    color: #000;
 }
 
 h1 {
-	font-weight: 400;
+	font-weight: 600;
+    color: #000;
     font-size: 34px;
     margin: .5em 0 .75em;
 }
@@ -184,7 +187,7 @@ button.navbar-toggler .navbar-toggler-icon {
 .bs-sidebar .nav > li > a {
     font-weight: normal;
     padding: 2px 20px;
-    font-family: "Operator SSm A", "Operator SSm B";
+    font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
     font-size: 14px;
 }
 
