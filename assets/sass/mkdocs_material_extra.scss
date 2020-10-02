@@ -21,6 +21,17 @@ body {
 	}
 }
 
+.md-header-nav__button.md-logo {
+	color: #000;
+    text-decoration: none;
+    font-family: 'National 2', sans-serif;
+    font-size: 30px;
+    font-weight: 600;
+    -webkit-font-smoothing: antialiased;
+    margin-top: 0.2rem;
+    padding-top: 0;
+}
+
 .md-header[data-md-state="shadow"] {
 	box-shadow: none;
 }
