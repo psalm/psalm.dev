@@ -24,7 +24,7 @@ nav {
 
         li {
             display: inline-block;
-            margin-left: 25px;
+            margin-left: 20px;
 
             &.doc_link {
                 margin-right: -2px;
@@ -37,7 +37,8 @@ nav {
                 font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
                 font-style: normal;
                 font-weight: 500;
-                font-size: 16px;
+                font-size: 18px;
+                color: #b93c3b;
 
                 svg {
                     vertical-align: middle;
