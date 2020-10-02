@@ -92,12 +92,25 @@ p, ul, table {
 	.md-header .md-search__input {
 		background-color: #FFF;
 		color: #000;
-		font-family: 'Tiempos Text';
+		font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
 
 		& + .md-search__icon,
 		&::placeholder {
 			color: #000;
 		}
+	}
+}
+
+.md-search {
+	font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
+
+	.md-search-result__teaser {
+		font-size: 16px;
+		max-height: 44px;
+	}
+
+	.md-search-result__title, .md-search-result__meta {
+		font-size: 16px;
 	}
 }
 
