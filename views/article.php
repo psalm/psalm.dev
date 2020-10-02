@@ -27,12 +27,8 @@ try {
 <html>
 <head>
 <title><?= $article->title ?></title>
-<script src="/assets/js/codemirror.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cloud.typography.com/751592/7707372/css/fonts.css" />
-<link rel="stylesheet" href="/assets/css/site.css?13">
-<link rel="icon" type="image/png" href="/favicon.png">
+<?php require('../includes/meta.php'); ?>
 <?php if ($article->canonical): ?><link rel="canonical" href="<?= $article->canonical ?>" /><?php endif; ?>
-<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@psalmphp" />
 <meta name="twitter:title" content="<?= $article->title ?>" />

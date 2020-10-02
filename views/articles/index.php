@@ -10,9 +10,7 @@ $articles = $blog->articles->getAll();
 <html>
 <head>
 <title>Psalm - Articles</title>
-<link rel="stylesheet" type="text/css" href="https://cloud.typography.com/751592/7707372/css/fonts.css" />
-<link rel="stylesheet" href="/assets/css/site.css?13">
-<link rel="icon" type="image/png" href="/favicon.png">
+<?php require('../../includes/meta.php'); ?>
 <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 </head>
 <body>
