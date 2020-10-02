@@ -102,15 +102,24 @@ p, ul, table {
 }
 
 .md-typeset {
-	h1, h2 {
+	h1, h2, h3 {
 		font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
     	color: #000;
     	font-weight: 600;
+	}
+
+	h3 {
+		font-weight: 500;
 	}
 }
 
 label.md-nav__title {
 	display: none;
+}
+
+.md-header-nav__title {
+	font-size: 1rem;
+    font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
 }
 
 .md-sidebar {
