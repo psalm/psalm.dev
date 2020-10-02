@@ -103,10 +103,12 @@ div.post {
 
     .meta {
         margin: 0.5em 0 3em;
-        color: #666;
+        color: #999;
+        font-weight: 500;
 
         &.inline {
             margin-bottom: -1em;
+            margin-top: -0.1em;
         }
 
         a {
