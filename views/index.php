@@ -7,7 +7,7 @@
 <?php require('../includes/nav.php'); ?>
 <div class="container front" id="page_container">
     <div class="intro">
-        <h2>Give PHP the love it&nbsp;deserves</h2>
+        <h2>Give PHP the <span class="CodeMirror-lint-mark-error">love</span> it&nbsp;deserves</h2>
 
         <p>It’s easy to make great things in PHP, but bugs can creep in just as easily. Psalm is a free &amp; open-source static analysis tool that helps you identify problems in your code, so you can sleep a little better.</p>
 
