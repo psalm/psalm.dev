@@ -17,6 +17,14 @@ body.front {
     padding: 0 40px 60px 20px;
     float: left;
     margin-top: -10px;
+
+    h2 {
+        font-family: 'National 2', sans-serif;
+        font-weight: 400;
+        font-size: 34px;
+        line-height: 1.3em;
+        margin-top: 20px;
+    }
 }
 
 .intro, .post {

@@ -3,7 +3,7 @@
 	    <h1><a href="/">Psalm</a></h1>
 
 	    <ul>
-	        <li class="get_started"><a href="/docs/installation">Getting started</a></li>
+	        <li class="get_started"><a href="/docs/installation">Get started</a></li>
 
 	        <li class="doc_link"><a href="/docs">Documentation</a></li>
 

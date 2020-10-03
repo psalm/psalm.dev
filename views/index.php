@@ -7,15 +7,13 @@
 <?php require('../includes/nav.php'); ?>
 <div class="container front" id="page_container">
     <div class="intro">
-        <p>Psalm is an open-source static analysis tool for PHP that helps you identify both obvious and hard-to-spot bugs in your code.</p>
+        <h2>Give PHP the love it&nbsp;deserves</h2>
 
-        <hr />
+        <p>It’s easy to make great things in PHP, but bugs can creep in just as easily. Psalm is a free &amp; open-source static analysis tool that helps you identify both obvious and hard-to-spot problems in your code, so you can sleep a little better.</p>
 
-        <p>Psalm is designed to be useful on both large legacy codebases and small, modern ones. <a href="articles/php-or-type-safety-pick-any-two">It can help you prevent</a> the vast majority of type-related runtime errors, and also enables you to take advantage of <a href="articles/immutability-and-beyond">safe coding patterns</a> popular in other languages.</p>
+        <p>Psalm helps people maintain a wide variety of codebases – large and small, ancient and modern. On its strictest setting it can help you <a href="articles/php-or-type-safety-pick-any-two">prevent almost all type-related runtime errors</a>, and enables you to take advantage of <a href="articles/immutability-and-beyond">safe coding patterns</a> popular in other languages.</p>
 
-        <p>Psalm’s functionality can also be extended with <a href="/plugins">a large assortment of plugins</a>.</p>
-
-        <p>Lastly, Psalm <a href="https://psalm.dev/docs/manipulating_code/fixing/">can automatically fix a number of the errors it finds</a>, allowing you to improve your code without breaking a sweat.</p>
+        <p>A <a href="/plugins">large collection of plugins</a> allows Psalm to work with popular packages like Laravel, PHPUnit, and Symfony, and Psalm <a href="https://psalm.dev/docs/manipulating_code/fixing/">also fixes bugs automatically</a>, allowing you to improve your code without breaking a sweat.</p>
     </div>
     <div class="cm_container">
         <textarea
