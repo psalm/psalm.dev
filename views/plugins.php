@@ -20,7 +20,7 @@ $plugins = PluginRepository::getAll();
     <?php require __DIR__ . "/../includes/nav.php" ?>
     <div class="plugin_list">
         <h1>Psalm plugins</h1>
-        <p>Plugins allow Psalm to work great with popular packages like Laravel, PHPUnit, and Symfony.</p>
+        <p>These plugins allow Psalm to work great with popular packages like Laravel, PHPUnit, and Symfony.</p>
         <?php if ($plugins) : ?>
             <?php foreach ($plugins as $plugin) : ?>
                 <section id="<?= $plugin->name ?>">
