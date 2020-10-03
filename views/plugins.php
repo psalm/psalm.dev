@@ -21,6 +21,7 @@ $plugins = PluginRepository::getAll();
     <div class="plugin_list">
         <h1>Psalm plugins</h1>
         <p>These plugins allow Psalm to work great with popular packages like Laravel, PHPUnit, and Symfony.</p>
+        <p>Have a look at <a href="https://psalm.dev/docs/running_psalm/plugins/using_plugins/">Psalm’s documentation</a> to find out how to install and use them.</p>
         <?php if ($plugins) : ?>
             <?php foreach ($plugins as $plugin) : ?>
                 <section id="<?= $plugin->name ?>">
