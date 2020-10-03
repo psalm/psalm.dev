@@ -128,6 +128,24 @@ var fetchAnnotations = function (code, callback, options, cm) {
                     )
                 )
             );
+
+            if ('fixable_errors' in response && response.fixable_errors > 0) {
+                document.getElementById('psalm_output').innerHTML = 'Psalm detected ' + response.fixable_errors + ' fixable errors<br>&nbsp;';
+
+                const textarea = cm.getTextArea()
+                const container = textarea.parentNode;
+
+                let fix_button = document.createElement('button');
+                fix_button.innerText = 'Fix code';
+                container.appendChild(fix_button);
+
+                fix_button.addEventListener(
+                    'click',
+                    function() {
+                        fetchFixedContents(cm.getValue(), cm);
+                    }
+                );
+            }
         }
         else if ('error' in response) {
             callback({
@@ -198,21 +216,6 @@ var fetchFixedContents = function (code, cm) {
 		container.appendChild(textarea);
 		container.className = 'cm_inline_container';
 
-		let fix_button = null;
-
-		let reset_button = null;
-
-		if (textarea.value.indexOf('<?= '<?php' ?> // fix') === 0) {
-			fix_button = document.createElement('button');
-			fix_button.innerText = 'Fix code';
-			container.appendChild(fix_button);
-
-			reset_button = document.createElement('button');
-			reset_button.innerText = 'Reset';
-			reset_button.className = 'reset';
-			container.appendChild(reset_button);
-		}
-
 		parent.replaceChild(container, code_element);
 		const cm = CodeMirror.fromTextArea(textarea, {
 		    lineNumbers: false,
@@ -226,24 +229,6 @@ var fetchFixedContents = function (code, cm) {
 		        async: true,
 		    }
 		});
-
-		if (fix_button) {
-			fix_button.addEventListener(
-				'click',
-				function() {
-					fetchFixedContents(cm.getValue(), cm);
-				}
-			);
-		}
-
-		if (reset_button) {
-			reset_button.addEventListener(
-				'click',
-				function() {
-					cm.setValue(text);
-				}
-			);
-		}
 	}
 );
 </script>

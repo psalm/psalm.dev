@@ -159,7 +159,8 @@ class OnlineChecker
 		    	'version' => $psalm_version,
 		    	'fixed_contents' => $fixed_file_contents,
 		    	'hash' => md5($file_contents),
-		    	'type_map' => $transformed_type_map
+		    	'type_map' => $transformed_type_map,
+                'fixable_errors' => IssueBuffer::getFixableIssues()
 		    ];
 		} catch (\PhpParser\Error $e) {
 		    $attributes = $e->getAttributes();

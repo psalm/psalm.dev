@@ -174,7 +174,25 @@ var fetchAnnotations = function (code, callback, options, cm) {
                         )
                     )
                 );
-            }  
+            }
+
+            if ('fixable_errors' in response && response.fixable_errors > 0) {
+                document.getElementById('psalm_output').innerHTML = 'Psalm detected ' + response.fixable_errors + ' fixable errors<br>&nbsp;';
+
+                const textarea = cm.getTextArea()
+                const container = textarea.parentNode;
+
+                fix_button = document.createElement('button');
+                fix_button.innerText = 'Fix code';
+                container.appendChild(fix_button);
+
+                fix_button.addEventListener(
+                    'click',
+                    function() {
+                        fetchFixedContents(cm.getValue(), cm);
+                    }
+                );
+            }
         }
         else if ('error' in response) {
             var error_type = response.error.type === 'parser_error' ? 'Parser' : 'Internal Psalm';
