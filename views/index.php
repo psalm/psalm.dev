@@ -9,11 +9,11 @@
     <div class="intro">
         <h2>Give PHP the love it&nbsp;deserves</h2>
 
-        <p>It’s easy to make great things in PHP, but bugs can creep in just as easily. Psalm is a free &amp; open-source static analysis tool that helps you identify both obvious and hard-to-spot problems in your code, so you can sleep a little better.</p>
+        <p>It’s easy to make great things in PHP, but bugs can creep in just as easily. Psalm is a free &amp; open-source static analysis tool that helps you identify problems in your code, so you can sleep a little better.</p>
 
         <p>Psalm helps people maintain a wide variety of codebases – large and small, ancient and modern. On its strictest setting it can help you <a href="articles/php-or-type-safety-pick-any-two">prevent almost all type-related runtime errors</a>, and enables you to take advantage of <a href="articles/immutability-and-beyond">safe coding patterns</a> popular in other languages.</p>
 
-        <p>A <a href="/plugins">large collection of plugins</a> allows Psalm to work with popular packages like Laravel, PHPUnit, and Symfony, and Psalm <a href="https://psalm.dev/docs/manipulating_code/fixing/">also fixes bugs automatically</a>, allowing you to improve your code without breaking a sweat.</p>
+        <p>Psalm <a href="https://psalm.dev/docs/manipulating_code/fixing/">also fixes bugs automatically</a>, allowing you to improve your code without breaking a sweat.</p>
     </div>
     <div class="cm_container">
         <textarea
