@@ -213,7 +213,7 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
 });
 
 //editor.focus();
-editor.setCursor(editor.lineCount(), 0);
+//editor.setCursor(editor.lineCount(), 0);
     
 redrawSettings();
 
