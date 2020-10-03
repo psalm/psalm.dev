@@ -5,6 +5,7 @@
 @import 'nav.scss';
 @import 'front.scss';
 @import 'post.scss';
+@import 'footer.scss';
 
 body {
     font-family: "Tiempos Text", Georgia;
@@ -112,5 +113,3 @@ div.plugin_list {
         }
     }
 }
-
-@import url('footer.scss');

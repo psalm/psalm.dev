@@ -1,3 +1,7 @@
+body.front {
+    background-color: #f1f0f0;
+}
+
 .container.front {
     padding-top: 50px;
 
@@ -85,6 +89,7 @@ div.cm_container {
     font-style: normal;
     font-weight: 400;
     line-height: 1.6em;
+    background-color: #FFF;
 }
 
 .cm_container div.CodeMirror,

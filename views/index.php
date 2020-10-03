@@ -3,7 +3,7 @@
 <title>Psalm - a static analysis tool for PHP</title>
 <?php require('../includes/meta.php'); ?>
 </head>
-<body>
+<body class="front">
 <?php require('../includes/nav.php'); ?>
 <div class="container front" id="page_container">
     <div class="intro">
