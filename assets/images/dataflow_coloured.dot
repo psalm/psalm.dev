@@ -1,0 +1,48 @@
+digraph G {
+  graph[fontsize=18 fontname="SF Mono"];
+  color="#efefef";
+  node[shape=box style=filled fontsize=18 fontname="SF Mono" fillcolor="#efefef"];
+  edge[fontsize=12 fontname="SF Mono"];
+
+  zero [label="0"];
+  five [label="5"];
+  one [label="1"];
+  a0 [label="$a₀" penwidth="3" color="blue"];
+  a1 [label="$a₁" penwidth="3" color="blue"];
+  a2 [label="$a₂"];
+  a3 [label="$a₃" penwidth="3" color="blue"];
+  a4 [label="$a₄"];
+  b0 [label="$b₀" penwidth="3" color="red" style=dashed];
+  b1 [label="$b₁"];
+  b2 [label="$b₂" penwidth="3" color="red" style=dashed];
+  a2_plus_1 [label="+"];
+  b1_plus_1 [label="+"];
+  echo [label="echo" color="blue"];
+
+  zero -> a0 [label=" ="]
+  zero -> b0 [label=" ="]
+  five -> a1 [label=" ="]
+
+  a0 -> a4 [color="blue"];
+  a1 -> a4 [color="blue"];
+  a3 -> a4 [color="blue"];
+
+  a0 -> a2 [color="blue"];
+  a3 -> a2 [color="blue"];
+
+  b0 -> b1 [color="red"]
+
+  one -> a2_plus_1
+  a2 -> a2_plus_1 [color="blue"];
+
+  a2_plus_1 -> a3 [color="blue" label=" ="];
+
+  one -> b1_plus_1
+  b1 -> b1_plus_1 [color="red"]
+
+  b1_plus_1 -> b2 [color="red" label=" ="]
+
+  b2 -> b1 [color="red"]
+
+  a4 -> echo [color="blue"];
+}

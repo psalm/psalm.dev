@@ -1,0 +1,42 @@
+digraph G {
+  graph[fontsize=18 fontname="SF Mono"];
+  color="#efefef";
+  node[shape=box style=filled fontsize=18 fontname="SF Mono" fillcolor="#efefef"];
+  edge[fontsize=12 fontname="SF Mono"];
+
+  node_0 [label="$a₀ = 0\l"];
+  node_b0 [label="$b₀ = 0\l"];
+  loop [label="<loop>\l"]
+  node_1 [label="first_condition()\l"];
+  node_2 [label="second_condition()\l"];
+  node_3 [label="third_condition()\l"];
+  node_4 [label="$a₁ = 5\l"];
+  break [label="break\l"]
+  node_5 [label="fourth_condition()\l"];
+  continue [label="continue\l"]
+  node_6 [label="$a₃ = $a₂ + 1\l"];
+  node_b [label="$b₂ = $b₁ + 1\l"]
+  node_7 [label="echo $a₄;"];
+
+  subgraph cluster_1 {
+    node [style=filled];
+    loop -> node_1
+    node_1 -> node_2 [label="true"]
+    node_2 -> node_3 [label="true"]
+    node_2 -> node_5 [label="false"]
+    node_3 -> node_4 [label="true"]
+    node_4 -> break
+    node_3 -> node_5 [label="false"]
+    node_5 -> continue [label="true"]
+    node_5 -> node_6 [label="false"]
+    node_6 -> node_b
+    continue -> loop
+    node_b -> loop
+    color=blue
+  }
+
+  node_0 -> node_b0
+  node_b0 -> loop
+  break -> node_7
+  node_1 -> node_7 [label="false"]
+}
