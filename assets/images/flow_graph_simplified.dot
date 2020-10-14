@@ -1,0 +1,28 @@
+digraph G {
+  graph[fontsize=18 fontname="SF Mono"];
+  color="#efefef";
+  node[shape=box style=filled fontsize=18 fontname="SF Mono" fillcolor="#efefef"];
+  edge[fontsize=12 fontname="SF Mono"];
+
+  node_0 [label="$a₀ = 0\l"];
+  node_b0 [label="$b₀ = 0\l"];
+  node_4 [label="$a₁ = 5\l"];
+  node_6 [label="$a₃ = $a₂ + 1\l"];
+  node_b [label="$b₂ = $b₁ + 1\l"]
+  node_7 [label="echo $a₄;"];
+
+  subgraph cluster_1 {
+    node [style=filled];
+    node_4
+    node_6 -> node_b
+    node_b -> node_6
+    color=blue
+  }
+
+  node_0 -> node_b0
+  node_b0 -> node_4
+  node_b0 -> node_6
+  node_b0 -> node_7
+  node_6 -> node_7
+  node_4 -> node_7
+}
