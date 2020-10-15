@@ -86,7 +86,7 @@ if (isset($_GET['format'])) {
 <link rel="icon" type="image/png" href="/favicon.png">
 <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 </head>
-<body class="code_expanded">
+<body class="front code_expanded">
 <?php require('../includes/nav.php'); ?>
 <div class="container snippet" id="page_container">
     <div class="cm_container">
