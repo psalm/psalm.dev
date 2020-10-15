@@ -254,6 +254,9 @@ var fetchFixedContents = function (code, cm) {
             return;
         }
 
+        fix_button.parentNode.removeChild(fix_button);
+        fix_button = null;                        
+
         if ('fixed_contents' in response && response.fixed_contents) {
             cm.setValue(response.fixed_contents);
         }
