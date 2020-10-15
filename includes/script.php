@@ -84,6 +84,8 @@ var urlParams = new URLSearchParams(window.location.search);
 
 var latestFetch = 0;
 
+let fix_button = null;
+
 var fetchAnnotations = function (code, callback, options, cm) {
     latestFetch++;
     fetchKey = latestFetch;
@@ -176,22 +178,35 @@ var fetchAnnotations = function (code, callback, options, cm) {
                 );
             }
 
-            if ('fixable_errors' in response && response.fixable_errors > 0) {
-                document.getElementById('psalm_output').innerHTML = 'Psalm detected ' + response.fixable_errors + ' fixable errors<br>&nbsp;';
+            if ('fixable_errors' in response && response.fixable_errors) {
+                let error_count = 0;
 
-                const textarea = cm.getTextArea()
-                const container = textarea.parentNode;
+                for (type in response.fixable_errors) {
+                    error_count += response.fixable_errors[type];
+                }
 
-                fix_button = document.createElement('button');
-                fix_button.innerText = 'Fix code';
-                container.appendChild(fix_button);
+                if (error_count) {
+                    document.getElementById('psalm_output').innerHTML += 'Psalm detected ' + error_count + ' fixable issue(s)<br>&nbsp;';
 
-                fix_button.addEventListener(
-                    'click',
-                    function() {
-                        fetchFixedContents(cm.getValue(), cm);
+                    const textarea = cm.getTextArea()
+                    const container = textarea.parentNode;
+
+                    if (!fix_button) {
+                        fix_button = document.createElement('button');
+                        fix_button.innerText = 'Fix code';
+                        container.appendChild(fix_button);
+
+                        fix_button.addEventListener(
+                            'click',
+                            function() {
+                                fetchFixedContents(cm.getValue(), cm);
+                            }
+                        );
                     }
-                );
+                } else {
+                    fix_button.parentNode.removeChild(fix_button);
+                    fix_button = null;
+                }
             }
         }
         else if ('error' in response) {
@@ -202,6 +217,46 @@ var fetchAnnotations = function (code, callback, options, cm) {
 
             console.log(cm.posFromIndex(response.error.to));
 
+            callback({
+               message: response.error.message,
+               severity: 'error',
+               from: cm.posFromIndex(response.error.from),
+               to: cm.posFromIndex(response.error.to),
+            });
+        }
+    })
+    .catch (function (error) {
+        console.log('Request failed', error);
+    });
+};
+
+var fetchFixedContents = function (code, cm) {
+    latestFetch++;
+    fetchKey = latestFetch;
+    fetch('/check', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+        },
+        body: serializeJSON({
+            code: code,
+            settings: JSON.stringify({...settings, ...{unused_methods: true}}),
+            fix: true,
+        })
+    })
+    .then(function (response) {
+        return response.json();
+    })
+    .then(function (response) {
+        if (latestFetch != fetchKey) {
+            return;
+        }
+
+        if ('fixed_contents' in response && response.fixed_contents) {
+            cm.setValue(response.fixed_contents);
+        }
+        else if ('error' in response) {
             callback({
                message: response.error.message,
                severity: 'error',
