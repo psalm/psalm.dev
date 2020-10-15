@@ -186,7 +186,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
                 }
 
                 if (error_count) {
-                    document.getElementById('psalm_output').innerHTML += 'Psalm detected ' + error_count + ' fixable issue(s)<br>&nbsp;';
+                    document.getElementById('psalm_output').innerHTML += '<br>Psalm detected ' + error_count + ' fixable issue(s)<br>&nbsp;';
 
                     const textarea = cm.getTextArea()
                     const container = textarea.parentNode;
