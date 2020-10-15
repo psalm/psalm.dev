@@ -193,8 +193,8 @@ var fetchAnnotations = function (code, callback, options, cm) {
 
                     if (!fix_button) {
                         fix_button = document.createElement('button');
-                        fix_button.innerText = 'Fix code';
-                        container.appendChild(fix_button);
+                        fix_button.innerHTML = '<svg width="15" height="15" xmlns="http://www.w3.org/2000/svg"><g fill="#000" fill-rule="evenodd"><path d="M50 58l-22 5 19-13-13-19 19 14 14-18-7 22 21 8H58l-1 22zM67 73l8-7 56 49-15 14zM40 76L24 95l10 5zM25 47L2 38 0 49zM51 26l2-25-11 2zM80 41l25-2-4-11zM22 64L7 69l3 6zM29 26l-9-13-5 5zM70 24l10-13-7-3zM88 57l14 7 2-7zM57 84l-2 16 7-1z"/></g></svg> Fix code';
+                        container.querySelector('.button_bar').appendChild(fix_button);
 
                         fix_button.addEventListener(
                             'click',
