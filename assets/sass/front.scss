@@ -26,19 +26,11 @@ body.front {
         margin-top: 20px;
         color: #8e8585;
     }
-}
 
-.intro, .post {
-    p, ul {
+    p {
         margin: 1.5em 0;
         font-size: 17px;
         line-height: 1.75em;
-    }
-
-    ul {
-        margin-left: 0;
-        -webkit-padding-start: 20px;
-        padding-inline-start: 20px;
     }
 }
 

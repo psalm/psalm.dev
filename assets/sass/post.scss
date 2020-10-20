@@ -121,6 +121,8 @@ div.post {
         padding-right: 20px;
         hyphens: none;
         font-size: 16px;
+        margin: 1.5em 0;
+        line-height: 1.75em;
 
         code {
             background: #f3f3f3;
@@ -208,6 +210,10 @@ div.post {
     }
 
     ul, ol {
+        margin-left: 0;
+        -webkit-padding-start: 20px;
+        padding-inline-start: 20px;
+        
         padding-left: 40px;
 
         li {
