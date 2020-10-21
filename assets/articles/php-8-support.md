@@ -200,6 +200,8 @@ class Airport {
 }
 ```
 
+That `@param self::* $airport` is a constant wildcard type, [documented here](https://psalm.dev/docs/annotating_code/typing_in_psalm/#specifying-stringint-options-aka-enums).
+
 ## Throw expressions
 
 Like match expressions, throw expressions can also help you write less code:
