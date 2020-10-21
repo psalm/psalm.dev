@@ -12,31 +12,6 @@ PHP 8 is coming out soon, and Psalm is ready.
 
 Here’s a big ol’ list of new PHP 8 features, with a few comments on how Psalm can help you use them safely.
 
-## Union types
-
-Psalm has supported union types from the very beginning, as they’re necessary to describe the output of many builtin PHP functions (such as `strpos`, which returns `int|false`).
-
-PHP now supports union types in native declarations, and now so does Psalm:
-
-```php
-<?php
-
-function takesIntOrFalse(int|false $foo) : void {
-    if ($foo === false) {
-        echo "false";
-    } else {
-        echo $foo;
-    }
-}
-
-function doStrpos(string $a, string $b) : int|false {
-    return strpos($a, $b);
-}
-
-takesIntOrFalse(doStrpos("a", "b")); // prints "false"
-takesIntOrFalse(doStrpos("aa", "a")); // prints "0"
-```
-
 ## Constructor property promotion
 
 If you’ve ever written out code that looks like this:
@@ -69,7 +44,7 @@ class IntLinkedList {
 }
 ```
 
-### Great for small objects
+### It’s great for small objects
 
 PHP has a long history of people using arrays in place of objects for small bits of data, mainly because they're a little easier to construct.
 
@@ -115,8 +90,6 @@ echo $list->value;
 $list->value = 6;
 ```
 
-
-
 ## Nullsafe operator
 
 The nullsafe operator allows you to simplify a lot of existing code:
@@ -156,6 +129,8 @@ function newWay(IntLinkedList $l) : ?int {
     return $l->getNext()?->getNext()?->value;
 }
 ```
+
+If you've used Laravel, this is a language-level replacement for the `optional()` helper function.
 
 ## Named arguments
 
@@ -247,6 +222,31 @@ function foo() : void {
     
     echo $foo . ' ' . $bar;
 }
+```
+
+## Union types
+
+Psalm has supported union types from the very beginning, as they’re necessary to describe the output of many builtin PHP functions (such as `strpos`, which returns `int|false`).
+
+PHP now supports union types in native declarations, and now so does Psalm:
+
+```php
+<?php
+
+function takesIntOrFalse(int|false $foo) : void {
+    if ($foo === false) {
+        echo "false";
+    } else {
+        echo $foo;
+    }
+}
+
+function doStrpos(string $a, string $b) : int|false {
+    return strpos($a, $b);
+}
+
+takesIntOrFalse(doStrpos("a", "b")); // prints "false"
+takesIntOrFalse(doStrpos("aa", "a")); // prints "0"
 ```
 
 ## get_debug_type
