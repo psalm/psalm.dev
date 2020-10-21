@@ -5,7 +5,7 @@
   author_link: https://twitter.com/mattbrowndev
 -->
 
-![Psalm 4 loves PHP 8](https://psalm.dev/assets/images/psalm4heartphp8.png)
+![Psalm 4 loves PHP 8](https://psalm.dev/assets/images/psalm4heartphp8.svg)
 
 I’m really happy to announce the release of Psalm 4. If you’re unfamiliar with Psalm, it’s a free & open-source static analysis tool that helps you identify problems in PHP.
 
