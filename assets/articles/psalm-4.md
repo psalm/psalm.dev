@@ -11,7 +11,7 @@ I’m really happy to announce the release of Psalm 4. If you’re unfamiliar wi
 
 It’s been almost two years since Psalm 3 was released, and a lot has happened. The PHP world has embraced static analysis in a big way – Psalm itself is over *15 times* more popular. There's also a fantastic community of contributers ticketing bugs, submitting PRs and generally helping to make Psalm a really useful, well-tested tool.
 
-PHP has changed too, with a big release – PHP 8 – coming out in a month’s time. I’ve spent the last few weeks making sure that Psalm 4 [supports the awesome new PHP 8 features](/articles/php-8-support).
+PHP has changed too, with a big release – PHP 8 – coming out in five weeks’ time. I’ve spent the last few months making sure that Psalm 4 [supports all the awesome new PHP 8 features](/articles/php-8-support).
 
 Psalm 4 also has [much better unused variable detection](/articles/better-unused-variable-detection) _and_ [it's faster, by default](/articles/whats-the-difference).
 
