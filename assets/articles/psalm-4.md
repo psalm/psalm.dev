@@ -15,4 +15,4 @@ PHP has changed too, with a big release – PHP 8 – coming out in a month’s 
 
 Psalm 4 also has [better unused variable detection](/articles/better-unused-variable-detection) _and_ [it's faster, by default](/articles/whats-the-difference).
 
-[Give it a whirl](https://psalm.dev/docs/running_psalm/installation/), and [let me know what you think](https://twitter.com/psalmphp)!
+Give it a whirl, and [let me know what you think](https://twitter.com/psalmphp)!
