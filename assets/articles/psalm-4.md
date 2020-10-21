@@ -1,6 +1,6 @@
 <!--
   title: Announcing Psalm 4
-  date: 2020-10-20 07:01:00
+  date: 2020-10-21 07:01:00
   author: Matt Brown
   author_link: https://twitter.com/mattbrowndev
 -->
