@@ -48,6 +48,8 @@ class OnlineChecker
             );
             $project_checker->setAllIssuesToFix();
         }
+        
+        $config->visitPreloadedStubFiles($codebase);
 
         $codebase->store_node_types = true;
 
