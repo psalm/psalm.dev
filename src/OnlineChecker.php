@@ -231,6 +231,7 @@ class OnlineChecker
         $config->setCustomErrorLevel('PossiblyUndefinedIntArrayOffset', Config::REPORT_INFO);
         $config->setCustomErrorLevel('PossiblyUndefinedStringArrayOffset', Config::REPORT_INFO);
         $config->setCustomErrorLevel('NonStaticSelfCall', Config::REPORT_INFO);
+        $config->setCustomErrorLevel('UndefinedAttributeClass', Config::REPORT_INFO);
 
         if (($settings['unused_variables'] ?? false) || strpos($file_contents, '<?php // findUnusedCode') === 0) {
             $config->setCustomErrorLevel('UnusedParam', Config::REPORT_INFO);
