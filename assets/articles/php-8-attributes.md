@@ -61,7 +61,7 @@ echo takesKeyedArray(["a" => "hello"]); // works
 echo takesKeyedArray(["b" => "hello"]); // silently breaks
 ```
 
-This occasionally led to runtime bugs because we didn’t have a way to define those contracts. In many such places we _should_ have been using named objects instead to convey this information, but my aim was always to document how the code actually worked, and not change its behaviour.
+This occasionally led to runtime bugs because we didn’t have a way to define those contracts. In many such places we _should_ have been using named objects to convey this information instead, but my aim was always to document how the code actually worked, and not change its behaviour.
 
 Inspired by [Hack’s array shapes](https://docs.hhvm.com/hack/built-in-types/shapes) I added a way to annotate array shapes in Psalm via docblocks. They look like this:
 
