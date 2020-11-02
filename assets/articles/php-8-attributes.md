@@ -35,7 +35,7 @@ The PHP 8 version is definitely prettier, and your IDE may already provide compl
 
 Advocates for using docblocks argue that developers have been using them to describe the behaviour of PHP functions and classes for many years, and there isn’t a pressing reason to stop now – especially since most PHP developers won’t be using PHP 8 in production code any time soon.
 
-Recently the PhpStorm team announced their intention to use PHP 8 attributes [for new static-analysis-specific annotations](https://blog.jetbrains.com/phpstorm/2020/10/phpstorm-2020-3-eap-4/). While I don’t agree with that position, some of Psalm’s users probably do, and I don’t want Psalm to get in their way.
+Recently the PhpStorm team announced their intention to use PHP 8 attributes [for new static-analysis-specific annotations](https://blog.jetbrains.com/phpstorm/2020/10/phpstorm-2020-3-eap-4/). While I don’t agree with that decision, some of Psalm’s users probably do, and I don’t want Psalm to get in their way.
 
 This week many are hoping that 2020 will be very different to 2016, but in one regard it’ll be mostly the same: then, as now, I’m making changes to Psalm so that PhpStorm users are happy!
 
