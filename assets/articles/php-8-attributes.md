@@ -97,7 +97,7 @@ function getServer() {
 
 This middle-ground satisfied my colleagues, but more importantly it has meant that lots of people outside Vimeo have also been able to use Psalm’s [various types](https://psalm.dev/docs/annotating_code/type_syntax/atomic_types/) without upsetting PhpStorm.
 
-Back then Psalm was only used by a handful of developers, and I never dreamt that PhpStorm would end up [adding support for a whole lot of @psalm-prefixed annotations](https://blog.jetbrains.com/phpstorm/2020/10/phpstorm-2020-3-eap-2/) four years later. There’s [even now a proposal](https://youtrack.jetbrains.com/issue/WI-56038) to add support for the array shape docblock syntax.
+Back then Psalm was only used by a handful of developers, and I never dreamt that PhpStorm would end up [adding support for many @psalm-prefixed annotations](https://blog.jetbrains.com/phpstorm/2020/10/phpstorm-2020-3-eap-2/) four years later. There’s [even now a proposal](https://youtrack.jetbrains.com/issue/WI-56038) to add support for the array shape docblock syntax.
 
 ## The compromise of 2020
 
