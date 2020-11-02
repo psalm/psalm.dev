@@ -33,7 +33,7 @@ function foo(int $i) : int {...}
 
 The PHP 8 version is definitely prettier, and your IDE may already provide completion of attributes (that it doesn’t provide for docblocks).
 
-Advocates for using docblocks argue that developers have been using them for many years to describe the behaviour of PHP functions and classes, and there isn’t a pressing reason to stop now – especially since most PHP developers won’t be using PHP 8 in production code any time soon.
+Advocates for using docblocks argue that developers have been using them to describe the behaviour of PHP functions and classes for many years, and there isn’t a pressing reason to stop now – especially since most PHP developers won’t be using PHP 8 in production code any time soon.
 
 Recently the PhpStorm team announced their intention to use PHP 8 attributes [for new static-analysis-specific annotations](https://blog.jetbrains.com/phpstorm/2020/10/phpstorm-2020-3-eap-4/). While I don’t agree with that position, some of Psalm’s users probably do, and I don’t want Psalm to get in their way.
 
