@@ -204,7 +204,10 @@ class OnlineChecker
         $config->ignore_internal_nullable_issues = !($settings['strict_internal_functions'] ?? false);
         $config->ignore_internal_falsable_issues = !($settings['strict_internal_functions'] ?? false);
         $config->base_dir = __DIR__ . '/';
-        $config->restrict_return_types = true;
+        
+        if ($settings['restrict_return_types'] ?? false) {
+            $config->restrict_return_types = true;
+        }
 
         $config->addStubFile(dirname(__DIR__) . '/vendor/vimeo/psalm/src/Psalm/Internal/Stubs/ext-ds.php');
 
