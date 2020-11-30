@@ -44,3 +44,4 @@ nav:
     - Custom taint sources: security_analysis/custom_taint_sources.md
     - Custom taint sinks: security_analysis/custom_taint_sinks.md
     - Avoiding false-positives: security_analysis/avoiding_false_positives.md
+  - Contributing: contributing/index.md
