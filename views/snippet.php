@@ -55,7 +55,7 @@ if (isset($_GET['format'])) {
         echo $code;
         exit;
     }
-    
+
     if ($_GET['format'] === 'results') {
         $settings = array_intersect_key(
             array_map(function (string $val): bool {
@@ -63,12 +63,21 @@ if (isset($_GET['format'])) {
             }, $result),
             array_flip($settings_fields)
         );
+
+        $php_version = $_GET['php'] ?? '8.0';
+
+        if (!preg_match('/^[578]\.\d$/', $php_version)) {
+            echo json_encode(['error' => ['message' => 'PHP version ' . $php_version . ' not supported']]);
+            exit;
+        }
+
         header('Content-Type: application/json');
         set_exception_handler([\PsalmDotOrg\ExceptionHandler::class, 'json']);
-        echo json_encode(PsalmDotOrg\OnlineChecker::getResults($code, $settings, false));
+
+        echo json_encode(PsalmDotOrg\OnlineChecker::getResults($code, $settings, false, $php_version));
         exit;
     }
-    
+
     header('HTTP/1.1 400 Bad Request');
     header('Content-Type: text/plain');
     echo 'Unrecognized format';
