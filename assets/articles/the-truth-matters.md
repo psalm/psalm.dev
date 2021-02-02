@@ -13,7 +13,7 @@ I, however, have designed zero programming languages, so I have to be a little m
 
 Psalm has a feature I'm calling flow-sensitive conditional analysis. <strike>I don't believe any similar tools employ it.</strike> Since writing this [Paul Khuong](https://twitter.com/pkhuong) has pointed to Typed Racket as a modern type system that also performs this analysis, where it's more properly named [Occurrence Typing](https://www2.ccs.neu.edu/racket/pubs/icfp10-thf.pdf).
 
-This article will hopefully show how Psalm’s analysis can help us avoid a false-positive on this snippet of code:
+This article will show how Psalm’s analysis can help us avoid a false-positive on this snippet of code:
 
 ```php
 <?php
