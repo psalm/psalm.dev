@@ -11,7 +11,7 @@ Some relatively new static analysis tools have overcome this through a sort of a
 
 I, however, have designed zero programming languages, so I have to be a little more accommodating when building a static analysis tool for PHP.
 
-Psalm has a feature I'm calling flow-sensitive conditional analysis. ~I don't believe any similar tools employ it~ Since writing this [Paul Khuong](https://twitter.com/pkhuong) has pointed to Typed Racket as a modern type system that also performs this analysis, where it's more properly named [Occurence Typing](https://www2.ccs.neu.edu/racket/pubs/icfp10-thf.pdf).
+Psalm has a feature I'm calling flow-sensitive conditional analysis. ~I don't believe any similar tools employ it~ Since writing this [Paul Khuong](https://twitter.com/pkhuong) has pointed to Typed Racket as a modern type system that also performs this analysis, where it's more properly named [Occurrence Typing](https://www2.ccs.neu.edu/racket/pubs/icfp10-thf.pdf).
 
 This article will hopefully show how Psalm’s analysis can help us avoid a false-positive on this snippet of code:
 
