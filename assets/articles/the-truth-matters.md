@@ -88,7 +88,7 @@ function getStringsOrDefault(?string $a, ?string $b) : string {
 2. Psalm then looks for clauses containing a single variable assertion, and sees two — `($a is null)` and `($b is null)`. Psalm dutifully assigns `$a` and `$b` to null inside the if condition (though these assignments are never used).
 3. Since the `if` block always returns when entered, the `if` condition must be false after it, so we compute the negation `!(($a is null) && ($b is null))`  to get `($a is !null || $b is !null)`. This is a single clause, but since it contains two variables we cannot infer any types straight away. At this point tools that just perform flow-sensitive type analysis discard that negated formula, since the formula cannot translate directly into type assignments. But Psalm retains this information, stored as the set of conditions it knows to be true.
 4. Now it encounters a new `if` condition `$a !== null`. It derives the formula `($a is !null)` and inside the `if` block it trivially determines `$a` has the type `string`
-5. After that second `if` condition Psalm then knows that `($a null)`. It combines that formula with the previously-generated formula `($a is !null || $b is !null)`.\
+5. After that second `if` condition Psalm then knows that `($a is null)`. It combines that formula with the previously-generated formula `($a is !null || $b is !null)`.\
 `($a is null) && ($a is !null || $b is !null)` simplifies to\
 `($b is !null)`.\
 This gives us a clause with a single variable which allows us to determine that `$b` has the type `string`. **Tools that just perform flow-sensitive type analysis emit a false-positive warning here.**
