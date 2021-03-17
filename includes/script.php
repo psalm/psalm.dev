@@ -143,11 +143,22 @@ var fetchAnnotations = function (code, callback, options, cm) {
             else {
                 var text = response.results.map(
                     function (issue) {
-                        return (issue.severity === 'error' ? 'ERROR' : 'INFO') + ': '
+                        let message = (issue.severity === 'error' ? 'ERROR' : 'INFO') + ': '
                             + '<a href="' + issue.link + '">' + issue.type + '</a> - ' + issue.line_from + ':'
-                            + issue.column_from + ' - ' + issue.message.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
-   return '&#'+i.charCodeAt(0)+';';
-});
+                            + issue.column_from + ' - ' + issue.message.replace(/[\u00A0-\u9999<>\&]/gim);
+
+                        if (issue.other_references) {
+                            message += "<br><br>"
+                                + issue.other_references.map(
+                                    function (reference) {
+                                        return '&nbsp;&nbsp;' + reference.label
+                                            + ' - ' + reference.line_from
+                                            . ':' . reference.column_from . "<br>";
+                                    }
+                                ).join("<br><br>");
+                        }
+
+                        return message;
                     }
                 );
 
