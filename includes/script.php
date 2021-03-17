@@ -151,10 +151,18 @@ var fetchAnnotations = function (code, callback, options, cm) {
                             message += "<br><br>"
                                 + issue.other_references.map(
                                     function (reference) {
+                                        let snippet = reference.snippet;
+
+                                        let selection_start = reference.from - reference.snippet_from;
+                                        let selection_length = reference.to - reference.from;
+
+                                        snippet = snippet.substring(0, selection_start)
+                                            + "<u>" + snippet.substring(selection_start, selection_length)
+                                            + "</u>" + snippet.substring(selection_start + selection_length);
                                         return '&nbsp;&nbsp;' + reference.label
                                             + ' - ' + reference.line_from
                                             + ':' + reference.column_from
-                                            + '<br>&nbsp;&nbsp;&nbsp;&nbsp;' + reference.selected_text;
+                                            + '<br>&nbsp;&nbsp;' + snippet;
                                     }
                                 ).join("<br><br>");
                         }
