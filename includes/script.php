@@ -157,7 +157,8 @@ var fetchAnnotations = function (code, callback, options, cm) {
                                         let selection_end = reference.to - reference.snippet_from;
 
                                         snippet = snippet.substring(0, selection_start)
-                                            + "<span style='color: black'>" + snippet.substring(selection_start, selection_end)
+                                            + "<span style='color: black;background-color:#ddd;'>"
+                                            + snippet.substring(selection_start, selection_end)
                                             + "</span>" + snippet.substring(selection_end);
                                         return '&nbsp;&nbsp;' + reference.label
                                             + ' - ' + reference.line_from
