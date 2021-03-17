@@ -145,7 +145,9 @@ var fetchAnnotations = function (code, callback, options, cm) {
                     function (issue) {
                         let message = (issue.severity === 'error' ? 'ERROR' : 'INFO') + ': '
                             + '<a href="' + issue.link + '">' + issue.type + '</a> - ' + issue.line_from + ':'
-                            + issue.column_from + ' - ' + issue.message.replace(/[\u00A0-\u9999<>\&]/gim);
+                            + issue.column_from + ' - ' + issue.message.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
+   return '&#'+i.charCodeAt(0)+';';
+});
 
                         if (issue.other_references) {
                             message += "<br><br>"
