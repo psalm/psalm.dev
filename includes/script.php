@@ -154,11 +154,11 @@ var fetchAnnotations = function (code, callback, options, cm) {
                                         let snippet = reference.snippet;
 
                                         let selection_start = reference.from - reference.snippet_from;
-                                        let selection_length = reference.to - reference.from;
+                                        let selection_end = reference.to - reference.snippet_from;
 
                                         snippet = snippet.substring(0, selection_start)
-                                            + "<u>" + snippet.substring(selection_start, selection_length)
-                                            + "</u>" + snippet.substring(selection_start + selection_length);
+                                            + "<u>" + snippet.substring(selection_start, selection_end)
+                                            + "</u>" + snippet.substring(selection_end);
                                         return '&nbsp;&nbsp;' + reference.label
                                             + ' - ' + reference.line_from
                                             + ':' + reference.column_from
