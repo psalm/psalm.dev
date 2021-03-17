@@ -153,7 +153,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
                                     function (reference) {
                                         return '&nbsp;&nbsp;' + reference.label
                                             + ' - ' + reference.line_from
-                                            . ':' . reference.column_from . "<br>";
+                                            + ':' . reference.column_from . "<br>";
                                     }
                                 ).join("<br><br>");
                         }
