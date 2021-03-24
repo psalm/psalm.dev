@@ -174,6 +174,10 @@ var fetchAnnotations = function (code, callback, options, cm) {
                             message += "<br><br>"
                                 + issue.taint_trace.map(
                                     function (reference) {
+                                        if (!("snippet" in reference)) {
+                                            return '&nbsp;&nbsp;' + reference.label;
+                                        }
+
                                         let snippet = reference.snippet;
 
                                         let selection_start = reference.from - reference.snippet_from;
