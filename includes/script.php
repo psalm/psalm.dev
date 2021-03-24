@@ -169,6 +169,27 @@ var fetchAnnotations = function (code, callback, options, cm) {
                                     }
                                 ).join("<br><br>");
                         }
+                        
+                        if (issue.taint_trace) {
+                            message += "<br><br>"
+                                + issue.taint_trace.map(
+                                    function (reference) {
+                                        let snippet = reference.snippet;
+
+                                        let selection_start = reference.from - reference.snippet_from;
+                                        let selection_end = reference.to - reference.snippet_from;
+
+                                        snippet = snippet.substring(0, selection_start)
+                                            + "<span style='color: black;background-color:#ddd;'>"
+                                            + snippet.substring(selection_start, selection_end)
+                                            + "</span>" + snippet.substring(selection_end);
+                                        return '&nbsp;&nbsp;' + reference.label
+                                            + ' - ' + reference.line_from
+                                            + ':' + reference.column_from
+                                            + '<br>&nbsp;&nbsp;&nbsp;&nbsp;' + snippet;
+                                    }
+                                ).join("<br><br>");
+                        }
 
                         return message;
                     }
