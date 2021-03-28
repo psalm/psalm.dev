@@ -74,3 +74,5 @@ MixedAssignment - Unable to determine the type
 ```
 
 Hopefully this will encourage developers to chose the robust fix over the quick one, and also increase the usage of Psalm’s strictest level.
+
+You can play with an interactive version here: https://psalm.dev/r/0b04c7c569
