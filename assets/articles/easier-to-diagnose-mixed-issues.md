@@ -30,7 +30,7 @@ It’s probably not dangerous in practice — you might only ever be calling `ta
 
 A lot of developers try running Psalm at the strictest level, see a lot of these issues, and then either give up completely or opt for a less strict level (2 and higher).
 
-For developers who do want to use Psalm at its strictest, one quick way of appeasing the type checker is to hardcode a docblock `@var` type  above the `foreach` loop:
+For developers who do still want to use Psalm at its strictest, one quick way of appeasing the type checker is to hardcode a docblock `@var` type  above the `foreach` loop:
 
 ```
 <?php
