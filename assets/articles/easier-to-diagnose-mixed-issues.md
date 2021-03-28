@@ -26,7 +26,7 @@ MixedAssignment - Unable to determine the type
     that $some_string is being assigned to
 ```
 
-It’s probably not dangerous in practice though — you might only ever be calling `takesArray` with an array of strings — but Psalm thinks it’s worth bringing to your attention.
+It’s probably not dangerous in practice — you might only ever be calling `takesArray` with an array of strings — but Psalm thinks it’s worth bringing to your attention.
 
 A lot of developers try running Psalm at the strictest level, see a lot of these issues, and then either give up completely or opt for a less strict level (2 and higher).
 
