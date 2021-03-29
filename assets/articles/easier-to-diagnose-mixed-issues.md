@@ -14,7 +14,7 @@ For example, when we ask Psalm to analyse this code:
 
 function takesArray(array $arr) : void {
     foreach ($arr as $some_string) {
-	    // more logic
+        // more logic
     }
 }
 ```
@@ -38,7 +38,7 @@ For developers who do still want to use Psalm at its strictest, one quick way of
 function takesArray(array $arr) : void {
     /** @var string $some_string */
     foreach ($arr as $some_string) {
-	    // more logic
+        // more logic
     }
 }
 ```
@@ -53,7 +53,7 @@ A more robust fix — one that helps Psalm verify that calls to `takesArray` are
 /** @param array<string> $arr */
 function takesArray(array $arr) : void {
     foreach ($arr as $some_string) {
-	    // more logic
+        // more logic
     }
 }
 ```
