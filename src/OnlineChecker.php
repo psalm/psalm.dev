@@ -39,6 +39,7 @@ class OnlineChecker
         $project_checker->setPhpVersion($php_version);
 
         $codebase = $project_checker->getCodebase();
+        $codebase->config->initializePlugins($project_checker);
         $codebase->collect_references = true;
 
         if ($fix_file) {
