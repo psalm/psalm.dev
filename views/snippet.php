@@ -50,6 +50,7 @@ $settings_fields = [
     'memoize_method_calls',
     'check_throws',
     'strict_internal_functions',
+    'restrict_return_types',
     'allow_phpstorm_generics',
     'use_phpdoc_without_magic_call',
 ];

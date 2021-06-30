@@ -13,6 +13,7 @@ CREATE TABLE `psalm_web`.`codes` (
  `memoize_method_calls` bit(1) NOT NULL DEFAULT b'0',
  `check_throws` bit(1) NOT NULL DEFAULT b'0',
  `strict_internal_functions` bit(1) NOT NULL DEFAULT b'0',
+ `restrict_return_types` bit(1) NOT NULL DEFAULT b'0',
  `allow_phpstorm_generics` bit(1) NOT NULL DEFAULT b'0',
  PRIMARY KEY (`hash`),
  KEY `ip` (`ip`)
