@@ -1,5 +1,7 @@
 <?php
 
+http_response_code(500);
+
 require_once('../vendor/autoload.php');
 
 $path = (int) substr($_SERVER['REQUEST_URI'], 1);
@@ -23,12 +25,12 @@ if ($path) {
     }
 
     if (isset($map[$path])) {
-        header("HTTP/1.1 301 Moved Permanently");
+        http_response_code(301);
         header("Location: /docs/running_psalm/issues/" . $map[$path]);
         exit();
     }
 }
 
-header("HTTP/1.1 301 Moved Permanently");
+http_response_code(301);
 header("Location: /docs/running_psalm/issues/");
 exit();
