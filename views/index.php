@@ -55,6 +55,7 @@ var settings = {
     'check_throws': false,
     'strict_internal_functions': false,
     'allow_phpstorm_generics': false,
+    'use_phpdoc_without_magic_call': false,
 };
 </script>
 <?php require('../includes/footer.php'); ?>

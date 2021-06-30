@@ -69,7 +69,8 @@ $settings_fields = [
     'memoize_method_calls',
     'check_throws',
     'strict_internal_functions',
-    'allow_phpstorm_generics'
+    'allow_phpstorm_generics',
+    'use_phpdoc_without_magic_call',
 ];
 
 foreach ($settings_fields as $field) {

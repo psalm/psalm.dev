@@ -23,6 +23,7 @@ var settingsText = {
     'check_throws': 'Check for <code>@throws</code> docblock',
     'restrict_return_types': 'Force return types to be as tight as possible',
     'allow_phpstorm_generics': 'Allow PHPStorm generic annotations (e.g. Traversable|string[])',
+    'use_phpdoc_without_magic_call': 'Use PHPDoc methods and properties without magic call.',
 };
     
 var toggleSetting = function(key) {
