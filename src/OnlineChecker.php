@@ -2,13 +2,12 @@
 
 namespace PsalmDotOrg;
 
-require_once(__DIR__ . '/../vendor/vimeo/psalm/tests/Internal/Provider/FakeFileProvider.php');
-
 use PhpParser\ParserFactory;
 use Psalm\Config;
 use Psalm\IssueBuffer;
 use Psalm\Internal\Analyzer\FileAnalyzer;
 use Psalm\Internal\Analyzer\ProjectAnalyzer;
+use Psalm\Internal\Provider\FakeFileProvider;
 
 class OnlineChecker
 {
@@ -22,7 +21,7 @@ class OnlineChecker
 
         $psalm_version = (string) \PackageVersions\Versions::getVersion('vimeo/psalm');
         $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
-        $file_provider = new \Psalm\Tests\Internal\Provider\FakeFileProvider();
+        $file_provider = new FakeFileProvider();
         $output_options = new \Psalm\Report\ReportOptions();
         $output_options->format = \Psalm\Report::TYPE_JSON;
 
@@ -49,7 +48,7 @@ class OnlineChecker
             );
             $project_checker->setAllIssuesToFix();
         }
-        
+
         $config->visitPreloadedStubFiles($codebase);
 
         $codebase->store_node_types = true;
@@ -207,7 +206,7 @@ class OnlineChecker
         $config->ignore_internal_nullable_issues = !($settings['strict_internal_functions'] ?? false);
         $config->ignore_internal_falsable_issues = !($settings['strict_internal_functions'] ?? false);
         $config->base_dir = __DIR__ . '/';
-        
+
         if ($settings['restrict_return_types'] ?? false) {
             $config->restrict_return_types = true;
         }
