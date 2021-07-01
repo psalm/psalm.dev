@@ -64,5 +64,7 @@ if (!preg_match('/^[578]\.\d$/', $php_version)) {
     exit;
 }
 
+$results = PsalmDotOrg\OnlineChecker::getResults($file_contents, $settings, $fix_file, $php_version);
+
 http_response_code(200);
-echo json_encode(PsalmDotOrg\OnlineChecker::getResults($file_contents, $settings, $fix_file, $php_version));
+echo json_encode($results);
