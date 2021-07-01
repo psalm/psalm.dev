@@ -14,7 +14,6 @@ CREATE TABLE `psalm_web`.`codes` (
  `check_throws` bit(1) NOT NULL DEFAULT b'0',
  `strict_internal_functions` bit(1) NOT NULL DEFAULT b'0',
  `allow_phpstorm_generics` bit(1) NOT NULL DEFAULT b'0',
- `use_phpdoc_without_magic_call` bit(1) NOT NULL DEFAULT b'0',
  PRIMARY KEY (`hash`),
  KEY `ip` (`ip`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
