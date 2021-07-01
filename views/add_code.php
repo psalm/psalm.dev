@@ -58,9 +58,12 @@ $stmt = $pdo->prepare('select `code`, `created_on` from `codes` where `hash` = :
 $stmt->execute([':hash' => $hash]);
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
+$port = $_SERVER['SERVER_PORT'];
+$server = $_SERVER['SERVER_NAME'] . ($port === 80 || $port === 443 ? '' : ':' . $port);
+
 if ($result) {
     http_response_code(200);
-    echo $_SERVER['SERVER_NAME'] . '/r/' . $hash;
+    echo $server . '/r/' . $hash;
     exit();
 }
 
@@ -84,10 +87,6 @@ foreach ($settings_fields as $field) {
 $insert_sql = 'insert into `codes` (`' . implode('`,`', array_keys($data)) .  '`) values (:' . implode(', :', array_keys($data)) . ')';
 $stmt = $pdo->prepare($insert_sql);
 $stmt->execute($data);
-
-$port = $_SERVER['SERVER_PORT'];
-
-$server = $_SERVER['SERVER_NAME'] . ($port === 80 || $port === 443 ? '' : ':' . $port);
 
 http_response_code(200);
 echo $server . '/r/' . $hash;
