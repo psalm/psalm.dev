@@ -202,6 +202,8 @@ class OnlineChecker
         $config->remember_property_assignments_after_call = $settings['memoize_properties'] ?? true;;
         $config->memoize_method_calls = $settings['memoize_method_calls'] ?? false;
         $config->allow_phpstorm_generics = $settings['allow_phpstorm_generics'] ?? false;
+        $config->use_phpdoc_method_without_magic_or_parent = $settings['use_phpdoc_without_magic_call'] ?? false;
+        $config->use_phpdoc_property_without_magic_or_parent = $settings['use_phpdoc_without_magic_call'] ?? false;
         $config->ignore_internal_nullable_issues = !($settings['strict_internal_functions'] ?? false);
         $config->ignore_internal_falsable_issues = !($settings['strict_internal_functions'] ?? false);
         $config->base_dir = __DIR__ . '/';
