@@ -1,14 +1,19 @@
 <?php
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+http_response_code(500);
+
 require_once('../vendor/autoload.php');
 // not included in autoload
 
 if (!isset($_POST['code'])) {
+    http_response_code(400);
     exit;
 }
 
 if (!isset($_POST['settings'])) {
+    http_response_code(400);
     exit;
 }
 
@@ -16,6 +21,7 @@ $fix_file = $_POST['fix'] ?? false;
 
 $settings = json_decode($_POST['settings'], true);
 if (!is_array($settings)) {
+    http_response_code(400);
     exit;
 }
 
@@ -37,6 +43,7 @@ if (!$fix_file) {
         $decoded = json_decode($cached_result, true);
 
         if ($decoded['hash'] === $file_hash) {
+            http_response_code(200);
             echo $cached_result;
             exit;
         }
@@ -44,7 +51,7 @@ if (!$fix_file) {
 }
 
 if (strlen($file_contents) > 100000) {
-    header(sprintf('HTTP/1.0 %s', 418));
+    http_response_code(418);
     echo json_encode(['error' => ['message' => 'Code too long', 'line_from' => 0]]);
     exit;
 }
@@ -52,8 +59,10 @@ if (strlen($file_contents) > 100000) {
 $php_version = $_POST['php'] ?? '8.1';
 
 if (!preg_match('/^[578]\.\d$/', $php_version)) {
+    http_response_code(422);
     echo json_encode(['error' => 'PHP version ' . $php_version . ' not supported']);
     exit;
 }
 
+http_response_code(200);
 echo json_encode(PsalmDotOrg\OnlineChecker::getResults($file_contents, $settings, $fix_file, $php_version));

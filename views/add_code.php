@@ -1,7 +1,10 @@
 <?php
+
 ini_set("display_errors", 1); 
 ini_set("display_startup_errors", 1);
 error_reporting(-1);
+http_response_code(500);
+
 if (!isset($_POST['code']) || !isset($_POST['settings']) ) {
     http_response_code(412);
     echo 'Expecting code';
@@ -56,6 +59,7 @@ $stmt->execute([':hash' => $hash]);
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($result) {
+    http_response_code(200);
     echo $_SERVER['SERVER_NAME'] . '/r/' . $hash;
     exit();
 }
@@ -84,6 +88,7 @@ $port = $_SERVER['SERVER_PORT'];
 
 $server = $_SERVER['SERVER_NAME'] . ($port === 80 || $port === 443 ? '' : ':' . $port);
 
+http_response_code(200);
 echo $server . '/r/' . $hash;
 exit();
 

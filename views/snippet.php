@@ -1,5 +1,9 @@
 <?php
+
+http_response_code(500);
+
 if (!isset($_GET['r']) ) {
+    http_response_code(303);
     header('Location: /');
     exit;
 }
@@ -7,6 +11,7 @@ if (!isset($_GET['r']) ) {
 $hash = trim($_GET['r']);
 
 if (!preg_match('/^[a-z0-9]+$/', $hash)) {
+    http_response_code(303);
     header('Location: /');
     exit;
 }
@@ -29,6 +34,7 @@ $stmt->execute([':hash' => $hash]);
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$result) {
+    http_response_code(303);
     header('Location: /');
     exit;
 }
@@ -52,6 +58,7 @@ const PHP_PARSER_VERSION = '4.0.0';
 
 if (isset($_GET['format'])) {
     if ($_GET['format'] === 'raw') {
+        http_response_code(200);
         header('Content-Type: text/plain');
         echo $code;
         exit;
@@ -68,10 +75,12 @@ if (isset($_GET['format'])) {
         $php_version = $_GET['php'] ?? '8.0';
 
         if (!preg_match('/^[578]\.\d$/', $php_version)) {
+            http_response_code(422);
             echo json_encode(['error' => ['message' => 'PHP version ' . $php_version . ' not supported']]);
             exit;
         }
 
+        http_response_code(200);
         header('Content-Type: application/json');
         set_exception_handler([\PsalmDotOrg\ExceptionHandler::class, 'json']);
 
@@ -79,13 +88,13 @@ if (isset($_GET['format'])) {
         exit;
     }
 
-    header('HTTP/1.1 400 Bad Request');
+    http_response_code(400);
     header('Content-Type: text/plain');
     echo 'Unrecognized format';
     exit;
 }
 
-
+http_response_code(200);
 ?>
 <html>
 <head>

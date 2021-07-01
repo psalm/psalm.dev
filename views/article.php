@@ -1,9 +1,11 @@
 <?php
 
-require_once('../vendor/autoload.php');
 error_reporting(E_ALL);
 ini_set('html_errors', '1');
 ini_set('display_errors', '1');
+http_response_code(500);
+
+require_once('../vendor/autoload.php');
 
 $title = 'Psalm - article not found';
 $name = $_GET['name'];
@@ -17,8 +19,9 @@ $blog = new Muglug\Blog\MarkdownBlog(
 
 try {
     $article = $blog->articles->get($name);
+    http_response_code(200);
 } catch (\Exception $e) {
-    header("HTTP/1.0 404 Not Found");
+    http_response_code(404);
     echo $e->getMessage();
     exit;
 }
