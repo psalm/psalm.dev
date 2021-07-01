@@ -54,6 +54,7 @@ var settings = {
     'memoize_method_calls': false,
     'check_throws': false,
     'strict_internal_functions': false,
+    'restrict_return_types': false,
     'allow_phpstorm_generics': false,
     'use_phpdoc_without_magic_call': false,
 };

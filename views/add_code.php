@@ -1,6 +1,6 @@
 <?php
 
-ini_set("display_errors", 1); 
+ini_set("display_errors", 1);
 ini_set("display_startup_errors", 1);
 error_reporting(-1);
 http_response_code(500);
@@ -73,6 +73,7 @@ $settings_fields = [
     'memoize_method_calls',
     'check_throws',
     'strict_internal_functions',
+    'restrict_return_types',
     'allow_phpstorm_generics',
     'use_phpdoc_without_magic_call',
 ];
