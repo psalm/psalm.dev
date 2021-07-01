@@ -3,12 +3,23 @@
     "type": "project",
     "require": {
         "vimeo/psalm": "dev-master",
-        "muglug/simple-markdown-blog": "dev-main"
+        "muglug/simple-markdown-blog": "dev-main",
+        "bamarni/composer-bin-plugin": "^1.4"
     },
     "autoload": {
         "psr-4": {
             "Psalm\\Tests\\Provider\\": "vendor/vimeo/psalm/tests/Provider",
             "PsalmDotOrg\\": "src"
         }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "composer bin all install",
+            "phinx migrate"
+        ],
+        "post-update-cmd": [
+            "composer bin all install",
+            "phinx migrate"
+        ]
     }
 }
