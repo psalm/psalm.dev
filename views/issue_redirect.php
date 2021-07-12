@@ -4,7 +4,13 @@ http_response_code(500);
 
 require_once('../vendor/autoload.php');
 
-$path = (int) substr($_SERVER['REQUEST_URI'], 1);
+$path = substr($_SERVER['REQUEST_URI'], 1);
+
+if (substr($path, -1) === ')') {
+    $path = substr($path, 0, -1);
+}
+
+$path = (int) $path;
 
 if ($path) {
     $issue_types = \Psalm\Config\IssueHandler::getAllIssueTypes();

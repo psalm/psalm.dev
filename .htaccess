@@ -65,7 +65,7 @@ RewriteRule ^contribute/?$ /views/contribute.php [L,NC]
 RewriteRule ^plugins/?$ /views/plugins.php [L,NC]
 RewriteRule ^$ /views/index.php [L,NC]
 RewriteRule ^schema/config$ /vendor/vimeo/psalm/config.xsd [L,NC]
-RewriteRule ^[0-9]{3}$ /views/issue_redirect.php [L,NC]
+RewriteRule ^[0-9]{3}\)?$ /views/issue_redirect.php [L,NC]
 
 
 RewriteRule ^composer\.*$ - [F,L]
