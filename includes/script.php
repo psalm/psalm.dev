@@ -8,13 +8,13 @@ var shrinkCode = function() {
     document.querySelector('body').classList.remove('code_expanded');
     return false;
 };
-    
+
 var toggleSettings = function() {
     document.querySelector('#settings_panel').classList.toggle('hidden');
     document.querySelector('#psalm_output').classList.toggle('hidden');
     return false;
 };
-    
+
 var settingsText = {
     'unused_variables': 'Detect unused variables and parameters',
     'unused_methods': 'Detect unused classes and methods',
@@ -25,7 +25,7 @@ var settingsText = {
     'allow_phpstorm_generics': 'Allow PHPStorm generic annotations (e.g. Traversable|string[])',
     'use_phpdoc_without_magic_call': 'Use PHPDoc methods and properties without magic call.',
 };
-    
+
 var toggleSetting = function(key) {
     if (key in settings) {
         settings[key] = !settings[key];
@@ -34,7 +34,7 @@ var toggleSetting = function(key) {
     }
 
     editor.performLint();
-    
+
     return false;
 };
 
@@ -45,7 +45,7 @@ var redrawSettings = function() {
         var checked = key in settings && settings[key];
         var clickHandler = 'javascript:toggleSetting(\'' + key + '\')';
         var input = '<input id="' + key + '" type="checkbox" onclick="' + clickHandler + '"' + (checked ? ' checked' : '') + '>';
-        
+
         settingsLines.push(
             '<div>' + input + ' <label for="' + key + '">' + settingsText[key] + '</label></div>'
         );
@@ -118,7 +118,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
 
         if ('results' in response) {
             var psalm_version = response.version;
-            
+
             if (psalm_version.indexOf('@')) {
                 psalm_version = psalm_version.split('@')[1];
             }
@@ -145,7 +145,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
                 var text = response.results.map(
                     function (issue) {
                         let message = (issue.severity === 'error' ? 'ERROR' : 'INFO') + ': '
-                            + '<a href="' + issue.link + '">' + issue.type + '</a> - ' + issue.line_from + ':'
+                            + '<a href="' + issue.link + '" target="_blank">' + issue.type + '</a> - ' + issue.line_from + ':'
                             + issue.column_from + ' - ' + issue.message.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
    return '&#'+i.charCodeAt(0)+';';
 });
@@ -170,7 +170,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
                                     }
                                 ).join("<br><br>");
                         }
-                        
+
                         if (issue.taint_trace) {
                             message += "<br><br>"
                                 + issue.taint_trace.map(
@@ -235,7 +235,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
                 }
 
                 if (error_count) {
-                    document.getElementById('psalm_output').innerHTML += '<br>Psalm detected ' + error_count + ' <a href="/docs/manipulating_code/fixing/">fixable issue(s)</a><br>&nbsp;';
+                    document.getElementById('psalm_output').innerHTML += '<br>Psalm detected ' + error_count + ' <a href="/docs/manipulating_code/fixing/" target="_blank">fixable issue(s)</a><br>&nbsp;';
 
                     const textarea = cm.getTextArea()
                     const container = textarea.parentNode;
@@ -304,7 +304,7 @@ var fetchFixedContents = function (code, cm) {
         }
 
         fix_button.parentNode.removeChild(fix_button);
-        fix_button = null;                        
+        fix_button = null;
 
         if ('fixed_contents' in response && response.fixed_contents) {
             cm.setValue(response.fixed_contents);
@@ -340,7 +340,7 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
 
 //editor.focus();
 //editor.setCursor(editor.lineCount(), 0);
-    
+
 redrawSettings();
 
 </script>
