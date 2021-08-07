@@ -8,7 +8,7 @@
 When running Psalm at its strictest (level 1) Psalm will tell you when you’re doing something risky with a type it cannot infer.
 
 For example, when we ask Psalm to analyse this code:
- 
+
 ```
 <?php
 
@@ -73,6 +73,6 @@ MixedAssignment - Unable to determine the type
                        ^^^^
 ```
 
-Hopefully this will encourage developers to chose the robust fix over the quick one, and also increase the usage of Psalm’s strictest level.
+Hopefully this will encourage developers to choose the robust fix over the quick one, and also increase the usage of Psalm’s strictest level.
 
 You can play with an interactive version here: [psalm.dev/r/fb3654d0aa](https://psalm.dev/r/fb3654d0aa)

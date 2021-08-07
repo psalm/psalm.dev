@@ -71,7 +71,7 @@ Psalm offers a [range of different default configs](https://github.com/vimeo/psa
 To initialise Psalm, run
 
 ```
-composer install vimeo/psalm  
+composer install vimeo/psalm
 vendor/bin/psalm --init [source_dir] [level]
 ```
 
@@ -81,7 +81,7 @@ where `[source_dir]` is your project’s main folder (it defaults to `src`) and 
 
 ## Go forth and type all the things
 
-Psalm allows us avoid [the fear cycle](http://www.michaelnygard.com/blog/2015/07/the-fear-cycle/), and it can help you too. PHP 7 adds support for a whole bunch of types in method signatures and elsewhere, so there’s never been a better time to improve your code.
+Psalm allows us to avoid [the fear cycle](http://www.michaelnygard.com/blog/2015/07/the-fear-cycle/), and it can help you too. PHP 7 adds support for a whole bunch of types in method signatures and elsewhere, so there’s never been a better time to improve your code.
 
 * * *
 
