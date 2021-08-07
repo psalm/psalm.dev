@@ -31,7 +31,7 @@ function getOwnerName(
   if (!$file_owner && !$folder_owner) {
     throw new \UnexpectedValueException('Bad');
   }
-  
+
   if ($file_owner) {
     return $file_owner->name;
   }
@@ -79,9 +79,9 @@ function sayHello(string $name) : void {
 function takeInput() : void {
   if (isset($_GET['name']) && is_string($_GET['name'])) {
     $name = trim($_GET['name']);
-    
+
     sayHello($name); // possible bug
-    
+
     if ($name) {
       sayHello($name); // this is ok
     }
@@ -93,26 +93,26 @@ Psalm is also now smarter when it comes to assignments in conditionals – It ac
 
 ```php
 <?php
-interface Convertor {
+interface Converter {
 	function getEmail(string $value): ?EmailAddress;
 }
 
 interface EmailAddress {
 	function isDomainValid(): bool;
 }
-  
+
 /**
  * @param mixed $value
  */
-function filterValue(Convertor $convertor, $value): EmailAddress
+function filterValue(Converter $converter, $value): EmailAddress
 {
   if (\is_string($value)
-    && ($value = $convertor->getEmail($value)) !== null
+    && ($value = $converter->getEmail($value)) !== null
     && $value->isDomaiValid()
   ) {
     return $value;
   }
-  
+
   throw new Exception();
 }
 ```

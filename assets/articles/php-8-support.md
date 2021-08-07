@@ -178,7 +178,7 @@ function processUserDataInvalid(array $data) : User {
 
 ## Match expressions
 
-[Match expressions](https://wiki.php.net/rfc/match_expression_v2) are sort of a tighter form of `switch` statements: they’re designed to capture all potential values of a given conditional, which means that Psalm can warn when it detects that not all possiblities are captured:
+[Match expressions](https://wiki.php.net/rfc/match_expression_v2) are sort of a tighter form of `switch` statements: they’re designed to capture all potential values of a given conditional, which means that Psalm can warn when it detects that not all possibilities are captured:
 
 ```php
 <?php
