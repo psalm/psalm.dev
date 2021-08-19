@@ -1,6 +1,7 @@
 <html>
 <head>
 <title>Psalm - a static analysis tool for PHP</title>
+<meta name="description" content="Psalm is a free & open-source static analysis tool that helps you identify problems in your code, so you can sleep a little better" />
 <?php require('../includes/meta.php'); ?>
 </head>
 <body class="front">
