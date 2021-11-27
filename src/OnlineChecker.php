@@ -35,7 +35,7 @@ class OnlineChecker
             $output_options
         );
 
-        $project_checker->setPhpVersion($php_version);
+        $project_checker->setPhpVersion($php_version, 'cli');
 
         $codebase = $project_checker->getCodebase();
         $codebase->config->initializePlugins($project_checker);
