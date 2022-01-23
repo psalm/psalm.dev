@@ -73,7 +73,7 @@ if (isset($_GET['format'])) {
             array_flip($settings_fields)
         );
 
-        $php_version = $_GET['php'] ?? '8.0';
+        $php_version = $_GET['php'] ?? '8.1';
 
         if (!preg_match('/^[578]\.\d$/', $php_version)) {
             http_response_code(422);
