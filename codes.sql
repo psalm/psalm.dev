@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS  `psalm_web`;
 
 GRANT ALL ON `psalm_web`.* TO 'psalm_mysql_user'@'%' IDENTIFIED BY 'psalm_mysql_development_password';
 
-CREATE TABLE `codes` (
+CREATE TABLE IF NOT EXISTS `codes` (
   `hash` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `code` text COLLATE utf8_unicode_ci NOT NULL,
   `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -16,6 +16,11 @@ CREATE TABLE `codes` (
   `restrict_return_types` bit(1) NOT NULL DEFAULT b'0',
   `allow_phpstorm_generics` bit(1) NOT NULL DEFAULT b'0',
   `use_phpdoc_without_magic_call` bit(1) NOT NULL DEFAULT b'0',
-  `result_cache` text COLLATE utf8_unicode_ci,
-  `cache_commit` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+  `posted_cache` text COLLATE utf8_unicode_ci,
+  `posted_cache_commit` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `recent_cache` text COLLATE utf8_unicode_ci,
+  `recent_cache_commit` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `github_issue` int(11) DEFAULT NULL,
+  PRIMARY KEY (`hash`),
+  KEY `ip` (`ip`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
