@@ -67,7 +67,7 @@ if (isset($_GET['format'])) {
 
     if ($_GET['format'] === 'results') {
         $settings = array_intersect_key(
-            array_map(function (string $val): bool {
+            array_map(function (?string $val): bool {
                 return (bool) intval($val);
             }, $result),
             array_flip($settings_fields)
