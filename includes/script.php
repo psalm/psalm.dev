@@ -156,6 +156,10 @@ var fetchAnnotations = function (code, callback, options, cm) {
                                     function (reference) {
                                         let snippet = reference.snippet;
 
+                                        snippet = snippet.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
+                                            return '&#'+i.charCodeAt(0)+';';
+                                        });
+
                                         let selection_start = reference.from - reference.snippet_from;
                                         let selection_end = reference.to - reference.snippet_from;
 
@@ -180,6 +184,10 @@ var fetchAnnotations = function (code, callback, options, cm) {
                                         }
 
                                         let snippet = reference.snippet;
+
+                                        snippet = snippet.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
+                                            return '&#'+i.charCodeAt(0)+';';
+                                        });
 
                                         let selection_start = reference.from - reference.snippet_from;
                                         let selection_end = reference.to - reference.snippet_from;
