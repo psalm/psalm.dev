@@ -87,6 +87,12 @@ var latestFetch = 0;
 
 let fix_button = null;
 
+var escapeHtml = function(snippet) {
+    return snippet.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
+        return '&#' + i.charCodeAt(0) + ';';
+    });
+}
+
 var fetchAnnotations = function (code, callback, options, cm) {
     latestFetch++;
     fetchKey = latestFetch;
@@ -146,9 +152,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
                     function (issue) {
                         let message = (issue.severity === 'error' ? 'ERROR' : 'INFO') + ': '
                             + '<a href="' + issue.link + '" target="_blank">' + issue.type + '</a> - ' + issue.line_from + ':'
-                            + issue.column_from + ' - ' + issue.message.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
-   return '&#'+i.charCodeAt(0)+';';
-});
+                            + issue.column_from + ' - ' + escapeHtml(issue.message);
 
                         if (issue.other_references) {
                             message += "<br><br>"
@@ -156,17 +160,13 @@ var fetchAnnotations = function (code, callback, options, cm) {
                                     function (reference) {
                                         let snippet = reference.snippet;
 
-                                        snippet = snippet.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
-                                            return '&#'+i.charCodeAt(0)+';';
-                                        });
-
                                         let selection_start = reference.from - reference.snippet_from;
                                         let selection_end = reference.to - reference.snippet_from;
 
-                                        snippet = snippet.substring(0, selection_start)
+                                        snippet = escapeHtml(snippet.substring(0, selection_start))
                                             + "<span style='color: black;background-color:#ddd;'>"
-                                            + snippet.substring(selection_start, selection_end)
-                                            + "</span>" + snippet.substring(selection_end);
+                                            + escapeHtml(snippet.substring(selection_start, selection_end))
+                                            + "</span>" + escapeHtml(snippet.substring(selection_end));
                                         return '&nbsp;&nbsp;' + reference.label
                                             + ' - ' + reference.line_from
                                             + ':' + reference.column_from
@@ -185,17 +185,13 @@ var fetchAnnotations = function (code, callback, options, cm) {
 
                                         let snippet = reference.snippet;
 
-                                        snippet = snippet.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
-                                            return '&#'+i.charCodeAt(0)+';';
-                                        });
-
                                         let selection_start = reference.from - reference.snippet_from;
                                         let selection_end = reference.to - reference.snippet_from;
 
-                                        snippet = snippet.substring(0, selection_start)
+                                        snippet = escapeHtml(snippet.substring(0, selection_start))
                                             + "<span style='color: black;background-color:#ddd;'>"
-                                            + snippet.substring(selection_start, selection_end)
-                                            + "</span>" + snippet.substring(selection_end);
+                                            + escapeHtml(snippet.substring(selection_start, selection_end))
+                                            + "</span>" + escapeHtml(snippet.substring(selection_end));
                                         return '&nbsp;&nbsp;' + reference.label
                                             + ' - ' + reference.line_from
                                             + ':' + reference.column_from
