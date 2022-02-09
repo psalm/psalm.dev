@@ -1,4 +1,4 @@
-FROM php:8.1.0RC5-apache
+FROM php:8.0-apache
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 COPY docker/php/vhost.conf /etc/apache2/sites-available/000-default.conf
