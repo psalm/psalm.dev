@@ -2,6 +2,8 @@ CREATE DATABASE IF NOT EXISTS  `psalm_web`;
 
 GRANT ALL ON `psalm_web`.* TO 'psalm_mysql_user'@'%' IDENTIFIED BY 'psalm_mysql_development_password';
 
+use `psalm_web`;
+
 CREATE TABLE IF NOT EXISTS `codes` (
   `hash` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `code` text COLLATE utf8_unicode_ci NOT NULL,
