@@ -207,6 +207,10 @@ class OnlineChecker
         $config->ignore_internal_falsable_issues = !($settings['strict_internal_functions'] ?? false);
         $config->base_dir = __DIR__ . '/';
 
+        foreach ($config->php_extensions as &$enabled) {
+            $enabled = true;
+        }
+
         if ($settings['restrict_return_types'] ?? false) {
             $config->restrict_return_types = true;
         }
