@@ -1,6 +1,8 @@
 nav {
     position: relative;
-    background: #FFF;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.27) 5%, rgb(255, 215, 0) 5%, rgb(255, 215, 0) 55%, rgb(0, 87, 183) 55%) #FFF;
+    background-repeat: no-repeat;
+    background-size: 100% 15%;
 
     &:after {
         position: absolute;
