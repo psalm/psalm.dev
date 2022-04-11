@@ -47,7 +47,16 @@ body {
 }
 
 code, pre {
-    font-family: "Operator Mono SSm A", "Operator Mono SSm B";
+    font-family: ui-monospace, 
+             Menlo, Monaco, 
+             "Cascadia Mono", "Segoe UI Mono", 
+             "Roboto Mono", 
+             "Oxygen Mono", 
+             "Ubuntu Monospace", 
+             "Source Code Pro",
+             "Fira Mono", 
+             "Droid Sans Mono", 
+             "Courier New", monospace;
     font-style: normal;
     background: #f5f5f5;
     border: 0;
@@ -60,7 +69,16 @@ pre {
 }
 
 pre code {
-	font-family: "Operator Mono SSm A", "Operator Mono SSm B";
+	font-family: ui-monospace, 
+             Menlo, Monaco, 
+             "Cascadia Mono", "Segoe UI Mono", 
+             "Roboto Mono", 
+             "Oxygen Mono", 
+             "Ubuntu Monospace", 
+             "Source Code Pro",
+             "Fira Mono", 
+             "Droid Sans Mono", 
+             "Courier New", monospace;
 	font-style: normal;
 	line-height: 1.7em;
 	font-size: 1em;

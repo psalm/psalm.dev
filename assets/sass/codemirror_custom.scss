@@ -83,7 +83,16 @@
 
 div.CodeMirror,
 div.CodeMirror-lint-tooltip {
-    font-family: "Operator Mono SSm A", "Operator Mono SSm B", "SF Mono", monospace;
+    font-family: ui-monospace, 
+             Menlo, Monaco, 
+             "Cascadia Mono", "Segoe UI Mono", 
+             "Roboto Mono", 
+             "Oxygen Mono", 
+             "Ubuntu Monospace", 
+             "Source Code Pro",
+             "Fira Mono", 
+             "Droid Sans Mono", 
+             "Courier New", monospace;
     font-style: normal;
     font-weight: 400;
     line-height: 1.6em;
