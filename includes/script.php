@@ -53,25 +53,30 @@ var redrawSettings = function() {
     document.getElementById('settings_panel').innerHTML = settingsLines.join('\n');
 };
 
-var getLink = function() {
-    fetch('/add_code', {
+var getLink = async function() {
+    const response = await fetch('/add_code', {
         method: 'POST',
         headers: {
             'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
             'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
         },
         body: serializeJSON({code: editor.getValue(), settings: JSON.stringify(settings)})
-    })
-    .then(function (response) {
-        return response.text();
-    })
-    .then(function (response) {
-        if (response.indexOf('/r/') === -1) {
-            alert(response);
-        } else {
-            window.location = '//' + response;
-        }
     });
+
+    const url = await response.text();
+
+    if (url.indexOf('/r/') === -1) {
+        alert(url);
+        return false;
+    }
+
+    try {
+        await navigator.clipboard.writeText('https://' + url);
+    } catch(error) {
+        console.warn('Could not copy URL to clipboard', error);
+    }
+
+    window.location.assign('https://' + url);
     return false;
 };
 
