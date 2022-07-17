@@ -58,7 +58,7 @@ $stmt = $pdo->prepare('select `code`, `created_on` from `codes` where `hash` = :
 $stmt->execute([':hash' => $hash]);
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$port = $_SERVER['SERVER_PORT'];
+$port = (int) $_SERVER['SERVER_PORT'];
 $server = $_SERVER['SERVER_NAME'] . ($port === 80 || $port === 443 ? '' : ':' . $port);
 
 if ($result) {
