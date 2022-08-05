@@ -70,13 +70,16 @@ var getLink = async function() {
         return false;
     }
 
+	// keep query params, e.g. ?php=8.1
+	const fullUrl = 'https://' + url + window.location.search;
+
     try {
-        await navigator.clipboard.writeText('https://' + url);
+        await navigator.clipboard.writeText(fullUrl);
     } catch(error) {
         console.warn('Could not copy URL to clipboard', error);
     }
 
-    window.location.assign('https://' + url);
+    window.location.assign(fullUrl);
     return false;
 };
 
