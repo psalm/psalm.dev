@@ -150,6 +150,12 @@ div.post {
         }
     }
 
+    &[lang=uk] {
+        p, ul, ol, blockquote, table {
+            font-family: "Lora", "Tiempos Text", Georgia;
+        }
+    }
+
     sup {
         line-height: 1em;
     }
@@ -249,6 +255,8 @@ div.post {
     .cm-s-elegant span.cm-def { color: #0b0bb1; }
     .cm-s-elegant span.cm-keyword { color: #881d1d; }
 }
+
+
 
 @media all and (min-device-width: 1022px) {
     div.post {
