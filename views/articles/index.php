@@ -12,6 +12,11 @@ $articles = $blog->articles->getAll();
 <title>Psalm - Articles</title>
 <?php require('../../includes/meta.php'); ?>
 <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<?php if (substr($_SERVER['REQUEST_URI'], -3) === '-uk'): ?>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<?php endif ?>
 </head>
 <body>
 <?php require('../../includes/nav.php'); ?>
