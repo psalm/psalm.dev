@@ -4,7 +4,7 @@
   author: The Maintainers of Psalm
 -->
 
-Lire cet article en [Anglais](/articles/psalm-5) ou en [Ukrainien](/articles/psalm-5-uk)
+Lire cet article en [Anglais](/articles/psalm-5), [Italien](/articles/psalm-5-it) ou en [Ukrainien](/articles/psalm-5-uk)
 
 ---
 
