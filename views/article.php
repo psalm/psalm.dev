@@ -47,7 +47,7 @@ try {
 </head>
 <body>
 <?php require('../includes/nav.php'); ?>
-<div class="post">
+<div class="post"<?php if (substr($_SERVER['REQUEST_URI'], -3) === '-uk'): ?> lang="uk"<?php endif ?>>
 <?php if ($article->is_preview) : ?>
     <p class="preview_warning">Article preview - contents subject to change</p>
 <?php endif ?>
