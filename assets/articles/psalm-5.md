@@ -4,6 +4,10 @@
   author: The Maintainers of Psalm
 -->
 
+Read this announcement in [Ukrainian](/articles/psalm-5-uk)
+
+---
+
 We all wish we could go back in time, whether it’s to right some historic wrong, tell a loved one how much they meant to us, or to correct a minor architectural decision in a PHP static analysis tool.
 
 Sadly time machines do not exist, but major version changes do. The biggest user-facing change in Psalm 5 is a relatively minor fix: array shapes are now considered sealed by default.
