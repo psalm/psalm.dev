@@ -52,12 +52,13 @@ Psalm si lamenterebbe che stiamo ritornando un valore diverso da quello document
 
 Il comportamento precedente è errato perché permette di scrivere il seguente codice senza errori in fase di analisi Psalm, quando invece [causa sempre una eccezione in fase di esecuzione](https://3v4l.org/PoVil): `implode('', takesUserData($foo))`.  
 
-Quando un typechecker permette comportamenti che causano errori a runtime, il typechecker è detto *rilassato*. Ci sono alcuni casi limite in PHP dove un comportamento rilassato è inevitabile, ma Psalm tenta di evitarli il più possibile. Abbiamo quindi deciso di modificare il comportamento di Psalm in un modo che speriamo causi meno problemi possibile ai nostri utenti.  
+Quando un typechecker permette comportamenti che causano errori a runtime, il typechecker è detto *debole*. Ci sono alcuni casi limite in PHP dove un comportamento debole è inevitabile, ma Psalm tenta di evitarli il più possibile. Abbiamo quindi deciso di modificare il comportamento di Psalm in un modo che speriamo causi meno problemi possibile ai nostri utenti.  
 
-Ecco il commento di Matt Brown, il creatore di Psalm:  
+Ecco un commento di Matt Brown, il creatore di Psalm:  
 
 >> This is all my fault. Sorry. I came up with the `array{id: string, name: string}` convention but didn't nail down all the semantics.
-> È tutta colpa mia. Mi dispiace. Ho creato la convenzione `array{id: string, name: string}`, ma non ho definito bene la semantica.
+
+> È tutta colpa mia. Mi dispiace. Ho creato la convenzione `array{id: string, name: string}`, ma non ne ho definito bene la semantica.
 
 Al momento della stesura di questo documento, molti strumenti di analisi statica per PHP come ([Phan](https://phan.github.io/demo/?code=%3C%3Fphp%0A%0A%2F**%0A+*+%40param+array%7Bid%3A+string%2C+name%3A+string%7D+%24user%0A+*+%40return+array%7Bid%3A+string%2C+name%3A+string%7D%0A+*%2F%0Afunction+takesUserData%28array+%24user%29%3A+array+%7B%0A++%24user%5B%27extra_data%27%5D+%3D+new+stdClass%28%29%3B%0A++return+%24user%3B%0A%7D%0A%0A%24foo+%3D+%5B%27id%27+%3D%3E+%27DP42%27%2C+%27name%27+%3D%3E+%27Douglas+Adams%27%5D%3B%0Aecho+implode%28%27%27%2C+takesUserData%28%24foo%29%29%3B) , [PHPStan](https://phpstan.org/r/4a61d13c-74f0-46d3-9bad-f3a61dd1d172)) permettono il comportamento errato, e noi speriamo che un giorno, col tempo, adotteranno anche loro la convenzione `...` per rimuovere questa falla nella loro gestione degli array a chiavi esplicite.
 
