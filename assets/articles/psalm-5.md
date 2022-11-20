@@ -14,7 +14,7 @@ Sadly time machines do not exist, but major version changes do. The biggest user
 
 ## Sealed vs unsealed array shapes
 
-If you’ve used array shapes in the past, you should familiar with the basic syntax:
+If you’ve used array shapes in the past, you should be familiar with the basic syntax:
 
 ```php
 <?php
