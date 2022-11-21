@@ -4,7 +4,7 @@
   author: The Maintainers of Psalm
 -->
 
-Read this announcement in [Ukrainian](/articles/psalm-5-uk) or [French](/articles/psalm-5-fr).
+Read this announcement in [Ukrainian](/articles/psalm-5-uk), [French](/articles/psalm-5-fr) or [Italian](/articles/psalm-5-it).
 
 ---
 
