@@ -4,7 +4,7 @@
   author: Команда підтримки Psalm
 -->
 
-Ця стаття [англійською](/articles/psalm-5).
+Ця стаття [англійською](/articles/psalm-5), [французською](/articles/psalm-5-fr) та [італійською](/articles/psalm-5-it).
 
 ---
 
