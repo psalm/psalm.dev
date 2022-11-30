@@ -106,7 +106,7 @@ Abbiamo finalmente aggiunto il supporto ai tipi intersezione e ad ulteriori funz
 Psalm 5 inoltre aggiunge alcuni nuovi tipi:
 
 - [list{int, string, float}](https://psalm.dev/docs/annotating_code/type_syntax/array_types/#list-shapes)
-- [properties-of<T>](https://psalm.dev/docs/annotating_code/type_syntax/utility_types/#properties-oft)
+- [properties-of<T>](https://psalm.dev/docs/annotating_code/type_syntax/utility_types/#properties-oflttgt)
 - [Variable templates](https://psalm.dev/docs/annotating_code/type_syntax/utility_types/#variable-templates)
 - [int-range<x, y>](https://psalm.dev/docs/annotating_code/type_syntax/scalar_types/#int-range)
 
