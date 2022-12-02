@@ -192,7 +192,7 @@ class OnlineChecker
         );
         $config->collectPredefinedConstants();
         $config->collectPredefinedFunctions();
-        $config->cache_directory = '';
+        $config->cache_directory = null;
         $config->allow_includes = false;
         $config->totally_typed = true;
         $config->ensure_array_string_offsets_exist = true;
