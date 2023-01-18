@@ -7,6 +7,10 @@ body {
 	-moz-osx-font-smoothing: inherit;
 }
 
+:root > * {
+	--md-typeset-color: initial;
+}
+
 .md-header {
 	color: #000;
 
