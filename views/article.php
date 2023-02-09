@@ -53,7 +53,7 @@ try {
 <?php endif ?>
 <h1><?= Muglug\Blog\AltHeadingParser::preventOrphans($article->title) ?></h1>
 <p class="meta">
-    <?= date('F j, Y', strtotime($article->date)) ?> by <?= $article->author ?> - 
+    <?= date('F j, Y', strtotime($article->date)) ?> by <?= $article->author ?> -
     <?php if ($article->canonical): ?>
         <a href="<?= $article->canonical ?>">original article</a>
     <?php else: ?>
@@ -83,7 +83,6 @@ const settings = {
     'memoize_method_calls': false,
     'check_throws': false,
     'strict_internal_functions': false,
-    'allow_phpstorm_generics': false,
     'use_phpdoc_without_magic_call': false,
 };
 
@@ -199,7 +198,7 @@ var fetchFixedContents = function (code, cm) {
 		const container = document.createElement('div');
 		const textarea = document.createElement('textarea');
 		textarea.value = code_element.innerText;
-	
+
 		container.appendChild(textarea);
 		container.className = 'cm_inline_container';
 
