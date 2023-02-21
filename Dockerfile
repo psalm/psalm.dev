@@ -12,4 +12,4 @@ RUN a2enmod rewrite && a2enmod headers
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install opcache
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-RUN echo "\nzend.assertions=1\nopcache.enable_cli=true\nopcache.jit_buffer_size=512M\nopcache.jit=1205" >> "$PHP_INI_DIR/php.ini"
+RUN echo -e "\nzend.assertions=1\nopcache.enable_cli=true\nopcache.jit_buffer_size=512M\nopcache.jit=1205" >> "$PHP_INI_DIR/php.ini"
