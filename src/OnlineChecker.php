@@ -98,7 +98,6 @@ class OnlineChecker
             );
 
             $context = new \Psalm\Context();
-            $context->collect_references = true;
             $class_aliases = $codebase->file_storage_provider->get($file_path)->classlike_aliases;
 
             foreach ($class_aliases as $aliased_class => $new_class) {
@@ -194,7 +193,7 @@ class OnlineChecker
         $config->collectPredefinedFunctions();
         $config->cache_directory = null;
         $config->allow_includes = false;
-        $config->totally_typed = true;
+        $config->show_mixed_issues = true;
         $config->ensure_array_string_offsets_exist = true;
         $config->ensure_array_int_offsets_exist = true;
         $config->check_for_throws_docblock = $settings['check_throws'] ?? true;
