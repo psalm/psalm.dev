@@ -1,5 +1,7 @@
 <?php
 
+use PsalmDotOrg\OnlineChecker;
+
 http_response_code(500);
 
 if (!isset($_GET['r']) ) {
@@ -72,7 +74,7 @@ if (isset($_GET['format'])) {
             array_flip($settings_fields)
         );
 
-        $php_version = $_GET['php'] ?? '8.1';
+        $php_version = $_GET['php'] ?? OnlineChecker::DEFAULT_PHP_VERSION;
 
         if (!preg_match('/^[578]\.\d$/', $php_version)) {
             http_response_code(422);
