@@ -1,5 +1,7 @@
 <?php
 
+use PsalmDotOrg\OnlineChecker;
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 http_response_code(500);
@@ -56,7 +58,7 @@ if (strlen($file_contents) > 100000) {
     exit;
 }
 
-$php_version = $_POST['php'] ?? '8.1';
+$php_version = $_POST['php'] ?? OnlineChecker::DEFAULT_PHP_VERSION;
 
 if (!preg_match('/^[578]\.\d$/', $php_version)) {
     http_response_code(422);

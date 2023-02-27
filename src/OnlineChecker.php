@@ -11,11 +11,13 @@ use Psalm\Internal\Provider\FakeFileProvider;
 
 class OnlineChecker
 {
+    public const DEFAULT_PHP_VERSION = '8.2';
+
     public static function getResults(
         string $file_contents,
         array $settings,
         bool $fix_file,
-        string $php_version = '8.1'
+        string $php_version = self::DEFAULT_PHP_VERSION
     ) : array {
         $config = self::getPsalmConfig($settings, $fix_file, $file_contents);
 
