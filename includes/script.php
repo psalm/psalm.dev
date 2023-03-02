@@ -136,7 +136,9 @@ var fetchAnnotations = function (code, callback, options, cm) {
                 psalm_version = psalm_version.split('@')[1];
             }
 
-            var psalm_header = 'Psalm output (using commit ' + psalm_version.substring(0, 7) + '): <br><br>'
+            const commit_hash = psalm_version.substring(0, 7);
+            const commit_link = '<a href="https://github.com/vimeo/psalm/commit/' + commit_hash + '" target="_blank">' + commit_hash + '</a>';
+            const psalm_header = 'Psalm output (using commit&nbsp;' + commit_link + '): <br><br>'
 
             if (response.results.length === 0) {
                 document.getElementById('psalm_output').innerHTML = psalm_header + 'No issues!';
