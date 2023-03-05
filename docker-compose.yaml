@@ -34,6 +34,17 @@ services:
       MYSQL_PASSWORD: devpass
     networks:
       - backend
+  node:
+    container_name: node
+    image: "node:19"
+    user: "node"
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./:/home/node/app
+    networks:
+      - backend
 
 networks:
   backend:
