@@ -2,7 +2,7 @@
     "name": "muglug/getpsalm.org",
     "type": "project",
     "require": {
-        "vimeo/psalm": "dev-5.x",
+        "vimeo/psalm": "5.x-dev",
         "muglug/simple-markdown-blog": "dev-main",
         "bamarni/composer-bin-plugin": "^1.4",
         "composer/package-versions-deprecated": "1.11.99.4"
