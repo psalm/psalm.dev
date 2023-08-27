@@ -51,8 +51,13 @@ final class PluginRepository
             );
         }
 
+        $packageNames = array_diff(
+            $plugin_names['packageNames'],
+            ['ghostwriter/example-psalm-plugin','ghostwriter/phpunit-psalm-plugin','ghostwriter/psalm-plugin'],
+        );
+
         $plugins = [];
-        foreach ($plugin_names['packageNames'] as $package_name) {
+        foreach ($packageNames as $package_name) {
             $plugin_json = file_get_contents("https://packagist.org/packages/$package_name.json");
             if (!$plugin_json) {
                 continue;
