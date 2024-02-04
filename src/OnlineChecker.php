@@ -2,7 +2,6 @@
 
 namespace PsalmDotOrg;
 
-use PhpParser\ParserFactory;
 use Psalm\Config;
 use Psalm\IssueBuffer;
 use Psalm\Internal\Analyzer\FileAnalyzer;
@@ -18,11 +17,10 @@ class OnlineChecker
         array $settings,
         bool $fix_file,
         string $php_version = self::DEFAULT_PHP_VERSION
-    ) : array {
+    ): array {
         $config = self::getPsalmConfig($settings, $fix_file, $file_contents);
 
         $psalm_version = (string) \PackageVersions\Versions::getVersion('vimeo/psalm');
-        $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
         $file_provider = new FakeFileProvider();
         $output_options = new \Psalm\Report\ReportOptions();
         $output_options->format = \Psalm\Report::TYPE_JSON;
@@ -55,7 +53,6 @@ class OnlineChecker
 
         $codebase->store_node_types = true;
 
-        $infer_types_from_usage = true;
         $project_checker->consolidateAnalyzedData();
         $file_path = __DIR__ . '/somefile.php';
         $file_provider->registerFile(
@@ -113,8 +110,6 @@ class OnlineChecker
             }
 
             $file_checker->analyze($context);
-
-            $i = 0;
 
             if ($codebase->taint_flow_graph) {
                 $codebase->taint_flow_graph->connectSinksAndSources();
@@ -180,7 +175,7 @@ class OnlineChecker
         }
     }
 
-    private static function getPsalmConfig(array $settings, bool $fix_file, string $file_contents) : \Psalm\Config
+    private static function getPsalmConfig(array $settings, bool $fix_file, string $file_contents): \Psalm\Config
     {
         $config = Config::loadFromXML(
             (string)getcwd(),
