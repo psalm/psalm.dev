@@ -10,9 +10,8 @@ Has the source for psalm.dev
 
 ## To build docs (for local preview)
 
-- Run `composer update` (requires [Composer](https://getcomposer.org))
-- Run `mkdocs build` (requires Python & [MkDocs](https://www.mkdocs.org/))
+- Or `docker-compose run --rm mkdocs build`
 
 ## To build styles (these files get committed)
 
-- Run `npx webpack` (requires Node)
+- Run `docker-compose exec node npx webpack`

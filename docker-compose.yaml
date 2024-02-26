@@ -46,5 +46,15 @@ services:
     networks:
       - backend
 
+  mkdocs:
+    container_name: mkdocs
+    image: squidfunk/mkdocs-material
+    profiles:
+      - cli # not an actual profile, just to make sure it's not started automatically
+    volumes:
+      - type: bind
+        source: "${PWD}"
+        target: /docs
+
 networks:
   backend:
