@@ -1,5 +1,8 @@
 <?php
 
+use PsalmDotOrg\Settings;
+require_once dirname(__DIR__) . '/src/Settings.php';
+
 ini_set("display_errors", 1);
 ini_set("display_startup_errors", 1);
 error_reporting(-1);
@@ -69,16 +72,7 @@ if ($result) {
 
 $data = ['hash' => $hash, 'code' => $code, 'ip' => $_SERVER['REMOTE_ADDR']];
 
-$settings_fields = [
-    'unused_variables',
-    'unused_methods',
-    'memoize_properties',
-    'memoize_method_calls',
-    'check_throws',
-    'strict_internal_functions',
-    'restrict_return_types',
-    'use_phpdoc_without_magic_call',
-];
+$settings_fields = Settings::names();
 
 foreach ($settings_fields as $field) {
     $data[$field] = ($settings[$field] ?? false) ? '1' : '';

@@ -1,5 +1,7 @@
 <?php
 
+use PsalmDotOrg\Settings;
+
 error_reporting(E_ALL);
 ini_set('html_errors', '1');
 ini_set('display_errors', '1');
@@ -76,15 +78,7 @@ const serializeJSON = function(data) {
 let latestFetch = 0;
 let fetchKey = null;
 
-const settings = {
-    'unused_variables': true,
-    'unused_methods': false,
-    'memoize_properties': true,
-    'memoize_method_calls': false,
-    'check_throws': false,
-    'strict_internal_functions': false,
-    'use_phpdoc_without_magic_call': false,
-};
+const settings = <?php echo json_encode(Settings::defaultValues()) ?>;
 
 var fetchAnnotations = function (code, callback, options, cm) {
     latestFetch++;

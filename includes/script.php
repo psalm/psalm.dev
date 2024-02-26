@@ -1,3 +1,4 @@
+<?php require_once dirname(__DIR__) . '/src/Settings.php' ?>
 <script>
 var expandCode = function() {
     document.querySelector('body').classList.add('code_expanded');
@@ -15,15 +16,7 @@ var toggleSettings = function() {
     return false;
 };
 
-var settingsText = {
-    'unused_variables': 'Detect unused variables and parameters',
-    'unused_methods': 'Detect unused classes and methods',
-    'memoize_properties': 'Memoize property assignments',
-    'memoize_method_calls': 'Memoize simple method calls',
-    'check_throws': 'Check for <code>@throws</code> docblock',
-    'restrict_return_types': 'Force return types to be as tight as possible',
-    'use_phpdoc_without_magic_call': 'Use PHPDoc methods and properties without magic call.',
-};
+var settingsText = <?php echo json_encode(\PsalmDotOrg\Settings::descriptions()); ?>;
 
 var toggleSetting = function(key) {
     if (key in settings) {
@@ -69,8 +62,9 @@ var getLink = async function() {
         return false;
     }
 
-	// keep query params, e.g. ?php=8.1
-	const fullUrl = 'https://' + url + window.location.search;
+    // keep query params, e.g. ?php=8.1
+    const scheme = window.location.protocol;
+    const fullUrl = scheme + '//' + url + window.location.search;
 
     try {
         await navigator.clipboard.writeText(fullUrl);

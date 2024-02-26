@@ -3,7 +3,12 @@
 <head>
 <title>Psalm - a static analysis tool for PHP</title>
 <meta name="description" content="Psalm is a free & open-source static analysis tool that helps you identify problems in your code, so you can sleep a little better" />
-<?php require('../includes/meta.php'); ?>
+<?php
+
+use PsalmDotOrg\Settings;
+require_once dirname(__DIR__) . '/src/Settings.php';
+
+ require('../includes/meta.php'); ?>
 </head>
 <body class="front">
 <?php require('../includes/nav.php'); ?>
@@ -49,16 +54,7 @@ if ($condition) {
     </div>
 </div>
 <script>
-var settings = {
-    'unused_variables': true,
-    'unused_methods': false,
-    'memoize_properties': true,
-    'memoize_method_calls': false,
-    'check_throws': false,
-    'strict_internal_functions': false,
-    'restrict_return_types': false,
-    'use_phpdoc_without_magic_call': false,
-};
+var settings = <?php echo json_encode(Settings::defaultValues()) ?>;
 </script>
 <?php require('../includes/footer.php'); ?>
 <?php require('../includes/script.php'); ?>

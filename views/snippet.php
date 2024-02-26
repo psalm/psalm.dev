@@ -1,6 +1,7 @@
 <?php
 
 use PsalmDotOrg\OnlineChecker;
+use PsalmDotOrg\Settings;
 
 http_response_code(500);
 
@@ -45,16 +46,7 @@ $code = $result['code'];
 $created_on = (new DateTime())->setTimestamp($result['created_on']);
 $created_on->setTimezone(new DateTimeZone("UTC"));
 
-$settings_fields = [
-    'unused_variables',
-    'unused_methods',
-    'memoize_properties',
-    'memoize_method_calls',
-    'check_throws',
-    'strict_internal_functions',
-    'restrict_return_types',
-    'use_phpdoc_without_magic_call',
-];
+$settings_fields = Settings::names();
 
 const PHP_PARSER_VERSION = '4.0.0';
 
