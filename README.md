@@ -14,4 +14,5 @@ Has the source for psalm.dev
 
 ## To build styles (these files get committed)
 
+- Run `docker-compose exec node npm ci`
 - Run `docker-compose exec node npx webpack`
