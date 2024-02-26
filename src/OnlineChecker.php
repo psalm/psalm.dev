@@ -10,7 +10,7 @@ use Psalm\Internal\Provider\FakeFileProvider;
 
 class OnlineChecker
 {
-    public const DEFAULT_PHP_VERSION = '8.2';
+    public const DEFAULT_PHP_VERSION = '8.3';
 
     public static function getResults(
         string $file_contents,
@@ -200,6 +200,7 @@ class OnlineChecker
         $config->use_phpdoc_property_without_magic_or_parent = $settings['use_phpdoc_without_magic_call'] ?? false;
         $config->ignore_internal_nullable_issues = !($settings['strict_internal_functions'] ?? false);
         $config->ignore_internal_falsable_issues = !($settings['strict_internal_functions'] ?? false);
+        $config->ensure_override_attribute = $settings['ensure_override_attribute'] ?? false;
         $config->base_dir = __DIR__ . '/';
 
         foreach ($config->php_extensions as &$enabled) {
