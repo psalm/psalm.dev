@@ -27,15 +27,26 @@ nav:
       - Dealing with code issues: running_psalm/dealing_with_code_issues.md
       - Issue Types: running_psalm/issues.md
     - Checking non-PHP files: running_psalm/checking_non_php_files.md
+    - Error levels: running_psalm/error_levels.md
   - Annotating types:
     - Using Type Annotations: annotating_code/typing_in_psalm.md
     - Union Types: annotating_code/type_syntax/union_types.md
     - Atomic Type Reference: annotating_code/type_syntax/atomic_types.md
     - Intersection Types: annotating_code/type_syntax/intersection_types.md
+    - Array Types: annotating_code/type_syntax/array_types.md
+    - Callable Types: annotating_code/type_syntax/callable_types.md
+    - Conditional Types: annotating_code/type_syntax/conditional_types.md
+    - Object Types: annotating_code/type_syntax/object_types.md
+    - Other Types: annotating_code/type_syntax/other_types.md
+    - Scalar Types: annotating_code/type_syntax/scalar_types.md
+    - Top Types, Bottom Types: annotating_code/type_syntax/top_bottom_types.md
+    - Utility Types: annotating_code/type_syntax/utility_types.md
+    - Value Types: annotating_code/type_syntax/value_types.md
   - Other annotations:
     - Supported Annotations: annotating_code/supported_annotations.md
     - Template Annotations: annotating_code/templated_annotations.md
     - Assert Annotations: annotating_code/adding_assertions.md
+    - Assertion syntax: annotating_code/assertion_syntax.md
   - Manipulating code:
     - Fixing code with Psalter: manipulating_code/fixing.md
     - Refactoring code: manipulating_code/refactoring.md
@@ -44,4 +55,13 @@ nav:
     - Custom taint sources: security_analysis/custom_taint_sources.md
     - Custom taint sinks: security_analysis/custom_taint_sinks.md
     - Avoiding false-positives: security_analysis/avoiding_false_positives.md
-  - Contributing: contributing/index.md
+    - Avoiding false-negatives: security_analysis/avoiding_false_negatives.md
+    - Security analysis annotations: security_analysis/annotations.md
+    - Taint Flow: security_analysis/taint_flow.md
+  - Contributing:
+    - Contributing to Psalm: contributing/index.md
+    - Adding a new issue type: contributing/adding_issues.md
+    - Altering callmaps: contributing/editing_callmaps.md
+    - How Psalm works: contributing/how_psalm_works.md
+    - Philosophy: contributing/philosophy.md
+    - Things that make developing Psalm complicated: contributing/what_makes_psalm_complicated.md
