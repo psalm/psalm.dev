@@ -21,6 +21,14 @@ require_once dirname(__DIR__) . '/src/Settings.php';
         <p>Psalm helps people maintain a wide variety of codebases – large and small, ancient and modern. On its strictest setting it can help you <a href="articles/php-or-type-safety-pick-any-two">prevent almost all type-related runtime errors</a>, and enables you to take advantage of <a href="articles/immutability-and-beyond">safe coding patterns</a> popular in other languages.</p>
 
         <p>Psalm <a href="https://psalm.dev/docs/manipulating_code/fixing/">also fixes bugs automatically</a>, allowing you to improve your code without breaking a sweat.</p>
+
+        <p>
+            Support Psalm development by requesting a support contract from <a href="https://daniil.it" target="_blank">Daniil Gentili</a>, the maintainer of Psalm!
+            <br />
+            Support contracts can cover full integration of Psalm into existing codebases, support for Psalm issues and development of additional Psalm features.  
+            <br />
+            See <a href="https://daniil.it" target="_blank">here &raquo;</a> for info, pricing and contact information.  
+        </p>
     </div>
     <div class="cm_container">
         <textarea
