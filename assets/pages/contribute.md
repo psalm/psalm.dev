@@ -28,12 +28,12 @@ There's a lot of interesting theory behind the things Psalm does, too. If you wa
 
 Lastly, working to improve static analysis tools will also make you a better PHP developer – it'll help you think more about how values flow through your program. 
 
-## “Why can’t I pay you?”
+### Support contracts
 
-Money’s great, but that's not what I'm after. There are a bunch of other PHP developers whose work I rely on, though – if you don't have time to support Psalm with code, you support Psalm indirectly by sponsoring these developers:
+Announcing Psalm's new **support model**: you can support Psalm development by requesting a support contract from [Daniil Gentili](https://daniil.it), the only active maintainer of Psalm.  
 
-- [Sara Golemon](https://github.com/sponsors/sgolemon) - core PHP contributor & v8 release manager
-- [Sebastian Bergmann](https://github.com/sponsors/sebastianbergmann) - creator of PHPUnit
-- [Marco Pivetta](https://github.com/sponsors/Ocramius) - prolific userland developer who helps push Psalm forward
+Support contracts can cover full integration of Psalm into existing codebases, support for Psalm issues and development of additional Psalm features.  
 
-Lastly, if you work at a large company that uses Psalm regularly, consider encouraging your colleagues to contribute to its development!
+See [here &raquo;](https://daniil.it) for info, pricing and contact information.  
+
+If you work at a large company that uses Psalm regularly, consider encouraging your colleagues to contribute to its development!
