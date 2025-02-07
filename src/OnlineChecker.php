@@ -155,6 +155,7 @@ class OnlineChecker
             return [
                 'results' => $issue_data,
                 'version' => $psalm_version,
+                'php_version' => PHP_VERSION,
                 'fixed_contents' => $fixed_file_contents,
                 'hash' => md5($file_contents),
                 'type_map' => $transformed_type_map,
