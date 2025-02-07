@@ -78,6 +78,9 @@ foreach ($settings_fields as $field) {
     $data[$field] = ($settings[$field] ?? false) ? '1' : '';
 }
 $insert_sql = 'insert into `codes` (`' . implode('`,`', array_keys($data)) .  '`) values (:' . implode(', :', array_keys($data)) . ')';
+
+$pdo->query("ALTER TABLE `codes` ADD `memoize_method_calls` bit(1) NOT NULL DEFAULT b'0'");
+
 $stmt = $pdo->prepare($insert_sql);
 $stmt->execute($data);
 
