@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS `codes` (
   `unused_methods` bit(1) NOT NULL DEFAULT b'0',
   `memoize_properties` bit(1) NOT NULL DEFAULT b'1',
   `memoize_method_calls` bit(1) NOT NULL DEFAULT b'0',
+  `disable_var_parsing` bit(1) NOT NULL DEFAULT b'0',
   `check_throws` bit(1) NOT NULL DEFAULT b'0',
   `strict_internal_functions` bit(1) NOT NULL DEFAULT b'0',
   `restrict_return_types` bit(1) NOT NULL DEFAULT b'0',

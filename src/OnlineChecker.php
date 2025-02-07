@@ -197,6 +197,7 @@ class OnlineChecker
         $config->check_for_throws_docblock = $settings['check_throws'] ?? true;
         $config->remember_property_assignments_after_call = $settings['memoize_properties'] ?? true;;
         $config->memoize_method_calls = $settings['memoize_method_calls'] ?? false;
+        $config->disable_var_parsing = $settings['disable_var_parsing'] ?? false;
         $config->use_phpdoc_method_without_magic_or_parent = $settings['use_phpdoc_without_magic_call'] ?? false;
         $config->use_phpdoc_property_without_magic_or_parent = $settings['use_phpdoc_without_magic_call'] ?? false;
         $config->ignore_internal_nullable_issues = !($settings['strict_internal_functions'] ?? false);

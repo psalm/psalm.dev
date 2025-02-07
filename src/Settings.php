@@ -10,6 +10,7 @@ final class Settings
 {
     private const AVAILABLE_SETTINGS = [
         'unused_variables' => [true, 'Detect unused variables and parameters'],
+        'disable_var_parsing' => [false, 'Disable parsing of <code>@var</code> for better type accuracy'],
         'unused_methods' => [false, 'Detect unused classes and methods'],
         'memoize_properties' => [true, 'Memoize property assignments'],
         'memoize_method_calls' => [false, 'Memoize simple method calls'],
