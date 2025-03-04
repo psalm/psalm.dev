@@ -50,6 +50,8 @@ Redirect 301 /docs/annotating_code/docblock_type_syntax https://psalm.dev/docs/a
 
 Redirect 301 /docs/fixing_code https://psalm.dev/docs/manipulating_code/fixing.md
 
+Redirect 307 /v2/ https://registry.hub.docker.com/v2/
+
 RewriteEngine On
 RewriteBase /
 RewriteRule ^articles/([a-z0-9\-]+)/?$ /views/article.php?name=$1 [L,NC]
@@ -76,3 +78,5 @@ RewriteRule ^vendor/?.*$ - [F,L]
 RewriteRule ^.git/?.*$ - [F,L]
 RewriteRule ^dbconfig.php.*$ - [F,L]
 RewriteRule ^bin/?.*$ - [F,L]
+
+RewriteRule ^/v2/docker(.*)$ https://registry.hub.docker.com/v2/danog/psalm$1 [END]
