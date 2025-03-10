@@ -41,7 +41,10 @@ nav:
     - Refactoring code: manipulating_code/refactoring.md
   - Security analysis:
     - Introduction: security_analysis/index.md
+    - Taint annotations: security_analysis/annotations.md
+    - Taint flow annotations: security_analysis/taint_flow.md
     - Custom taint sources: security_analysis/custom_taint_sources.md
     - Custom taint sinks: security_analysis/custom_taint_sinks.md
     - Avoiding false-positives: security_analysis/avoiding_false_positives.md
+    - Avoiding false-negatives: security_analysis/avoiding_false_negatives.md
   - Contributing: contributing/index.md
