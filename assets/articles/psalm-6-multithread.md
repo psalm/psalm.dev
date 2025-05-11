@@ -24,6 +24,4 @@ The maintainer of amphp was kind enough to [begin integration of Psalm's fork co
 
 This release also adds an additional check to ensure VM overcommitting (the feature which allows copy-on-write optimizations) is enabled in the OS when running Psalm, by ensuring that the `vm.overcommit_memory` kernel setting is always set to 1.  
 
-~~~
-
 This post is the first of a series of **technical deep dives** into Psalm v6's performance improvements, which will be released over the next weeks, [click here](https://blog.daniil.it/category/psalm/deep-dive-psalm-v6/) to see all the other posts in the series, and [subscribe to the newsletter](https://blog.daniil.it/newsletter/) to always stay up to date on the latest Psalm news and developments!  
