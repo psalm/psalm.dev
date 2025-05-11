@@ -8,7 +8,7 @@
 
 Psalm is one of the biggest and most powerful PHP Static analysis tools, featuring exclusive features like [security analysis](https://psalm.dev/docs/security_analysis/).  
 
-In [Psalm 6.1](https://github.com/vimeo/psalm/releases/tag/6.1.0), I implemented a major refactoring of multithreaded mode (automatically enabled on Linux/Mac OS) based on [amphp/parallel](https://github.com/amphp/parallel), which greatly reduced analysis speeds!  
+In [Psalm 6.1](https://github.com/vimeo/psalm/releases/tag/6.1.0), I implemented a major refactoring of multithreaded mode (automatically enabled on Linux/Mac OS) based on [amphp/parallel](https://github.com/amphp/parallel), which greatly improved analysis speeds!  
 
 But why was it so effective? To understand, one must first understand that in the vast majority of PHP multithreaded analysis tools, jobs are distributed *statically* between threads on startup, which means that towards the end of the analysis, a lot of workers just sit there doing nothing, just waiting for the other workers processing bigger and heavier files to finish.  
 
