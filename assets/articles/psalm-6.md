@@ -1,6 +1,6 @@
 <!--
   title: Psalm v6 announcement
-  date: 2025-05-11 18:00
+  date: 2025-05-11
   author: Daniil Gentili
 -->
 

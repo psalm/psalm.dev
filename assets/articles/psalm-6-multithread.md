@@ -1,6 +1,6 @@
 <!--
   title: Psalm v6 Deep Dive: Copy-on-Write + dynamic task dispatching
-  date: 2025-05-11 18:00
+  date: 2025-05-11
   author: Daniil Gentili
 -->
 
