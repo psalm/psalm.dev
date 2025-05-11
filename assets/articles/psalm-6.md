@@ -4,7 +4,7 @@
   author: Daniil Gentili
 -->
 
-[Cross-posted from Daniil Gentili's blog &raquo;](https://blog.daniil.it).
+[Cross-posted from Daniil Gentili's blog &raquo;](https://blog.daniil.it/2025/05/11/psalm-v6-announcement/).
 
 [Psalm](https://psalm.dev) is one of the biggest and most powerful PHP Static analysis tools, featuring exclusive features like [security analysis](https://psalm.dev/docs/security_analysis/).
 
