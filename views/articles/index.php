@@ -9,7 +9,7 @@ $articles = $blog->articles->getAll();
 ?>
 <html>
 <head>
-<title>Psalm - Articles</title>
+<title>Psalm - Blog</title>
 <?php require('../../includes/meta.php'); ?>
 <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 </head>
