@@ -22,11 +22,7 @@ require_once dirname(__DIR__) . '/src/Settings.php';
 
         <p>Psalm <a href="https://psalm.dev/docs/manipulating_code/fixing/">also fixes bugs automatically</a>, allowing you to improve your code without breaking a sweat.</p>
 
-        <p>Join the <a href="https://psalmphp.t.me" target="_blank">official Psalm news channel</a> and the <a href="https://t.me/psalmphp_community" target="_blank">Psalm community</a>!</p>
-
-        <p>Support Psalm development by requesting a support contract from <a href="https://daniil.it" target="_blank">Daniil Gentili</a>, the maintainer of Psalm!</p>
-        <p>Support contracts can cover full integration of Psalm into existing codebases, support for Psalm issues and development of additional Psalm features.</p>
-        <p>See <a href="https://daniil.it" target="_blank">here &raquo;</a> for info, pricing and contact information!</p>
+        <p>Help support Psalm’s ongoing development costs by requesting a <a href="/support">paid support contract</a> from Psalm’s maintainer.</p>
     </div>
     <div class="cm_container">
         <textarea
