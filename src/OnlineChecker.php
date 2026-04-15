@@ -34,6 +34,8 @@ class OnlineChecker
             $providers,
             $output_options
         );
+        $project_checker->initExtraFiles();
+        $project_checker->initProjectFiles();
 
         $project_checker->setPhpVersion($php_version, 'cli');
 
