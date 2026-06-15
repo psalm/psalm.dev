@@ -205,6 +205,7 @@ class OnlineChecker
         $config->ignore_internal_nullable_issues = !($settings['strict_internal_functions'] ?? false);
         $config->ignore_internal_falsable_issues = !($settings['strict_internal_functions'] ?? false);
         $config->ensure_override_attribute = $settings['ensure_override_attribute'] ?? false;
+        $config->run_taint_analysis = true;
         $config->base_dir = __DIR__ . '/';
 
         foreach ($config->php_extensions as &$enabled) {
