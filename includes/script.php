@@ -42,6 +42,12 @@ var redrawSettings = function() {
             '<div>' + input + ' <label for="' + key + '">' + settingsText[key] + '</label></div>'
         );
     });
+    settingsLines.push(
+        '<div style="margin-top: 8px;">'
+        + '<button commandfor="help_dialog" command="show-modal" style="background:none;border:1px solid #999;border-radius:3px;padding:2px 8px;font-size:13px;cursor:pointer;">More options&hellip;</button>'
+        + '</div>'
+    );
+
     document.getElementById('settings_panel').innerHTML = settingsLines.join('\n');
 };
 
