@@ -105,10 +105,8 @@ class OnlineChecker
                 $codebase->classlikes->addClassAlias($new_class, $aliased_class);
             }
 
-            $track_taints = preg_match('/^\<\?php\s*\/\/\s*(--taint-analysis|checkTaintedInput|trackTaints)\b/', $file_contents) > 0;
-
-            if ($track_taints) {
-                $codebase->taint_flow_graph = new \Psalm\Internal\Codebase\TaintFlowGraph();
+            if ($config->run_taint_analysis) {
+                $project_checker->trackTaintedInputs();
             }
 
             $file_checker->analyze($context);
