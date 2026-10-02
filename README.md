@@ -28,3 +28,4 @@ docker compose exec php-apache vendor/bin/phinx create MyNewMigration
 Migrations are applied automatically when psalm.dev updates from the master branch.
 
 See https://book.cakephp.org/phinx/0/en/migrations.html#creating-a-new-migration to learn more about creating migrations.
+
