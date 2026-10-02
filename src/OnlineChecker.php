@@ -11,7 +11,8 @@ use Psalm\Internal\Provider\FakeFileProvider;
 class OnlineChecker
 {
     public const DEFAULT_PHP_VERSION = '8.3';
-    private const SITE_VERSION_FALLBACK = 'dev-master';
+    // psalm.dev version shown in the REPL output
+    public const SITE_VERSION = '1.0.0';
 
     public static function getResults(
         string $file_contents,
@@ -156,7 +157,7 @@ class OnlineChecker
             return [
                 'results' => $issue_data,
                 'version' => $psalm_version,
-                'site_version' => self::getSiteVersion(),
+                'site_version' => self::SITE_VERSION,
                 'php_version' => PHP_VERSION,
                 'fixed_contents' => $fixed_file_contents,
                 'hash' => md5($file_contents),
@@ -176,73 +177,6 @@ class OnlineChecker
                 ]
             ];
         }
-    }
-
-    /**
-     * Returns the psalm.dev commit hash, or a non-hash version string if the commit can't be determined
-     */
-    private static function getSiteVersion(): string
-    {
-        $commit = self::getSiteCommit();
-
-        if ($commit !== null) {
-            return $commit;
-        }
-
-        $root_package = \Composer\InstalledVersions::getRootPackage();
-
-        if (self::isCommitHash($root_package['reference'])) {
-            return $root_package['reference'];
-        }
-
-        if (strpos($root_package['pretty_version'], 'no-version-set') === false) {
-            return $root_package['pretty_version'];
-        }
-
-        return self::SITE_VERSION_FALLBACK;
-    }
-
-    /**
-     * Reads the psalm.dev commit straight from .git, as the git binary may not be usable by the web server user
-     */
-    private static function getSiteCommit(): ?string
-    {
-        $git_dir = dirname(__DIR__) . '/.git';
-        $head = @file_get_contents($git_dir . '/HEAD');
-
-        if ($head === false) {
-            return null;
-        }
-
-        $head = trim($head);
-
-        if (strpos($head, 'ref: ') !== 0) {
-            return self::isCommitHash($head) ? $head : null;
-        }
-
-        $ref = substr($head, 5);
-        $hash = @file_get_contents($git_dir . '/' . $ref);
-
-        if ($hash !== false) {
-            $hash = trim($hash);
-
-            return self::isCommitHash($hash) ? $hash : null;
-        }
-
-        foreach (@file($git_dir . '/packed-refs', FILE_IGNORE_NEW_LINES) ?: [] as $line) {
-            if (substr($line, 41) === $ref) {
-                $hash = substr($line, 0, 40);
-
-                return self::isCommitHash($hash) ? $hash : null;
-            }
-        }
-
-        return null;
-    }
-
-    private static function isCommitHash(?string $value): bool
-    {
-        return $value !== null && preg_match('/^[0-9a-f]{40}$/', $value) === 1;
     }
 
     private static function getPsalmConfig(array $settings, bool $fix_file, string $file_contents): \Psalm\Config

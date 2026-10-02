@@ -1,4 +1,5 @@
 <?php require_once dirname(__DIR__) . '/src/Settings.php' ?>
+<?php require_once dirname(__DIR__) . '/src/OnlineChecker.php' ?>
 <script>
 var expandCode = function() {
     document.querySelector('body').classList.add('code_expanded');
@@ -133,19 +134,10 @@ var fetchAnnotations = function (code, callback, options, cm) {
 
             const commit_hash = psalm_version.substring(0, 7);
             const commit_link = '<a href="https://github.com/vimeo/psalm/commit/' + commit_hash + '" target="_blank">' + commit_hash + '</a>';
-            const site_version = response.site_version || 'dev-master';
-            var site_link;
+            const site_version_text = document.createElement('span');
+            site_version_text.textContent = response.site_version || <?= json_encode(\PsalmDotOrg\OnlineChecker::SITE_VERSION) ?>;
 
-            if (/^[0-9a-f]{40}$/.test(site_version)) {
-                const site_hash = site_version.substring(0, 7);
-                site_link = ', psalm.dev commit&nbsp;<a href="https://github.com/psalm/psalm.dev/commit/' + site_hash + '" target="_blank">' + site_hash + '</a>';
-            } else {
-                const site_version_text = document.createElement('span');
-                site_version_text.textContent = site_version;
-                site_link = ', psalm.dev version&nbsp;' + site_version_text.innerHTML;
-            }
-
-            const psalm_header = 'Psalm output (using commit&nbsp;' + commit_link + site_link + ' on PHP ' + php_version + '): <br><br>'
+            const psalm_header = 'Psalm output (using commit&nbsp;' + commit_link + ', psalm.dev version&nbsp;' + site_version_text.innerHTML + ' on PHP ' + php_version + '): <br><br>'
 
             if (response.results.length === 0) {
                 document.getElementById('psalm_output').innerHTML = psalm_header + 'No issues!';
