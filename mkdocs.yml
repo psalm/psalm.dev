@@ -10,5 +10,5 @@ theme:
 markdown_extensions:
   - codehilite
 extra_css:
-  - '../assets/css/mkdocs_material_extra.css'
+  - '../assets/css/mkdocs_material_extra.css?v=2'
   - 'https://cloud.typography.com/751592/7707372/css/fonts.css'

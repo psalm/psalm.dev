@@ -35,6 +35,14 @@ Header set Access-Control-Allow-Origin "*"
   Header append Vary User-Agent
 </IfModule>
 
+# Stylesheets and scripts aren't fingerprinted, so make browsers revalidate
+# them instead of guessing a cache lifetime and serving stale copies.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
 DirectoryIndex index.php index.html
 
 Redirect 301 /docs/installation https://psalm.dev/docs/running_psalm/installation
