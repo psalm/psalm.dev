@@ -1,0 +1,168 @@
+{#-
+  Macros used by partials/nav.html.
+
+  The navigation is generated entirely from the docs directory (mkdocs.yml has
+  no `nav`), so pages added upstream show up without any configuration:
+
+  - every directory becomes a section, every page an entry;
+  - entries are ordered by where they're linked from the "Index" list of the
+    docs home page (README.md), then by where they're linked from their
+    section's index.md, then alphabetically;
+  - entries linked from the home page use that link's text as their label,
+    other entries use the page's first heading;
+  - a directory that sits next to a page with the same URL (e.g. issues/ next
+    to issues.md) is merged with that page into one collapsible group.
+-#}
+
+{#- Position of the first link to `href` in rendered `content`, or -1 -#}
+{% macro link_pos(content, href) -%}
+  {%- set exact = content.find('href="' ~ href ~ '"') -%}
+  {%- set anchored = content.find('href="' ~ href ~ '#') -%}
+  {%- if exact < 0 or (anchored >= 0 and anchored < exact) -%}
+    {{- anchored -}}
+  {%- else -%}
+    {{- exact -}}
+  {%- endif -%}
+{%- endmacro %}
+
+{#- Sortable key: home page index links, then section index links, then title -#}
+{% macro sort_key(item, index_page) -%}
+  {%- if item.children -%}
+    {%- set keys = [] -%}
+    {#- Only direct pages count, which keeps big nested directories cheap -#}
+    {%- for child in item.children if not child.children -%}
+      {%- set _ = keys.append(sort_key(child, none) | string) -%}
+    {%- endfor -%}
+    {%- set first = (keys | sort | first) or "" -%}
+    {{- first if first.startswith("1") else "3" ~ item.title | lower -}}
+  {%- else -%}
+    {%- set pos = link_pos(nav.homepage.content, item.url) | int -%}
+    {%- set index_pos = -1 -%}
+    {%- if index_page and item.url.startswith(index_page.url) -%}
+      {%- set index_pos = link_pos(index_page.content, item.url[index_page.url | length:]) | int -%}
+    {%- endif -%}
+    {%- if item.url and pos >= 0 -%}
+      1{{ "%08d" | format(pos) }}
+    {%- elif index_pos >= 0 -%}
+      2{{ "%08d" | format(index_pos) }}
+    {%- else -%}
+      3{{ item.title | lower }}
+    {%- endif -%}
+  {%- endif -%}
+{%- endmacro %}
+
+{#- URL a directory section is attached to, if a sibling page has that URL -#}
+{% macro adopter(section, siblings) -%}
+  {%- set child_url = (section.children | selectattr("url", "defined") | map(attribute="url") | first) or "" -%}
+  {%- set dir_url = child_url.rstrip("/").rpartition("/")[0] ~ "/" -%}
+  {%- for sibling in siblings -%}
+    {%- if not sibling.children and sibling.url and sibling.url == dir_url -%}
+      {{- dir_url -}}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endmacro %}
+
+{% macro label(item, index_page) -%}
+  {%- if item.children -%}
+    {{- item.title | replace("psalm", "Psalm") -}}
+  {%- elif item.is_homepage -%}
+    Home
+  {%- elif item == index_page -%}
+    Overview
+  {%- else -%}
+    {%- set content = nav.homepage.content -%}
+    {%- set start = content.find('href="' ~ item.url ~ '"') -%}
+    {%- if item.url and start >= 0 -%}
+      {%- set start = content.find(">", start) + 1 -%}
+      {{- content[start:content.find("</a>", start)] | striptags -}}
+    {%- else -%}
+      {{- item.title -}}
+    {%- endif -%}
+  {%- endif -%}
+{%- endmacro %}
+
+{#- Renders one level of the tree, sorted. `index_page` is the page that
+    introduces this level when it isn't part of it (see adopter()). -#}
+{% macro render_list(items, depth, index_page=none) %}
+  {% set ns = namespace(index=index_page) %}
+  {% for item in items %}
+    {% if not item.children and item.file and item.file.name == "index" and not item.is_homepage %}
+      {% set ns.index = item %}
+    {% endif %}
+  {% endfor %}
+  {% set entries = [] %}
+  {% set adopted = {} %}
+  {% for item in items %}
+    {% if item.children %}
+      {% set adopted_by = adopter(item, items) | trim %}
+      {% if adopted_by %}
+        {% set _ = adopted.update({adopted_by: item}) %}
+      {% else %}
+        {% set _ = entries.append({"key": sort_key(item, ns.index) | string, "item": item}) %}
+      {% endif %}
+    {% elif item == ns.index or item.is_homepage %}
+      {% set _ = entries.append({"key": "0", "item": item}) %}
+    {% else %}
+      {% set _ = entries.append({"key": sort_key(item, ns.index) | string, "item": item}) %}
+    {% endif %}
+  {% endfor %}
+  {% for entry in entries | sort(attribute="key") %}
+    {{ render(entry.item, depth, ns.index, adopted) }}
+  {% endfor %}
+{% endmacro %}
+
+{% macro render(item, depth, index_page, adopted) %}
+  {% if item.children and depth == 0 %}
+    <li class="psalm-nav__section{% if item.active %} psalm-nav__section--active{% endif %}">
+      <span class="psalm-nav__heading">{{ label(item, none) }}</span>
+      <ul class="psalm-nav__list">
+        {{ render_list(item.children, depth + 1) }}
+      </ul>
+    </li>
+  {% elif item.children %}
+    <li class="psalm-nav__item">
+      <details class="psalm-nav__group"{% if item.active %} open{% endif %}>
+        <summary class="psalm-nav__link psalm-nav__group-title">{{ label(item, none) }}</summary>
+        <ul class="psalm-nav__list">
+          {{ render_list(item.children, depth + 1) }}
+        </ul>
+      </details>
+    </li>
+  {% elif item.url in adopted %}
+    {#- A page with a same-named directory (issues.md + issues/) becomes a
+        group: the page itself first, then everything in the directory. -#}
+    {% set section = adopted[item.url] %}
+    <li class="psalm-nav__item">
+      <details class="psalm-nav__group"{% if item == page or section.active %} open{% endif %}>
+        <summary class="psalm-nav__link psalm-nav__group-title">{{ label(item, index_page) }}</summary>
+        <ul class="psalm-nav__list">
+          {{ render(item, depth + 1, item, {}) }}
+          {{ render_list(section.children, depth + 1, item) }}
+        </ul>
+      </details>
+    </li>
+  {% elif item == page %}
+    <li class="psalm-nav__item">
+      <a href="{{ item.url | url }}" class="psalm-nav__link psalm-nav__link--active" aria-current="page" title="{{ item.title | striptags }}">{{ label(item, index_page) }}</a>
+      {#- In-page table of contents, only shown in the mobile drawer (the
+          secondary sidebar shows it on larger screens). -#}
+      {% set toc_ = page.toc %}
+      {% if toc_ | first is defined and "\x3ch1 id=" in page.content %}
+        {% set toc_ = (toc_ | first).children %}
+      {% endif %}
+      {% if toc_ | first is defined %}
+        <ul class="psalm-nav__list psalm-nav__toc">
+          {% for toc_item in toc_ %}
+            <li class="psalm-nav__item">
+              <a href="{{ toc_item.url }}" class="psalm-nav__link">{{ toc_item.title }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </li>
+  {% else %}
+    <li class="psalm-nav__item">
+      <a href="{{ item.url | url }}" class="psalm-nav__link" title="{{ item.title | striptags }}">{{ label(item, index_page) }}</a>
+    </li>
+  {% endif %}
+{% endmacro %}

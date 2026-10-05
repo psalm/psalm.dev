@@ -9,3 +9,22 @@
 {% block extrahead %}
 <script src="{{ 'assets/javascripts/modernizr.86422ebf.js' | url }}"></script>
 {% endblock %}
+{% block scripts %}
+{{ super() }}
+<script>
+  // Keep the current page visible when it sits far down the sidebar
+  window.addEventListener("load", function () {
+    var link = document.querySelector(".psalm-nav .psalm-nav__link--active")
+    if (!link)
+      return
+    var boxes = [link.closest(".psalm-nav__list--root"), link.closest(".md-sidebar__scrollwrap")]
+    boxes.forEach(function (box) {
+      if (!box || box.scrollHeight <= box.clientHeight)
+        return
+      var offset = link.getBoundingClientRect().top - box.getBoundingClientRect().top
+      if (offset > box.clientHeight - 80)
+        box.scrollTop += offset - box.clientHeight / 3
+    })
+  })
+</script>
+{% endblock %}

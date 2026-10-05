@@ -177,3 +177,200 @@ label.md-nav__title {
 .md-footer a {
 	color: #f59493;
 }
+
+// Primary navigation (see theme/partials/nav.html)
+
+$nav-red: #943b3a;
+$nav-text: #333;
+$nav-muted: #757575;
+$nav-active-bg: #f8eded;
+
+.psalm-nav {
+	font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
+	font-size: 15px;
+	line-height: 1.35;
+	-webkit-font-smoothing: antialiased;
+
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.psalm-nav__drawer-header,
+	.psalm-nav__source {
+		display: none;
+	}
+
+	.psalm-nav__list--root {
+		padding: 0 .4rem 1.2rem 0;
+	}
+
+	.psalm-nav__section {
+		margin-top: 1.4em;
+
+		&:first-child {
+			margin-top: 0;
+		}
+	}
+
+	.psalm-nav__heading {
+		display: block;
+		padding: 0 0 .35em 10px;
+		color: #000;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: .06em;
+		text-transform: uppercase;
+	}
+
+	.psalm-nav__section--active > .psalm-nav__heading {
+		color: $nav-red;
+	}
+
+	.psalm-nav__link {
+		display: block;
+		padding: .3em 8px;
+		border-left: 2px solid transparent;
+		border-radius: 0 3px 3px 0;
+		color: $nav-text;
+		text-decoration: none;
+		cursor: pointer;
+		transition: color .1s, background-color .1s;
+
+		&:hover,
+		&:focus {
+			color: $nav-red;
+			background-color: #f7f7f7;
+		}
+
+		&:focus-visible {
+			outline: 2px solid $nav-red;
+			outline-offset: -2px;
+		}
+	}
+
+	.psalm-nav__link--active,
+	.psalm-nav__link--active:hover,
+	.psalm-nav__link--active:focus {
+		border-left-color: $nav-red;
+		background-color: $nav-active-bg;
+		color: $nav-red;
+		font-weight: 600;
+	}
+
+	// Pages nested under another page or group are indented and
+	// share a guide line, so the hierarchy is visible at a glance.
+	.psalm-nav__group > .psalm-nav__list,
+	.psalm-nav__toc {
+		margin: .1em 0 .3em 10px;
+		padding-left: 0;
+		border-left: 1px solid #e3e3e3;
+		font-size: 14px;
+	}
+
+	// Issue names are long single words: wrap them rather than overflow
+	.psalm-nav__group > .psalm-nav__list .psalm-nav__link {
+		overflow-wrap: anywhere;
+		word-break: break-word;
+	}
+
+	.psalm-nav__group-title {
+		position: relative;
+		padding-right: 22px;
+		list-style: none;
+		user-select: none;
+
+		&::-webkit-details-marker {
+			display: none;
+		}
+
+		&::after {
+			content: "";
+			position: absolute;
+			top: 50%;
+			right: 10px;
+			width: 6px;
+			height: 6px;
+			margin-top: -5px;
+			border-right: 1.5px solid currentColor;
+			border-bottom: 1.5px solid currentColor;
+			transform: rotate(-45deg);
+			transition: transform .15s;
+		}
+	}
+
+	.psalm-nav__group[open] > .psalm-nav__group-title::after {
+		margin-top: -6px;
+		transform: rotate(45deg);
+	}
+
+	// The in-page table of contents is only useful in the mobile drawer;
+	// wider screens show it in the secondary sidebar.
+	.psalm-nav__toc {
+		display: none;
+	}
+}
+
+// Navigation drawer (tablets and phones)
+@media only screen and (max-width: 76.1875em) {
+	.psalm-nav {
+		font-size: 16px;
+		background-color: #fff;
+
+		.psalm-nav__drawer-header {
+			display: flex;
+			flex: none;
+			align-items: center;
+			justify-content: space-between;
+			height: 3.4rem;
+			padding: 0 .4rem 0 .8rem;
+			border-bottom: 1px solid #eee;
+		}
+
+		.psalm-nav__drawer-title {
+			color: #000;
+			font-size: 20px;
+			font-weight: 600;
+			text-decoration: none;
+		}
+
+		.psalm-nav__drawer-close {
+			padding: 0 .4rem;
+			color: $nav-muted;
+			font-size: 28px;
+			line-height: 1;
+			cursor: pointer;
+		}
+
+		.psalm-nav__list--root {
+			flex: 1;
+			padding: 1rem .4rem 1.6rem;
+			overflow-y: auto;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.psalm-nav__link {
+			padding-top: .45em;
+			padding-bottom: .45em;
+		}
+
+		.psalm-nav__source {
+			display: block;
+			flex: none;
+			padding: .6rem .8rem;
+			border-top: 1px solid #eee;
+			font-size: 14px;
+
+			a {
+				color: $nav-red;
+			}
+		}
+	}
+}
+
+@media only screen and (max-width: 59.9375em) {
+	.psalm-nav .psalm-nav__toc {
+		display: block;
+	}
+}

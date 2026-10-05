@@ -1,0 +1,25 @@
+{#-
+  Primary navigation (replaces mkdocs-material's nav.html). The tree is built
+  automatically from the docs directory, see partials/nav-item.html.
+
+  Top-level sections are rendered as always-visible headings instead of
+  collapsed toggles, so the whole documentation structure is visible at once.
+  Nested groups (e.g. "Type syntax") collapse, and open automatically when
+  they contain the current page.
+-#}
+{% import "partials/nav-item.html" as items with context %}
+
+<nav class="md-nav md-nav--primary psalm-nav" data-md-level="0" aria-label="Documentation">
+  <div class="psalm-nav__drawer-header">
+    <a href="{{ nav.homepage.url | url }}" class="psalm-nav__drawer-title">Psalm docs</a>
+    <label class="psalm-nav__drawer-close" for="__drawer" aria-label="Close navigation">&times;</label>
+  </div>
+  <ul class="psalm-nav__list psalm-nav__list--root">
+    {{ items.render_list(nav.items, 0) }}
+  </ul>
+  {% if config.repo_url %}
+    <div class="psalm-nav__source">
+      <a href="{{ config.repo_url }}">Docs source on GitHub</a>
+    </div>
+  {% endif %}
+</nav>
