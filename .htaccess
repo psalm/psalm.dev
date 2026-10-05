@@ -35,11 +35,16 @@ Header set Access-Control-Allow-Origin "*"
   Header append Vary User-Agent
 </IfModule>
 
-# Stylesheets and scripts aren't fingerprinted, so make browsers revalidate
-# them instead of guessing a cache lifetime and serving stale copies.
+# Without explicit headers browsers guess a cache lifetime from the file age
+# and can keep stale copies for weeks. Most stylesheets and scripts aren't
+# fingerprinted (they're versioned with ?N query strings when they change),
+# so cache them briefly; mkdocs-material's hashed assets never change.
 <IfModule mod_headers.c>
   <FilesMatch "\.(css|js)$">
-    Header set Cache-Control "no-cache"
+    Header set Cache-Control "public, max-age=3600"
+  </FilesMatch>
+  <FilesMatch "\.[0-9a-f]{8}\.(css|js)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
 </IfModule>
 
