@@ -91,5 +91,7 @@ RewriteRule ^vendor/?.*$ - [F,L]
 RewriteRule ^.git/?.*$ - [F,L]
 RewriteRule ^dbconfig.php.*$ - [F,L]
 RewriteRule ^bin/?.*$ - [F,L]
+RewriteRule ^db/?.*$ - [F,L]
+RewriteRule ^\.venv-docs/?.*$ - [F,L]
 
 RewriteRule ^/v2/docker(.*)$ https://registry.hub.docker.com/v2/danog/psalm$1 [END]

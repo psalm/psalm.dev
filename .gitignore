@@ -12,3 +12,5 @@ assets/plugins/list.json
 node_modules
 package-lock.json
 /psalm_version.json
+# Docs toolchain, created by the InstallDocsPythonToolchain migration
+/.venv-docs/
