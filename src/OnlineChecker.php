@@ -13,6 +13,8 @@ class OnlineChecker
     public const DEFAULT_PHP_VERSION = '8.3';
     // psalm.dev version shown in the REPL output
     public const SITE_VERSION = '1.0.0';
+    // written by bin/generate_psalm_version.php on composer install/update
+    public const PSALM_VERSION_FILE = __DIR__ . '/../psalm_version.json';
 
     public static function getResults(
         string $file_contents,
@@ -22,7 +24,7 @@ class OnlineChecker
     ): array {
         $config = self::getPsalmConfig($settings, $fix_file, $file_contents);
 
-        $psalm_version = (string) \PackageVersions\Versions::getVersion('vimeo/psalm');
+        [$psalm_version, $psalm_version_url] = self::getPsalmVersion();
         $file_provider = new FakeFileProvider();
         $output_options = new \Psalm\Report\ReportOptions();
         $output_options->format = \Psalm\Report::TYPE_JSON;
@@ -157,6 +159,7 @@ class OnlineChecker
             return [
                 'results' => $issue_data,
                 'version' => $psalm_version,
+                'version_url' => $psalm_version_url,
                 'site_version' => self::SITE_VERSION,
                 'php_version' => PHP_VERSION,
                 'fixed_contents' => $fixed_file_contents,
@@ -177,6 +180,30 @@ class OnlineChecker
                 ]
             ];
         }
+    }
+
+    /**
+     * Returns the vimeo/psalm tag, "$last_tag+$commit_hash", or just the commit hash if the tag is unknown,
+     * along with its GitHub URL
+     *
+     * @return array{string, string}
+     */
+    private static function getPsalmVersion(): array
+    {
+        $commit = (string) \Composer\InstalledVersions::getReference('vimeo/psalm');
+        $commit_url = 'https://github.com/vimeo/psalm/commit/' . $commit;
+        $data = @file_get_contents(self::PSALM_VERSION_FILE);
+        $data = $data !== false ? json_decode($data, true) : null;
+
+        if (is_array($data) && ($data['commit'] ?? null) === $commit && is_string($data['version'] ?? null)) {
+            if (($data['is_tag'] ?? false) === true) {
+                return [$data['version'], 'https://github.com/vimeo/psalm/releases/tag/' . rawurlencode($data['version'])];
+            }
+
+            return [$data['version'], $commit_url];
+        }
+
+        return [substr($commit, 0, 7), $commit_url];
     }
 
     private static function getPsalmConfig(array $settings, bool $fix_file, string $file_contents): \Psalm\Config

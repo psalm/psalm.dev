@@ -128,16 +128,14 @@ var fetchAnnotations = function (code, callback, options, cm) {
             var psalm_version = response.version;
             var php_version = response.php_version;
 
-            if (psalm_version.indexOf('@')) {
-                psalm_version = psalm_version.split('@')[1];
-            }
-
-            const commit_hash = psalm_version.substring(0, 7);
-            const commit_link = '<a href="https://github.com/vimeo/psalm/commit/' + commit_hash + '" target="_blank">' + commit_hash + '</a>';
+            const psalm_version_link = document.createElement('a');
+            psalm_version_link.href = response.version_url;
+            psalm_version_link.target = '_blank';
+            psalm_version_link.textContent = psalm_version;
             const site_version_text = document.createElement('span');
             site_version_text.textContent = response.site_version || <?= json_encode(\PsalmDotOrg\OnlineChecker::SITE_VERSION) ?>;
 
-            const psalm_header = 'Psalm output (using commit&nbsp;' + commit_link + ', psalm.dev version&nbsp;' + site_version_text.innerHTML + ' on PHP ' + php_version + '): <br><br>'
+            const psalm_header = 'Psalm output (using Psalm&nbsp;' + psalm_version_link.outerHTML + ', psalm.dev website &nbsp;' + site_version_text.innerHTML + ' on PHP ' + php_version + '): <br><br>'
 
             if (response.results.length === 0) {
                 document.getElementById('psalm_output').innerHTML = psalm_header + 'No issues!';
