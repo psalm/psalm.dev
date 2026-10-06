@@ -12,6 +12,38 @@
 {% block scripts %}
 {{ super() }}
 <script>
+  // The search index splits words on dashes, but the theme only splits queries
+  // on spaces, so annotations like "@psalm-taint-specialize" never matched.
+  // Also index dashed words whole, and trim queries the way indexed words are.
+  (function (lunr) {
+    if (!lunr)
+      return
+    var tokenize = lunr.tokenizer
+    lunr.tokenizer = function (obj, metadata) {
+      var tokens = tokenize(obj, metadata)
+      if (obj == null || Array.isArray(obj))
+        return tokens
+      var words = obj.toString().toLowerCase().match(/\w+(?:-\w+)+/g) || []
+      words.forEach(function (word) {
+        var tokenMetadata = lunr.utils.clone(metadata) || {}
+        tokenMetadata.index = tokens.length
+        tokens.push(new lunr.Token(word, tokenMetadata))
+      })
+      return tokens
+    }
+    // lunr and the theme both read and write lunr.tokenizer.separator
+    Object.defineProperty(lunr.tokenizer, "separator", {
+      get: function () { return tokenize.separator },
+      set: function (separator) { tokenize.separator = separator }
+    })
+    var term = lunr.Query.prototype.term
+    lunr.Query.prototype.term = function (value, options) {
+      if (typeof value === "string")
+        value = value.replace(/^\W+/, "").replace(/\W+$/, "") || value
+      return term.call(this, value, options)
+    }
+  })(window.lunr)
+
   // Keep the current page visible when it sits far down the sidebar
   window.addEventListener("load", function () {
     var link = document.querySelector(".psalm-nav .psalm-nav__link--active")
