@@ -1,0 +1,9 @@
+# Docs build toolchain (Python >= 3.10): pip install -r requirements.txt
+#
+# mkdocs 1.6 requires Markdown >= 3.3.6. Older setups (mkdocs 1.1 with
+# Markdown 3.2.1) double-escape code spans in headings, so headings like
+# `@psalm-taint-unescape <taint-type>` show up as "&lt;taint-type&gt;" in
+# search results and the sidebar.
+mkdocs==1.6.1
+mkdocs-material==9.7.7
+pymdown-extensions==12.1

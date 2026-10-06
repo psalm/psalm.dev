@@ -1,6 +1,16 @@
 @import 'tiempos_text.scss';
 @import 'national.scss';
 
+:root {
+	--md-primary-fg-color: #fff;
+	--md-primary-fg-color--light: #fff;
+	--md-primary-fg-color--dark: #fff;
+	--md-primary-bg-color: #000;
+	--md-primary-bg-color--light: #757575;
+	--md-accent-fg-color: #943b3a;
+	--md-typeset-a-color: #943b3a;
+}
+
 body {
 	font-family: 'Tiempos Text', 'Times New Roman', serif;
 	-webkit-font-smoothing: subpixel-antialiased;
@@ -21,7 +31,7 @@ body {
 	}
 }
 
-.md-header-nav__button.md-logo {
+.md-header__button.md-logo {
 	color: #000;
     text-decoration: none;
     font-family: 'National 2', sans-serif;
@@ -32,7 +42,7 @@ body {
     padding-top: 0;
 }
 
-.md-header[data-md-state="shadow"] {
+.md-header--shadow {
 	box-shadow: none;
 }
 
@@ -68,7 +78,8 @@ pre {
     font-size: .825em;
 }
 
-pre code {
+pre code,
+.md-typeset pre > code {
 	font-family: ui-monospace, 
              Menlo, Monaco, 
              "Cascadia Mono", "Segoe UI Mono", 
@@ -149,19 +160,14 @@ label.md-nav__title {
 }
 
 .md-header {
-	height: 3.4rem;
+	padding: .4rem 0 .6rem;
 }
 
-.md-header-nav {
-	margin-top: 0.5rem;
-	margin-top: 0.4rem;
+.md-header__topic:first-child {
+	font-weight: normal;
 }
 
-.md-sidebar[data-md-state=lock] {
-	top: 3.2rem;
-}
-
-.md-header-nav__title {
+.md-header__title {
 	font-size: 1rem;
     font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
 }

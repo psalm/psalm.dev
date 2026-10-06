@@ -11,7 +11,8 @@ Has the source for psalm.dev
 ## To build docs (for local preview)
 
 - Run `composer update` (requires [Composer](https://getcomposer.org))
-- Run `mkdocs build` (requires Python & [MkDocs](https://www.mkdocs.org/))
+- Run `pip install -r requirements.txt` (requires Python 3.10+; installs the pinned [MkDocs](https://www.mkdocs.org/) toolchain)
+- Run `mkdocs build`
 
 ## To build styles (these files get committed)
 

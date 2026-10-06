@@ -1,14 +1,33 @@
 site_name: Documentation
-site_url: https://psalm.dev
+site_url: https://psalm.dev/docs/
 repo_url: https://github.com/vimeo/psalm
 repo_name: GitHub
+edit_uri: edit/master/docs/
 site_dir: docs
 docs_dir: vendor/vimeo/psalm/docs
 theme:
   name: 'material'
   custom_dir: 'theme'
+  # Fonts come from extra_css
+  font: false
+  icon:
+    edit: material/pencil
+    repo: fontawesome/brands/github
+  features:
+    - content.action.edit
+    - content.code.copy
+    - search.highlight
+plugins:
+  - search:
+      # Also split on the characters that surround names in annotations and
+      # types, e.g. "@psalm-taint-unescape <taint-type>" or "key-of<T>"
+      separator: '[\s\-,:!=\[\]()"/@<>]+|\.(?!\d)|&[lg]t;'
 markdown_extensions:
-  - codehilite
+  - pymdownx.highlight
+  - pymdownx.superfences
+extra:
+  # The logo links to the main site
+  homepage: https://psalm.dev
 extra_css:
-  - '../assets/css/mkdocs_material_extra.css?v=2'
+  - '../assets/css/mkdocs_material_extra.css?v=3'
   - 'https://cloud.typography.com/751592/7707372/css/fonts.css'

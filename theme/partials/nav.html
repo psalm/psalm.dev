@@ -1,13 +1,13 @@
 {#-
   Primary navigation (replaces mkdocs-material's nav.html). The tree is built
-  automatically from the docs directory, see partials/nav-item.html.
+  automatically from the docs directory, see partials/psalm-nav-item.html.
 
   Top-level sections are rendered as always-visible headings instead of
   collapsed toggles, so the whole documentation structure is visible at once.
   Nested groups (e.g. "Type syntax") collapse, and open automatically when
   they contain the current page.
 -#}
-{% import "partials/nav-item.html" as items with context %}
+{% import "partials/psalm-nav-item.html" as items with context %}
 
 <nav class="md-nav md-nav--primary psalm-nav" data-md-level="0" aria-label="Documentation">
   <div class="psalm-nav__drawer-header">
