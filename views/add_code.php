@@ -66,7 +66,7 @@ $server = $_SERVER['SERVER_NAME'] . ($port === 80 || $port === 443 ? '' : ':' . 
 
 if ($result) {
     http_response_code(200);
-    echo $server . '/r/' . $hash;
+    echo htmlentities($server . '/r/' . $hash);
     exit();
 }
 
@@ -77,12 +77,14 @@ $settings_fields = Settings::names();
 foreach ($settings_fields as $field) {
     $data[$field] = ($settings[$field] ?? false) ? '1' : '';
 }
-$insert_sql = 'insert into `codes` (`' . implode('`,`', array_keys($data)) .  '`) values (:' . implode(', :', array_keys($data)) . ')';
+$columns = array_merge(['hash', 'code', 'ip'], $settings_fields);
+
+$insert_sql = 'insert into `codes` (`' . implode('`,`', $columns) .  '`) values (:' . implode(', :', $columns) . ')';
 
 $stmt = $pdo->prepare($insert_sql);
 $stmt->execute($data);
 
 http_response_code(200);
-echo $server . '/r/' . $hash;
+echo htmlentities($server . '/r/' . $hash);
 exit();
 
