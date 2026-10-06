@@ -135,7 +135,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
             const site_version_text = document.createElement('span');
             site_version_text.textContent = response.site_version || <?= json_encode(\PsalmDotOrg\OnlineChecker::SITE_VERSION) ?>;
 
-            const psalm_header = 'Psalm output (using Psalm&nbsp;' + psalm_version_link.outerHTML + ', psalm.dev website &nbsp;' + site_version_text.innerHTML + ' on PHP ' + php_version + '): <br><br>'
+            const psalm_header = 'Psalm output (using Psalm&nbsp;' + psalm_version_link.outerHTML + ', psalm.dev website&nbsp;' + site_version_text.innerHTML + ' on PHP ' + php_version + '): <br><br>'
 
             if (response.results.length === 0) {
                 document.getElementById('psalm_output').innerHTML = psalm_header + 'No issues!';
