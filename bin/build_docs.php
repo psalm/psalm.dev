@@ -35,3 +35,4 @@ if ($exit_code !== 0) {
 }
 
 echo 'Docs built with ' . $mkdocs . PHP_EOL;
+
