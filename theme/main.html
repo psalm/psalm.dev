@@ -14,7 +14,9 @@
 <script>
   // The search index splits words on dashes, but the theme only splits queries
   // on spaces, so annotations like "@psalm-taint-specialize" never matched.
-  // Also index dashed words whole, and trim queries the way indexed words are.
+  // Also index dashed words whole, along with every run of two or more of
+  // their parts (so "taint-specialize" matches too), and trim queries the way
+  // indexed words are.
   (function (lunr) {
     if (!lunr)
       return
@@ -25,9 +27,14 @@
         return tokens
       var words = obj.toString().toLowerCase().match(/\w+(?:-\w+)+/g) || []
       words.forEach(function (word) {
-        var tokenMetadata = lunr.utils.clone(metadata) || {}
-        tokenMetadata.index = tokens.length
-        tokens.push(new lunr.Token(word, tokenMetadata))
+        var parts = word.split("-")
+        for (var start = 0; start < parts.length - 1; start++) {
+          for (var end = start + 2; end <= parts.length; end++) {
+            var tokenMetadata = lunr.utils.clone(metadata) || {}
+            tokenMetadata.index = tokens.length
+            tokens.push(new lunr.Token(parts.slice(start, end).join("-"), tokenMetadata))
+          }
+        }
       })
       return tokens
     }
@@ -43,6 +50,30 @@
       return term.call(this, value, options)
     }
   })(window.lunr)
+
+  // Search result titles have the same doubly escaped code spans as the
+  // sidebars (see partials/toc-title.html). The theme fetches the index the
+  // first time search is used, so fix the titles as it loads.
+  if (window.fetch)
+    window.fetch = (function (fetch) {
+      return function (url) {
+        var response = fetch.apply(this, arguments)
+        if (typeof url !== "string" || !/\/search\/search_index\.json$/.test(url))
+          return response
+        return response.then(function (res) {
+          var json = res.json.bind(res)
+          res.json = function () {
+            return json().then(function (index) {
+              index.docs.forEach(function (doc) {
+                doc.title = doc.title.replace(/&amp;(lt|gt|quot|amp);/g, "&$1;")
+              })
+              return index
+            })
+          }
+          return res
+        })
+      }
+    })(window.fetch)
 
   // Keep the current page visible when it sits far down the sidebar
   window.addEventListener("load", function () {

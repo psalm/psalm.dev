@@ -1,5 +1,6 @@
 site_name: Documentation
-site_url: https://psalm.dev
+# Canonical links and the sitemap need the /docs/ prefix
+site_url: https://psalm.dev/docs/
 repo_url: https://github.com/vimeo/psalm
 repo_name: GitHub
 site_dir: docs
@@ -9,6 +10,9 @@ theme:
   custom_dir: 'theme'
 markdown_extensions:
   - codehilite
+extra:
+  # The logo links to the main site
+  homepage: https://psalm.dev/
 extra_css:
   - '../assets/css/mkdocs_material_extra.css?v=5'
   - 'https://cloud.typography.com/751592/7707372/css/fonts.css'

@@ -14,6 +14,8 @@
     to issues.md) is merged with that page into one collapsible group.
 -#}
 
+{% import "partials/toc-title.html" as toc %}
+
 {#- Position of the first link to `href` in rendered `content`, or -1 -#}
 {% macro link_pos(content, href) -%}
   {%- set exact = content.find('href="' ~ href ~ '"') -%}
@@ -154,7 +156,7 @@
         <ul class="psalm-nav__list psalm-nav__toc">
           {% for toc_item in toc_ %}
             <li class="psalm-nav__item">
-              <a href="{{ toc_item.url }}" class="psalm-nav__link">{{ toc_item.title }}</a>
+              <a href="{{ toc_item.url }}" class="psalm-nav__link">{{ toc.toc_title(toc_item.title) }}</a>
             </li>
           {% endfor %}
         </ul>

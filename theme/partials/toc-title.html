@@ -1,0 +1,10 @@
+{#-
+  The server builds the docs with Markdown 3.2.1, which escapes code spans in
+  headings twice: "`@psalm-taint-unescape <taint-type>`" comes out as
+  "@psalm-taint-unescape &amp;lt;taint-type&amp;gt;" and shows the entities.
+  Undo the extra escaping; the result is still escaped once, as it should be.
+  The same fix for search results is in main.html.
+-#}
+{% macro toc_title(title) -%}
+  {{- title | replace("&amp;lt;", "&lt;") | replace("&amp;gt;", "&gt;") | replace("&amp;quot;", "&quot;") | replace("&amp;amp;", "&amp;") -}}
+{%- endmacro %}
