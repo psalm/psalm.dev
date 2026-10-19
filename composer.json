@@ -17,14 +17,12 @@
         "post-install-cmd": [
             "composer bin all install",
             "@php bin/generate_psalm_version.php",
-            "phinx migrate",
-            "@php bin/build_docs.php"
+            "phinx migrate"
         ],
         "post-update-cmd": [
             "composer bin all install",
             "@php bin/generate_psalm_version.php",
-            "phinx migrate",
-            "@php bin/build_docs.php"
+            "phinx migrate"
         ]
     },
     "config": {

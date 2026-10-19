@@ -11,14 +11,7 @@ Has the source for psalm.dev
 ## To build docs (for local preview)
 
 - Run `composer update` (requires [Composer](https://getcomposer.org))
-- Run `python3 -m venv .venv-docs` (requires Python 3.10+)
-- Run `.venv-docs/bin/pip install -r requirements.txt` (the pinned [MkDocs](https://www.mkdocs.org/) toolchain)
-- Run `php bin/build_docs.php`
-
-Don't build with an `mkdocs` from `PATH`: the pinned versions are what the
-theme in `theme/` is written against. On the server the virtualenv is created
-by the `InstallDocsPythonToolchain` migration, and `composer install` rebuilds
-the docs from it on every deploy.
+- Run `mkdocs build` with [MkDocs](https://www.mkdocs.org/) 1.1 and mkdocs-material 4.6.3, the versions on the server (they need Python 3.9 or older)
 
 ## To build styles (these files get committed)
 
