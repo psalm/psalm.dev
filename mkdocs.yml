@@ -29,5 +29,5 @@ extra:
   # The logo links to the main site
   homepage: https://psalm.dev
 extra_css:
-  - '../assets/css/mkdocs_material_extra.css?v=3'
+  - '../assets/css/mkdocs_material_extra.css?v=4'
   - 'https://cloud.typography.com/751592/7707372/css/fonts.css'
