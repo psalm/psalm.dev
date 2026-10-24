@@ -10,7 +10,7 @@ use Psalm\Internal\Provider\FakeFileProvider;
 
 class OnlineChecker
 {
-    public const DEFAULT_PHP_VERSION = '8.3';
+    public const DEFAULT_PHP_VERSION = '8.5';
     // psalm.dev version shown in the REPL output
     public const SITE_VERSION = '1.0.2';
     // written by bin/generate_psalm_version.php on composer install/update
