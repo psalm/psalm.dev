@@ -868,18 +868,6 @@ li.pg_step > .pg_step_label {
     color: inherit;
 }
 
-.pg_docs {
-    gap: 8px;
-}
-
-.pg_docs a {
-    text-underline-offset: 2px;
-}
-
-.pg_docs a:hover {
-    color: var(--pg-ink);
-}
-
 .pg_run_state {
     min-width: 13ch;
     color: var(--pg-ink);
@@ -1011,10 +999,5 @@ li.pg_step > .pg_step_label {
 
     .pg_statusbar .pg_spacer {
         display: none;
-    }
-
-    .pg_docs {
-        flex-wrap: wrap;
-        row-gap: 2px;
     }
 }

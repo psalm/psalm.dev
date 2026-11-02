@@ -47,7 +47,6 @@
     <div class="pg_bar pg_statusbar" id="pg_statusbar">
         <span class="pg_status_item pg_run_state" id="pg_run_state" data-state="idle">idle</span>
         <span class="pg_status_item" id="pg_psalm_version"></span>
-        <span class="pg_status_item pg_docs">Docs:<a href="/docs/running_psalm/issues/" target="_blank" rel="noopener">issues</a><a href="/docs/annotating_code/supported_annotations/" target="_blank" rel="noopener">annotations</a><a href="/docs/annotating_code/typing_in_psalm/" target="_blank" rel="noopener">types</a><a href="/docs/security_analysis/" target="_blank" rel="noopener">taint analysis</a><a href="/docs/running_psalm/configuration/" target="_blank" rel="noopener">config</a></span>
 <?php if (!empty($playground_saved_on)) : ?>
         <span class="pg_status_item pg_saved_on"><?= htmlspecialchars($playground_saved_on) ?></span>
 <?php endif ?>
