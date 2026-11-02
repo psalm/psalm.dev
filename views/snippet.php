@@ -56,7 +56,8 @@ $created_on->setTimezone(new DateTimeZone("UTC"));
 $settings_fields = Settings::names();
 $settings = Settings::fromRow($result);
 
-$php_version_regex = '/' . OnlineChecker::SUPPORTED_PHP_VERSION_REGEX . '/';
+// D: without it $ also matches before a trailing newline, so "8.1\n" would pass
+$php_version_regex = '/' . OnlineChecker::SUPPORTED_PHP_VERSION_REGEX . '/D';
 // NULL for snippets saved before the version was stored
 $stored_php_version = $result['php_version'] ?? null;
 
