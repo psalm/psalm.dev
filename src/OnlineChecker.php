@@ -174,7 +174,9 @@ class OnlineChecker
 
             return [
                 'results' => $issue_data,
-                'version' => $psalm_version['version'],
+                // psalm-github-bot parses this as "<pretty version>@<commit hash>"; keep the format
+                'version' => (string) \PackageVersions\Versions::getVersion('vimeo/psalm'),
+                'version_label' => $psalm_version['version'],
                 'version_url' => $psalm_version['version_url'],
                 'version_commit' => $psalm_version['commit'],
                 'version_commit_url' => $psalm_version['commit_url'],
