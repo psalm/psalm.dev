@@ -15,7 +15,7 @@ Psalm's docker image uses a custom build of PHP built from scratch with a custom
 To use it right now, on PHP 8.4, simply run:
 
 ```
-docker run -v $PWD:/app --rm -it ghcr.io/danog/psalm:latest /composer/vendor/bin/psalm --no-cache
+docker run -v $PWD:/app --rm -it ghcr.io/psalm/psalm:latest /composer/vendor/bin/psalm --no-cache
 ```
 
 Issues due to missing extensions can be fixed by enabling them in psalm.xml and/or requiring them in composer.json, [see here &raquo;](https://psalm.dev/docs/running_psalm/configuration/#enableextensions) for more info.
