@@ -21,23 +21,22 @@ var settingsText = <?php echo json_encode(\PsalmDotOrg\Settings::descriptions())
 
 var defaultPhpVersion = <?= json_encode(\PsalmDotOrg\OnlineChecker::DEFAULT_PHP_VERSION) ?>;
 var phpVersions = <?= json_encode(\PsalmDotOrg\OnlineChecker::PHP_VERSIONS) ?>;
+// a saved snippet opens with the version it was saved with; ?php= overrides it
+var basePhpVersion = (typeof snippetPhpVersion !== 'undefined' && snippetPhpVersion) || defaultPhpVersion;
 var phpVersion = new URLSearchParams(window.location.search).get('php');
 
-// same versions check.php accepts; anything else falls back to the default
+// same versions check.php accepts; anything else falls back to the base version
 if (!phpVersion || !new RegExp(<?= json_encode(\PsalmDotOrg\OnlineChecker::SUPPORTED_PHP_VERSION_REGEX) ?>).test(phpVersion)) {
-    phpVersion = defaultPhpVersion;
+    phpVersion = basePhpVersion;
 }
-
-// environment details from the latest /check response, shown at the bottom of the settings panel
-var runtimeInfo = null;
 
 var setPhpVersion = function(version) {
     phpVersion = version;
 
-    // keep the choice in the URL, so reloading and "Get link" preserve it
+    // keep the choice in the URL, so reloading preserves it
     const params = new URLSearchParams(window.location.search);
 
-    if (version === defaultPhpVersion) {
+    if (version === basePhpVersion) {
         params.delete('php');
     } else {
         params.set('php', version);
@@ -47,19 +46,6 @@ var setPhpVersion = function(version) {
     window.history.replaceState(null, '', window.location.pathname + (query ? '?' + query : '') + window.location.hash);
 
     editor.performLint();
-};
-
-var redrawRuntimeInfo = function() {
-    const container = document.getElementById('runtime_info');
-
-    if (!container) {
-        return;
-    }
-
-    container.textContent = runtimeInfo
-        ? 'Psalm ' + runtimeInfo.psalm_version + ' runs on PHP ' + runtimeInfo.php_version
-            + '; your code is analysed as PHP ' + runtimeInfo.analysed_as + '. psalm.dev ' + runtimeInfo.site_version + '.'
-        : '';
 };
 
 var toggleSetting = function(key) {
@@ -97,10 +83,7 @@ var redrawSettings = function() {
             '<div>' + input + ' <label for="' + key + '">' + settingsText[key] + '</label></div>'
         );
     });
-    settingsLines.push('<div id="runtime_info"></div>');
-
     document.getElementById('settings_panel').innerHTML = settingsLines.join('\n');
-    redrawRuntimeInfo();
 };
 
 var getLink = async function() {
@@ -110,7 +93,7 @@ var getLink = async function() {
             'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
             'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
         },
-        body: serializeJSON({code: editor.getValue(), settings: JSON.stringify(settings)})
+        body: serializeJSON({code: editor.getValue(), settings: JSON.stringify(settings), php: phpVersion})
     });
 
     const url = await response.text();
@@ -124,9 +107,9 @@ var getLink = async function() {
         return false;
     }
 
-    // keep query params, e.g. ?php=8.1 set from the settings panel
+    // the PHP version is stored with the snippet, so the link needs no query params
     const scheme = window.location.protocol;
-    const fullUrl = scheme + '//' + url + window.location.search;
+    const fullUrl = scheme + '//' + url;
 
     try {
         await navigator.clipboard.writeText(fullUrl);
@@ -199,14 +182,6 @@ var fetchAnnotations = function (code, callback, options, cm) {
             }
 
             const psalm_header = 'Psalm output (using Psalm&nbsp;' + psalm_version_html + '): <br><br>'
-
-            runtimeInfo = {
-                psalm_version: response.version,
-                analysed_as: submitData.php,
-                site_version: response.site_version || <?= json_encode(\PsalmDotOrg\OnlineChecker::SITE_VERSION) ?>,
-                php_version: response.php_version
-            };
-            redrawRuntimeInfo();
 
             if (response.results.length === 0) {
                 document.getElementById('psalm_output').innerHTML = psalm_header + 'No issues!';
