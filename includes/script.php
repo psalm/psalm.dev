@@ -479,9 +479,10 @@ var renderPsalmVersion = function(response) {
         element.appendChild(link(response.version_tag_url, response.version_tag, 'Release notes for ' + response.version_tag));
 
         if (response.version_compare_url) {
+            element.appendChild(document.createTextNode('+'));
             element.appendChild(link(
                 response.version_compare_url,
-                '+' + response.version_ahead,
+                String(response.version_ahead),
                 response.version_ahead + ' commits after ' + response.version_tag
             ));
         }
