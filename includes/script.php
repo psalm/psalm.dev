@@ -460,7 +460,9 @@ var setIssueCount = function(count) {
 
 // "Psalm 7.0.0+2 (ca4690d)": release, compare view and commit links; label/url when no tag was resolved
 var renderPsalmVersion = function(response) {
-    var element = document.getElementById('pg_psalm_version');
+    // one inline wrapper: as direct children of the flex status item, the text nodes would lose their spaces
+    var element = document.createElement('span');
+    var item = document.getElementById('pg_psalm_version');
     var link = function (href, text, title) {
         var a = document.createElement('a');
         a.href = href;
@@ -492,6 +494,9 @@ var renderPsalmVersion = function(response) {
         element.appendChild(link(response.version_commit_url, response.version_commit, 'The commit psalm.dev runs'));
         element.appendChild(document.createTextNode(')'));
     }
+
+    item.textContent = '';
+    item.appendChild(element);
 };
 
 var renderPlainOutput = function(text) {
