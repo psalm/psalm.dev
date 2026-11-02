@@ -115,8 +115,12 @@ var getLink = async function() {
 
     const url = await response.text();
 
-    if (url.indexOf('/r/') === -1) {
-        alert(url);
+    if (!response.ok || url.indexOf('/r/') === -1) {
+        // add_code.php answers with short plain-text messages; anything else (HTML, a PHP error, nothing) is not shown
+        const isPlainMessage = url.length > 0 && url.length < 300 && url.indexOf('<') === -1;
+        alert(isPlainMessage
+            ? url
+            : 'Could not create a link: the server returned HTTP ' + response.status + '. Please try again later');
         return false;
     }
 
