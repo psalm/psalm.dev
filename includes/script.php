@@ -1,13 +1,38 @@
 <?php require_once dirname(__DIR__) . '/src/Settings.php' ?>
 <?php require_once dirname(__DIR__) . '/src/OnlineChecker.php' ?>
 <script>
-// the playground is always expanded now; kept as no-ops for old bookmarklets and inline handlers
-var expandCode = function() {
+// homepage only (body.pg_compact): the playground sits next to the intro until expanded; elsewhere a no-op
+var setCodeExpanded = function(expanded) {
+    var body = document.body;
+
+    if (!body.classList.contains('pg_expandable')) {
+        return false;
+    }
+
+    var hadFocus = document.activeElement && /^(expander|shrinker)$/.test(document.activeElement.id);
+
+    body.classList.toggle('pg_compact', !expanded);
+    editor.refresh();
+
+    if (hadFocus) {
+        document.getElementById(expanded ? 'shrinker' : 'expander').focus();
+    }
+
+    var playground = document.getElementById('playground');
+
+    if (expanded && playground.getBoundingClientRect().top < 0) {
+        playground.scrollIntoView({block: 'start'});
+    }
+
     return false;
 };
 
+var expandCode = function() {
+    return setCodeExpanded(true);
+};
+
 var shrinkCode = function() {
-    return false;
+    return setCodeExpanded(false);
 };
 
 var toggleSettings = function() {

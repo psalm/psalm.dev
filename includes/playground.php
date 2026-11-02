@@ -4,6 +4,7 @@
  *
  * @var string $playground_code already HTML-escaped textarea contents
  * @var string|null $playground_saved_on optional "saved on" label for snippet pages
+ * @var bool|null $playground_expandable homepage only: offer Expand/Shrink
  */
 ?>
 <section class="playground" id="playground" aria-label="Psalm playground">
@@ -18,6 +19,10 @@
         <span class="pg_spacer"></span>
         <div class="pg_toolgroup pg_toolgroup_actions">
             <button type="button" id="fixer" class="pg_ghost" title="Let Psalm rewrite the code to fix the fixable issues" hidden>Fix code</button>
+<?php if (!empty($playground_expandable)) : ?>
+            <button type="button" id="expander" class="pg_ghost pg_size_toggle" onclick="return expandCode();" title="Give the playground the full page width"><svg width="15" height="14" viewBox="0 0 15 14" fill="currentColor" aria-hidden="true" focusable="false"><path d="M0 5h1.5v6.4L12.9 0l1.4 1.2L2.8 12.5H9V14H0z" fill-rule="evenodd"/></svg>Expand</button>
+            <button type="button" id="shrinker" class="pg_ghost pg_size_toggle" onclick="return shrinkCode();" title="Put the playground back next to the introduction"><svg width="15" height="14" viewBox="0 0 15 14" fill="currentColor" aria-hidden="true" focusable="false"><path d="M15 9h-1.5V2.6L2.1 14 .8 12.8 12.2 1.5H6V0h9z" fill-rule="evenodd"/></svg>Shrink</button>
+<?php endif ?>
             <button type="button" id="getlink" class="pg_primary" onclick="getLink();" title="Save the snippet and copy its link"><svg width="22" height="12" viewBox="0 0 28 15" fill="currentColor" aria-hidden="true" focusable="false"><g fill-rule="evenodd"><path d="M17.3 2.5A5 5 0 0 0 13 0H5a5 5 0 0 0-5 5v1a5 5 0 0 0 5 5h8a5 5 0 0 0 4.8-3.5H16a4 4 0 0 1-3.5 2h-7a4 4 0 1 1 0-8h7c1 0 2 .4 2.6 1h2.2z"/><path d="M10.4 12.5a5 5 0 0 0 4.4 2.5h8a5 5 0 0 0 5-5V9a5 5 0 0 0-5-5h-8A5 5 0 0 0 10 7.5h1.8a4 4 0 0 1 3.5-2h7a4 4 0 1 1 0 8h-7c-1 0-2-.4-2.7-1h-2.2z"/></g></svg><span class="pg_share_label">Share</span></button>
         </div>
     </div>
