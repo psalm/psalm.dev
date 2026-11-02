@@ -19,6 +19,26 @@ if (($_GET['run'] ?? null) !== '1') {
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
+/** @var array{dsn: string, user: string, password: string} $db_config */
+$db_config = require dirname(__DIR__) . '/dbconfig.php';
+
+// MySQL DDL isn't transactional, so two simultaneous runs could both try to apply the same migration
+try {
+    $lock_pdo = new PDO($db_config['dsn'], $db_config['user'], $db_config['password']);
+    $locked = (int) $lock_pdo->query("SELECT GET_LOCK('psalm_dev_migrate', 0)")->fetchColumn() === 1;
+} catch (PDOException $e) {
+    error_log('migrate: ' . $e->getMessage());
+    http_response_code(500);
+    echo "Cannot connect to the database (error {$e->getCode()})\n";
+    exit;
+}
+
+if (!$locked) {
+    http_response_code(409);
+    echo "Another migration run is in progress, try again in a minute\n";
+    exit;
+}
+
 $wrapper = new \Phinx\Wrapper\TextWrapper(
     new \Phinx\Console\PhinxApplication(),
     ['configuration' => dirname(__DIR__) . '/phinx.php']
