@@ -193,40 +193,117 @@ var redrawSettings = function() {
     updateSettingsSummary();
 };
 
-var getLink = async function() {
-    const response = await fetch('/add_code', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
-            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
-        },
-        body: serializeJSON({code: editor.getValue(), settings: JSON.stringify(settings), php: phpVersion})
-    });
+var messageTimer = null;
 
-    const url = await response.text();
+/**
+ * Status bar message area: a short text, optionally followed by a link shown as selectable text.
+ * kind is "ok" or "error"; "ok" messages with a timeout disappear on their own.
+ */
+var showStatusMessage = function(kind, text, link, timeout) {
+    var element = document.getElementById('pg_message');
+
+    clearTimeout(messageTimer);
+    element.textContent = '';
+    element.dataset.kind = kind;
+    element.appendChild(document.createTextNode(text));
+
+    if (link) {
+        var linkText = document.createElement('span');
+        linkText.className = 'pg_message_link';
+        linkText.textContent = link;
+        element.appendChild(document.createTextNode(' '));
+        element.appendChild(linkText);
+    }
+
+    if (timeout) {
+        messageTimer = setTimeout(function () {
+            element.textContent = '';
+        }, timeout);
+    }
+};
+
+var sharing = false;
+
+var getLink = async function() {
+    if (sharing) {
+        return false;
+    }
+
+    sharing = true;
+    showStatusMessage('ok', 'saving\u2026');
+
+    try {
+        await shareSnippet();
+    } finally {
+        sharing = false;
+    }
+
+    return false;
+};
+
+var shareSnippet = async function() {
+    let response;
+    let url;
+
+    try {
+        response = await fetch('/add_code', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
+                'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+            },
+            body: serializeJSON({code: editor.getValue(), settings: JSON.stringify(settings), php: phpVersion})
+        });
+        url = await response.text();
+    } catch (error) {
+        showStatusMessage('error', 'Could not create a link: the request failed. Please try again later');
+        return;
+    }
 
     if (!response.ok || url.indexOf('/r/') === -1) {
         // add_code.php answers with short plain-text messages; anything else (HTML, a PHP error, nothing) is not shown
         const isPlainMessage = url.length > 0 && url.length < 300 && url.indexOf('<') === -1;
-        alert(isPlainMessage
-            ? url
+        showStatusMessage('error', isPlainMessage
+            ? url.trim()
             : 'Could not create a link: the server returned HTTP ' + response.status + '. Please try again later');
-        return false;
+        return;
     }
 
     // the PHP version is stored with the snippet, so the link needs no query params
-    const scheme = window.location.protocol;
-    const fullUrl = scheme + '//' + url;
+    const fullUrl = window.location.protocol + '//' + url.trim();
+    let copied = true;
 
     try {
         await navigator.clipboard.writeText(fullUrl);
-    } catch(error) {
-        console.warn('Could not copy URL to clipboard', error);
+    } catch (error) {
+        copied = false;
     }
 
-    window.location.assign(fullUrl);
-    return false;
+    // stay on the page, but make the address bar point at the snippet so reloading opens it
+    try {
+        const target = new URL(fullUrl);
+
+        if (target.origin === window.location.origin && target.pathname !== window.location.pathname) {
+            window.history.pushState({snippet: target.pathname}, '', target.pathname);
+        }
+
+        // the snippet now carries the chosen version, so the picker no longer needs ?php=
+        basePhpVersion = phpVersion;
+    } catch (error) {
+        // an unexpected URL shape: the link is still shown below
+    }
+
+    if (copied) {
+        showStatusMessage('ok', 'Link copied', fullUrl, 8000);
+    } else {
+        showStatusMessage('error', 'Copy failed, link:', fullUrl);
+    }
 };
+
+// pushState only changes the address bar; going back or forward has to load that page for real
+window.addEventListener('popstate', function () {
+    window.location.reload();
+});
 
 var serializeJSON = function(data) {
     return Object.keys(data).map(function (keyName) {

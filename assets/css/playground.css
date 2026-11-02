@@ -503,6 +503,28 @@ button.pg_loc:hover {
     font-weight: 700;
 }
 
+/* share result: "Link copied <url>", or an error in red */
+.pg_message {
+    gap: 8px;
+    color: var(--pg-ink);
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.pg_message[data-kind="error"] {
+    color: var(--pg-error);
+    font-weight: 700;
+}
+
+.pg_message_link {
+    color: var(--pg-ink);
+    font-weight: 400;
+    background: var(--pg-hover);
+    padding: 0 4px;
+    user-select: all;
+    -webkit-user-select: all;
+}
+
 .pg_keys {
     gap: 16px;
 }

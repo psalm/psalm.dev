@@ -36,6 +36,7 @@
 <?php if (!empty($playground_saved_on)) : ?>
         <span class="pg_status_item pg_saved_on"><?= htmlspecialchars($playground_saved_on) ?></span>
 <?php endif ?>
+        <span class="pg_status_item pg_message" id="pg_message" role="status" aria-live="polite"></span>
         <span class="pg_spacer"></span>
         <span class="pg_status_item pg_keys"><span><kbd>⌘/Ctrl+Enter</kbd> run</span><span><kbd>⌘/Ctrl+S</kbd> share</span><span><kbd>F8</kbd>/<kbd>⇧F8</kbd> next/prev issue</span></span>
     </div>
