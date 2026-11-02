@@ -11,6 +11,8 @@ use Psalm\Internal\Provider\FakeFileProvider;
 class OnlineChecker
 {
     public const DEFAULT_PHP_VERSION = '8.5';
+    // offered in the settings panel; check.php also accepts other X.Y versions passed via ?php=
+    public const PHP_VERSIONS = ['7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5'];
     // psalm.dev version shown in the REPL output
     public const SITE_VERSION = '1.0.2';
     // written by bin/generate_psalm_version.php on composer install/update

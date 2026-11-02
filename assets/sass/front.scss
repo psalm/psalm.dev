@@ -141,6 +141,20 @@ div.cm_container {
     label {
         color: #333;
     }
+
+    .php_version {
+        margin-bottom: 0.5em;
+    }
+
+    select {
+        font: inherit;
+    }
+
+    #runtime_info {
+        margin-top: 1em;
+        font-size: 12px;
+        color: #777;
+    }
 }
 
 .cm_container .CodeMirror {

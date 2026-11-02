@@ -19,6 +19,48 @@ var toggleSettings = function() {
 
 var settingsText = <?php echo json_encode(\PsalmDotOrg\Settings::descriptions()); ?>;
 
+var defaultPhpVersion = <?= json_encode(\PsalmDotOrg\OnlineChecker::DEFAULT_PHP_VERSION) ?>;
+var phpVersions = <?= json_encode(\PsalmDotOrg\OnlineChecker::PHP_VERSIONS) ?>;
+var phpVersion = new URLSearchParams(window.location.search).get('php');
+
+// same format check.php accepts; anything else falls back to the default
+if (!phpVersion || !/^[578]\.\d$/.test(phpVersion)) {
+    phpVersion = defaultPhpVersion;
+}
+
+// environment details from the latest /check response, shown at the bottom of the settings panel
+var runtimeInfo = null;
+
+var setPhpVersion = function(version) {
+    phpVersion = version;
+
+    // keep the choice in the URL, so reloading and "Get link" preserve it
+    const params = new URLSearchParams(window.location.search);
+
+    if (version === defaultPhpVersion) {
+        params.delete('php');
+    } else {
+        params.set('php', version);
+    }
+
+    const query = params.toString();
+    window.history.replaceState(null, '', window.location.pathname + (query ? '?' + query : '') + window.location.hash);
+
+    editor.performLint();
+};
+
+var redrawRuntimeInfo = function() {
+    const container = document.getElementById('runtime_info');
+
+    if (!container) {
+        return;
+    }
+
+    container.textContent = runtimeInfo
+        ? 'psalm.dev ' + runtimeInfo.site_version + ', Psalm running on PHP ' + runtimeInfo.php_version
+        : '';
+};
+
 var toggleSetting = function(key) {
     if (key in settings) {
         settings[key] = !settings[key];
@@ -34,6 +76,17 @@ var toggleSetting = function(key) {
 var redrawSettings = function() {
     var settingsLines = [];
 
+    var versions = phpVersions.indexOf(phpVersion) === -1 ? phpVersions.concat([phpVersion]) : phpVersions;
+    var options = versions.map(function (version) {
+        return '<option value="' + escapeHtml(version) + '"' + (version === phpVersion ? ' selected' : '') + '>'
+            + escapeHtml(version) + (version === defaultPhpVersion ? ' (default)' : '') + '</option>';
+    });
+
+    settingsLines.push(
+        '<div class="php_version"><label for="php_version">Analyse code as PHP</label> '
+            + '<select id="php_version" onchange="setPhpVersion(this.value)">' + options.join('') + '</select></div>'
+    );
+
     Object.keys(settingsText).forEach(function (key) {
         var checked = key in settings && settings[key];
         var clickHandler = 'javascript:toggleSetting(\'' + key + '\')';
@@ -43,7 +96,10 @@ var redrawSettings = function() {
             '<div>' + input + ' <label for="' + key + '">' + settingsText[key] + '</label></div>'
         );
     });
+    settingsLines.push('<div id="runtime_info"></div>');
+
     document.getElementById('settings_panel').innerHTML = settingsLines.join('\n');
+    redrawRuntimeInfo();
 };
 
 var getLink = async function() {
@@ -63,7 +119,7 @@ var getLink = async function() {
         return false;
     }
 
-    // keep query params, e.g. ?php=8.1
+    // keep query params, e.g. ?php=8.1 set from the settings panel
     const scheme = window.location.protocol;
     const fullUrl = scheme + '//' + url + window.location.search;
 
@@ -83,8 +139,6 @@ var serializeJSON = function(data) {
     }).join('&');
 }
 
-var urlParams = new URLSearchParams(window.location.search);
-
 var latestFetch = 0;
 
 let fix_button = null;
@@ -101,12 +155,9 @@ var fetchAnnotations = function (code, callback, options, cm) {
 
     var submitData = {
         code: code,
-        settings: JSON.stringify(settings)
+        settings: JSON.stringify(settings),
+        php: phpVersion
     };
-
-    if (urlParams.has('php')) {
-        submitData.php = urlParams.get('php');
-    }
 
     fetch('/check', {
         method: 'POST',
@@ -126,14 +177,11 @@ var fetchAnnotations = function (code, callback, options, cm) {
 
         if ('results' in response) {
             var psalm_version = response.version;
-            var php_version = response.php_version;
 
             const psalm_version_link = document.createElement('a');
             psalm_version_link.href = response.version_url;
             psalm_version_link.target = '_blank';
             psalm_version_link.textContent = psalm_version;
-            const site_version_text = document.createElement('span');
-            site_version_text.textContent = response.site_version || <?= json_encode(\PsalmDotOrg\OnlineChecker::SITE_VERSION) ?>;
 
             let psalm_version_html = psalm_version_link.outerHTML;
 
@@ -145,7 +193,13 @@ var fetchAnnotations = function (code, callback, options, cm) {
                 psalm_version_html += '&nbsp;(' + psalm_commit_link.outerHTML + ')';
             }
 
-            const psalm_header = 'Psalm output (using Psalm&nbsp;' + psalm_version_html + ', psalm.dev website&nbsp;' + site_version_text.innerHTML + ' on PHP ' + php_version + '): <br><br>'
+            const psalm_header = 'Psalm output (using Psalm&nbsp;' + psalm_version_html + '): <br><br>'
+
+            runtimeInfo = {
+                site_version: response.site_version || <?= json_encode(\PsalmDotOrg\OnlineChecker::SITE_VERSION) ?>,
+                php_version: response.php_version
+            };
+            redrawRuntimeInfo();
 
             if (response.results.length === 0) {
                 document.getElementById('psalm_output').innerHTML = psalm_header + 'No issues!';
