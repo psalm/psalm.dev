@@ -20,6 +20,7 @@ return [
             'adapter' => parse_url($db_config['dsn'], PHP_URL_SCHEME),
             'name' => $dsn_entries['dbname'],
             'host' => $dsn_entries['host'],
+            'port' => (int) ($dsn_entries['port'] ?? 3306),
             'user' => $db_config['user'],
             'pass' => $db_config['password'],
             'charset' => 'utf8',

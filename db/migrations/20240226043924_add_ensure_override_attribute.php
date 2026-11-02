@@ -18,8 +18,11 @@ final class AddEnsureOverrideAttribute extends AbstractMigration
      */
     public function change(): void
     {
-        $this->table('codes')
-            ->addColumn('ensure_override_attribute', 'bit', ['length' => 1, 'default' => 0])
-            ->update();
+        $table = $this->table('codes');
+
+        // the column may have been added by hand before migrations ran on production
+        if (!$table->hasColumn('ensure_override_attribute')) {
+            $table->addColumn('ensure_override_attribute', 'bit', ['length' => 1, 'default' => 0])->update();
+        }
     }
 }

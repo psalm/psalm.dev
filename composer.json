@@ -4,8 +4,8 @@
     "require": {
         "vimeo/psalm": "dev-master",
         "muglug/simple-markdown-blog": "dev-main",
-        "bamarni/composer-bin-plugin": "^1.4",
-        "composer/package-versions-deprecated": "1.11.99.5"
+        "composer/package-versions-deprecated": "1.11.99.5",
+        "robmorgan/phinx": "^0.16.12"
     },
     "autoload": {
         "psr-4": {
@@ -15,19 +15,16 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "composer bin all install",
             "@php bin/generate_psalm_version.php",
             "phinx migrate"
         ],
         "post-update-cmd": [
-            "composer bin all install",
             "@php bin/generate_psalm_version.php",
             "phinx migrate"
         ]
     },
     "config": {
         "allow-plugins": {
-            "bamarni/composer-bin-plugin": true,
             "composer/package-versions-deprecated": true,
             "ocramius/package-versions": true
         }
