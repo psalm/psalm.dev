@@ -8,14 +8,18 @@
 ?>
 <section class="playground" id="playground" aria-label="Psalm playground">
     <div class="pg_bar pg_topbar">
-        <label class="pg_field" for="php_version">
-            <span class="pg_field_label">Analyse as PHP</span>
-            <select id="php_version" onchange="setPhpVersion(this.value)"></select>
-        </label>
+        <div class="pg_toolgroup pg_toolgroup_config">
+            <label class="pg_field" for="php_version">
+                <span class="pg_field_value" id="php_version_label" aria-hidden="true">PHP</span>
+                <select id="php_version" onchange="setPhpVersion(this.value)" aria-label="Analyse code as PHP version"></select>
+            </label>
+            <button type="button" id="settings" onclick="toggleSettings();" aria-expanded="false" aria-controls="settings_panel">Settings</button>
+        </div>
         <span class="pg_spacer"></span>
-        <button type="button" id="fixer" hidden>Fix code</button>
-        <button type="button" id="settings" onclick="toggleSettings();" aria-expanded="false" aria-controls="settings_panel">Settings</button>
-        <button type="button" id="getlink" onclick="getLink();" title="Save the snippet and copy its link (Cmd/Ctrl+S)">Share</button>
+        <div class="pg_toolgroup pg_toolgroup_actions">
+            <button type="button" id="fixer" class="pg_ghost" title="Let Psalm rewrite the code to fix the fixable issues" hidden>Fix code</button>
+            <button type="button" id="getlink" class="pg_primary" onclick="getLink();" title="Save the snippet and copy its link">Share</button>
+        </div>
     </div>
     <div class="pg_panes" id="pg_panes">
         <div class="pg_pane pg_editor">
@@ -23,9 +27,12 @@
         </div>
         <div class="pg_splitter" id="pg_splitter" role="separator" aria-orientation="vertical" aria-label="Resize editor and output" title="Drag to resize, double-click to reset" tabindex="0"></div>
         <div class="pg_pane pg_output">
-            <div class="pg_bar pg_tabs" role="tablist" id="pg_tabs">
-                <button type="button" role="tab" id="pg_tab_issues" data-tab="issues" class="active" aria-selected="true" aria-controls="psalm_output">Issues <span class="pg_count" id="pg_issue_count"></span></button>
-                <button type="button" role="tab" id="pg_tab_types" data-tab="types" aria-selected="false" aria-controls="pg_types" tabindex="-1">Types <span class="pg_count" id="pg_type_count"></span></button>
+            <div class="pg_bar pg_tabs">
+                <div class="pg_tablist" role="tablist" id="pg_tabs">
+                    <button type="button" role="tab" id="pg_tab_issues" data-tab="issues" class="active" aria-selected="true" aria-controls="psalm_output">Issues <span class="pg_count" id="pg_issue_count"></span></button>
+                    <button type="button" role="tab" id="pg_tab_types" data-tab="types" aria-selected="false" aria-controls="pg_types" tabindex="-1">Types <span class="pg_count" id="pg_type_count"></span></button>
+                </div>
+                <span class="pg_running" id="pg_running" aria-hidden="true" hidden>running&hellip;</span>
             </div>
             <div id="psalm_output" role="tabpanel" aria-labelledby="pg_tab_issues" aria-live="polite"></div>
             <div id="pg_types" role="tabpanel" aria-labelledby="pg_tab_types" hidden></div>

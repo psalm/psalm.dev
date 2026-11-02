@@ -25,9 +25,10 @@ $canonical_url = 'https://psalm.dev/';
 }
 </script>
 <script src="/assets/js/codemirror.min.js?2"></script>
-<link rel="stylesheet" href="/assets/css/playground.css?1">
+<link rel="stylesheet" href="/assets/css/playground.css?2">
 </head>
 <body class="front">
+<a class="pg_skip" href="#playground" onclick="return focusEditor();">Skip to editor</a>
 <?php require('../includes/nav.php'); ?>
 <div class="container front" id="page_container">
     <div class="intro">

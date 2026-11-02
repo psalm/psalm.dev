@@ -63,7 +63,23 @@ var setPhpVersion = function(version) {
     window.history.replaceState(null, '', window.location.pathname + (query ? '?' + query : '') + window.location.hash);
     loadedPage = window.location.pathname + window.location.search;
 
+    renderPhpVersionLabels();
     editor.performLint();
+};
+
+var renderPhpVersionLabels = function() {
+    var text = 'PHP ' + phpVersion;
+    var title = 'Analyse code as PHP ' + phpVersion + (phpVersion === defaultPhpVersion ? ', the default' : '');
+
+    document.getElementById('php_version_label').textContent = text;
+    document.getElementById('php_version').title = title;
+
+    var drawerVersion = document.getElementById('pg_drawer_php');
+
+    if (drawerVersion) {
+        drawerVersion.textContent = text;
+        drawerVersion.title = title;
+    }
 };
 
 var isSettingChanged = function(key) {
@@ -132,6 +148,11 @@ var buildSettingsPanel = function() {
     head.className = 'pg_drawer_head';
     head.appendChild(document.createTextNode('Settings'));
 
+    var headVersion = document.createElement('span');
+    headVersion.className = 'pg_drawer_php';
+    headVersion.id = 'pg_drawer_php';
+    head.appendChild(headVersion);
+
     var reset = document.createElement('button');
     reset.type = 'button';
     reset.textContent = 'Reset';
@@ -192,6 +213,7 @@ var redrawSettings = function() {
     renderPhpVersions();
     buildSettingsPanel();
     updateSettingsSummary();
+    renderPhpVersionLabels();
 };
 
 var messageTimer = null;
@@ -224,6 +246,22 @@ var showStatusMessage = function(kind, text, link, timeout) {
 };
 
 var sharing = false;
+var shareLabelTimer = null;
+
+var setShareLabel = function(text, state) {
+    var button = document.getElementById('getlink');
+
+    clearTimeout(shareLabelTimer);
+    button.textContent = text;
+    button.dataset.state = state;
+
+    if (state !== 'busy') {
+        shareLabelTimer = setTimeout(function () {
+            button.textContent = 'Share';
+            delete button.dataset.state;
+        }, 2000);
+    }
+};
 
 var getLink = async function() {
     if (sharing) {
@@ -232,9 +270,17 @@ var getLink = async function() {
 
     sharing = true;
     showStatusMessage('ok', 'saving\u2026');
+    setShareLabel('Saving\u2026', 'busy');
 
     try {
-        await shareSnippet();
+        var result = await shareSnippet();
+        setShareLabel(
+            {copied: 'Copied \u2713', copy_failed: 'Copy failed'}[result] || 'Share failed',
+            result === 'copied' ? 'ok' : 'error'
+        );
+    } catch (error) {
+        setShareLabel('Share failed', 'error');
+        throw error;
     } finally {
         sharing = false;
     }
@@ -258,7 +304,7 @@ var shareSnippet = async function() {
         url = await response.text();
     } catch (error) {
         showStatusMessage('error', 'Could not create a link: the request failed. Please try again later');
-        return;
+        return 'failed';
     }
 
     if (!response.ok || url.indexOf('/r/') === -1) {
@@ -267,7 +313,7 @@ var shareSnippet = async function() {
         showStatusMessage('error', isPlainMessage
             ? url.trim()
             : 'Could not create a link: the server returned HTTP ' + response.status + '. Please try again later');
-        return;
+        return 'failed';
     }
 
     // the PHP version is stored with the snippet, so the link needs no query params; highlighted lines stay linked
@@ -297,9 +343,11 @@ var shareSnippet = async function() {
 
     if (copied) {
         showStatusMessage('ok', 'Link copied', fullUrl, 8000);
-    } else {
-        showStatusMessage('error', 'Copy failed, link:', fullUrl);
+        return 'copied';
     }
+
+    showStatusMessage('error', 'Copy failed, link:', fullUrl);
+    return 'copy_failed';
 };
 
 // the path and query the editor currently shows; entries that only differ in the #L fragment share it
@@ -340,10 +388,26 @@ var outputElement = function() {
 /**
  * Status bar run state: idle | busy | done | parse_error | error.
  */
+var runningTimer = null;
+
 var setRunState = function(state, label) {
     var element = document.getElementById('pg_run_state');
     element.dataset.state = state;
     element.textContent = label;
+
+    // dim the output only for runs that take a while, so fast ones don't flicker
+    if (state === 'busy') {
+        runningTimer = runningTimer || setTimeout(function () { setRunning(true); }, 150);
+    } else {
+        clearTimeout(runningTimer);
+        runningTimer = null;
+        setRunning(false);
+    }
+};
+
+var setRunning = function(running) {
+    document.getElementById('pg_running').hidden = !running;
+    document.querySelector('.playground .pg_output').classList.toggle('pg_is_running', running);
 };
 
 var setIssueCount = function(count) {
@@ -715,7 +779,9 @@ var fetchAnnotations = function (code, callback, options, cm) {
             setRunState('done', 'done in ' + Math.round(performance.now() - startedAt) + ' ms');
 
             if (response.results.length === 0) {
-                outputElement().innerHTML = '<div class="pg_empty">No issues!</div>';
+                outputElement().innerHTML = /^\s*(<\?php)?\s*$/i.test(code)
+                    ? '<div class="pg_empty">Write some PHP to analyse</div>'
+                    : '<div class="pg_empty">No issues!</div>';
             } else {
                 outputElement().innerHTML = response.results.map(renderIssue).join('');
             }
@@ -1065,6 +1131,17 @@ var lineLink = (function () {
         fragment: fragment,
     };
 })();
+
+var isMac = /mac|iphone|ipad/i.test((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform);
+
+document.getElementById('getlink').title = 'Share: save the snippet and copy its link (' + (isMac ? '\u2318S' : 'Ctrl+S') + ')';
+
+var focusEditor = function() {
+    editor.focus();
+    document.getElementById('playground').scrollIntoView({block: 'nearest'});
+
+    return false;
+};
 
 // keyboard shortcuts; capture phase, so they also work while CodeMirror has focus
 window.addEventListener('keydown', function (event) {

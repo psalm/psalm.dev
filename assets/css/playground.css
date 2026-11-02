@@ -139,32 +139,103 @@
     outline-offset: -5px;
 }
 
-.pg_field {
+.pg_toolgroup {
     display: flex;
     align-items: stretch;
-    padding: 0 0 0 12px;
-    border-right: var(--pg-rule);
-    white-space: nowrap;
 }
 
-.pg_field_label {
+.pg_toolgroup_config > :last-child {
+    border-right: var(--pg-rule);
+}
+
+.pg_toolgroup_config > :first-child {
+    border-left: 0;
+}
+
+/* compact "PHP 8.6" face; the transparent native select on top opens the full "8.6 (default)" list */
+.pg_field {
+    position: relative;
     display: flex;
     align-items: center;
-    padding-right: 12px;
+    padding: 0 30px 0 12px;
+    background: var(--pg-panel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0h10L5 6z'/%3E%3C/svg%3E") no-repeat right 12px center;
+    white-space: nowrap;
+    cursor: pointer;
 }
 
-/* the select fills the bar height and shares the bar's rules */
+.pg_field:hover {
+    background-color: var(--pg-hover);
+}
+
+.pg_field:has(select:focus-visible) {
+    outline: 2px dashed currentColor;
+    outline-offset: -5px;
+}
+
 .pg_field select {
     appearance: none;
+    position: absolute;
+    inset: 0;
+    width: 100%;
     margin: 0;
-    padding: 0 30px 0 12px;
+    padding: 0 0 0 12px;
     border: 0;
-    border-left: var(--pg-rule);
-    border-radius: 0;
-    background: var(--pg-panel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0h10L5 6z'/%3E%3C/svg%3E") no-repeat right 12px center;
-    color: var(--pg-ink);
+    opacity: 0;
     font: inherit;
     cursor: pointer;
+}
+
+/* Share is the one primary action */
+.pg_bar button.pg_primary {
+    min-width: calc(12ch + 30px);
+    background: var(--pg-ink);
+    color: var(--pg-panel);
+}
+
+.pg_bar button.pg_primary:hover {
+    background: #333;
+}
+
+.pg_bar button.pg_primary[data-state="error"] {
+    background: var(--pg-error);
+}
+
+/* Fix code is rare: plain text, no cell of its own */
+.pg_bar button.pg_ghost {
+    border-left: 0;
+    background: transparent;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.pg_bar button.pg_ghost:hover {
+    background: var(--pg-hover);
+}
+
+.pg_topbar #settings[aria-expanded="true"] {
+    background: var(--pg-hover);
+    color: var(--pg-ink);
+    box-shadow: inset 0 -3px 0 var(--pg-ink);
+}
+
+.pg_skip {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 100;
+    padding: 8px 14px;
+    background: var(--pg-ink);
+    color: var(--pg-panel);
+    font-family: var(--pg-mono);
+    font-size: 14px;
+    text-decoration: none;
+    transform: translateY(-200%);
+}
+
+.pg_skip:focus {
+    transform: none;
+    outline: 2px dashed var(--pg-panel);
+    outline-offset: -5px;
 }
 
 /* ---- panes ---- */
@@ -251,8 +322,27 @@ body.pg_resizing {
     border-bottom: var(--pg-rule);
 }
 
+.pg_tablist {
+    display: flex;
+    align-items: stretch;
+}
+
 .pg_tabs button:first-child {
     border-left: 0;
+}
+
+.pg_running {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    padding: 0 14px;
+    color: var(--pg-muted);
+}
+
+.pg_is_running #psalm_output,
+.pg_is_running #pg_types {
+    opacity: 0.45;
+    transition: opacity 0.15s;
 }
 
 .pg_tabs button {
@@ -515,6 +605,13 @@ li.pg_step > .pg_step_label {
     font-weight: 700;
 }
 
+.pg_drawer_php {
+    margin-left: 12px;
+    margin-right: auto;
+    color: var(--pg-muted);
+    font-weight: 400;
+}
+
 .pg_drawer_head button {
     align-self: stretch;
     margin: 0;
@@ -711,19 +808,33 @@ li.pg_step > .pg_step_label {
         padding: 0 8px 24px;
     }
 
-    .pg_field {
+    /* config on one row, actions on the next */
+    .pg_toolgroup {
         flex: 1 0 100%;
-        border-right: 0;
-        border-bottom: var(--pg-rule);
-        min-height: calc(var(--pg-bar-height) - 2px);
     }
 
-    .pg_field + .pg_spacer {
+    .pg_toolgroup_config {
+        border-bottom: var(--pg-rule);
+    }
+
+    .pg_toolgroup_config > :last-child {
+        border-right: 0;
+    }
+
+    .pg_topbar .pg_spacer {
         display: none;
     }
 
     .pg_topbar button {
         flex: 1 1 auto;
+    }
+
+    .pg_toolgroup_actions > button {
+        flex: 1 1 0;
+    }
+
+    .pg_toolgroup_actions > button[hidden] + button {
+        border-left: 0;
     }
 
     /* status items wrap onto their own lines instead of leaving half-closed cells */
@@ -734,11 +845,5 @@ li.pg_step > .pg_step_label {
 
     .pg_statusbar .pg_spacer {
         display: none;
-    }
-
-    /* the first visible button after the full-width version row starts the line */
-    .pg_topbar .pg_spacer + button:not([hidden]),
-    .pg_topbar .pg_spacer + button[hidden] + button {
-        border-left: 0;
     }
 }
