@@ -247,6 +247,7 @@ body.pg_resizing {
 }
 
 .playground #psalm_output {
+    position: relative; /* offsetParent for issue scrolling */
     display: block;
     flex: 1 1 auto;
     height: auto;
@@ -274,11 +275,13 @@ body.pg_resizing {
 }
 
 .pg_issue {
-    padding: 10px 14px;
+    padding: 10px 14px 10px 10px;
+    border-left: 4px solid transparent;
     border-bottom: 1px solid #ddd;
 }
 
 .pg_issue.current {
+    border-left-color: var(--pg-ink);
     background: var(--pg-hover);
 }
 
@@ -568,6 +571,16 @@ button.pg_loc:hover {
 
     .pg_topbar button {
         flex: 1 1 auto;
+    }
+
+    /* status items wrap onto their own lines instead of leaving half-closed cells */
+    .pg_status_item {
+        border-right: 0;
+        padding: 4px 12px;
+    }
+
+    .pg_statusbar .pg_spacer {
+        display: none;
     }
 
     /* the first visible button after the full-width version row starts the line */

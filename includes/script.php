@@ -376,7 +376,13 @@ var jumpToIssue = function(index) {
 
     if (element) {
         element.classList.add('current');
-        element.scrollIntoView({block: 'nearest'});
+
+        // scroll only the output pane; element.scrollIntoView() would also scroll the page
+        if (element.offsetTop < output.scrollTop) {
+            output.scrollTop = element.offsetTop;
+        } else if (element.offsetTop + element.offsetHeight > output.scrollTop + output.clientHeight) {
+            output.scrollTop = element.offsetTop + element.offsetHeight - output.clientHeight;
+        }
     }
 };
 
