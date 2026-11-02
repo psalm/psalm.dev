@@ -19,7 +19,7 @@ var toggleSettings = function() {
 
 var settingsText = <?php echo json_encode(\PsalmDotOrg\Settings::descriptions()); ?>;
 
-var defaultPhpVersion = <?= json_encode(\PsalmDotOrg\OnlineChecker::DEFAULT_PHP_VERSION) ?>;
+var defaultPhpVersion = <?= json_encode(\PsalmDotOrg\OnlineChecker::defaultPhpVersion()) ?>;
 var phpVersions = <?= json_encode(\PsalmDotOrg\OnlineChecker::PHP_VERSIONS) ?>;
 // a saved snippet opens with the version it was saved with; ?php= overrides it
 var basePhpVersion = (typeof snippetPhpVersion !== 'undefined' && snippetPhpVersion) || defaultPhpVersion;

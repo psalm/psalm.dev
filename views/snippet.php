@@ -95,7 +95,7 @@ if (isset($_GET['format'])) {
     }
 
     if ($_GET['format'] === 'results') {
-        $php_version = $_GET['php'] ?? $stored_php_version ?? OnlineChecker::DEFAULT_PHP_VERSION;
+        $php_version = $_GET['php'] ?? $stored_php_version ?? OnlineChecker::defaultPhpVersion();
 
         if (!is_string($php_version) || !preg_match($php_version_regex, $php_version)) {
             http_response_code(422);
