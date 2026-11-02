@@ -339,13 +339,73 @@ button.pg_loc:hover {
 
 .pg_refs {
     margin: 8px 0 0;
-    padding: 0 0 0 12px;
-    border-left: 2px solid #ddd;
     color: var(--pg-muted);
 }
 
-.pg_ref + .pg_ref {
-    margin-top: 6px;
+.pg_refs_title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.pg_steps {
+    margin: 4px 0 0;
+    padding: 0 0 0 3.5ch;
+    border-left: 2px solid var(--pg-ink);
+    list-style: decimal;
+}
+
+.pg_step {
+    padding: 2px 0;
+}
+
+.pg_step::marker {
+    color: var(--pg-ink);
+    font-weight: 700;
+}
+
+.pg_step + .pg_step {
+    border-top: 1px solid #ddd;
+}
+
+.pg_step_label {
+    color: var(--pg-ink);
+}
+
+button.pg_step_jump {
+    appearance: none;
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 2px 6px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+button.pg_step_jump:hover {
+    background: var(--pg-hover);
+}
+
+li.pg_step > .pg_step_label {
+    display: block;
+    padding: 2px 6px;
+}
+
+.pg_step_head {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+}
+
+.pg_step_loc {
+    margin-left: auto;
+    color: var(--pg-muted);
 }
 
 .pg_ref_snippet {

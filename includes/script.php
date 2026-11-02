@@ -371,23 +371,38 @@ var renderPlainOutput = function(text) {
     outputElement().appendChild(element);
 };
 
+/**
+ * One step of a taint trace or one related location: label, line:col and the snippet with the span marked.
+ * Steps with a snippet are buttons that select their range in the editor.
+ */
 var renderReference = function(reference) {
-    var html = '<div class="pg_ref">' + escapeHtml(reference.label);
-
-    if (!('snippet' in reference)) {
-        return html + '</div>';
+    if (!('snippet' in reference) || typeof reference.from !== 'number') {
+        return '<li class="pg_step"><span class="pg_step_label">' + escapeHtml(reference.label) + '</span></li>';
     }
 
     var snippet = reference.snippet;
     var selection_start = reference.from - reference.snippet_from;
     var selection_end = reference.to - reference.snippet_from;
 
-    return html + ' - ' + escapeHtml(reference.line_from) + ':' + escapeHtml(reference.column_from)
+    return '<li class="pg_step">'
+        + '<button type="button" class="pg_step_jump" data-from="' + Number(reference.from) + '" data-to="' + Number(reference.to) + '"'
+        + ' title="Select this step in the editor">'
+        + '<span class="pg_step_head">'
+        + '<span class="pg_step_label">' + escapeHtml(reference.label) + '</span>'
+        + '<span class="pg_step_loc">' + escapeHtml(reference.line_from) + ':' + escapeHtml(reference.column_from) + '</span>'
+        + '</span>'
         + '<span class="pg_ref_snippet">'
         + escapeHtml(snippet.substring(0, selection_start))
         + '<mark>' + escapeHtml(snippet.substring(selection_start, selection_end)) + '</mark>'
         + escapeHtml(snippet.substring(selection_end))
-        + '</span></div>';
+        + '</span></button></li>';
+};
+
+var renderReferences = function(title, references, className) {
+    return '<div class="pg_refs ' + className + '">'
+        + '<div class="pg_refs_title">' + title + '</div>'
+        + '<ol class="pg_steps">' + references.map(renderReference).join('') + '</ol>'
+        + '</div>';
 };
 
 var renderIssue = function(issue, index) {
@@ -401,12 +416,12 @@ var renderIssue = function(issue, index) {
         + '</div>'
         + '<div class="pg_issue_msg">' + escapeHtml(issue.message) + '</div>';
 
-    if (issue.other_references) {
-        html += '<div class="pg_refs">' + issue.other_references.map(renderReference).join('') + '</div>';
+    if (issue.other_references && issue.other_references.length) {
+        html += renderReferences('Related', issue.other_references, 'pg_other_refs');
     }
 
-    if (issue.taint_trace) {
-        html += '<div class="pg_refs pg_taint_trace">' + issue.taint_trace.map(renderReference).join('') + '</div>';
+    if (issue.taint_trace && issue.taint_trace.length) {
+        html += renderReferences('Taint trace', issue.taint_trace, 'pg_taint_trace');
     }
 
     return html + '</div>';
@@ -823,6 +838,13 @@ document.getElementById('psalm_output').addEventListener('click', function (even
 
     if (location) {
         jumpToIssue(Number(location.dataset.issue));
+        return;
+    }
+
+    var step = event.target.closest('button.pg_step_jump');
+
+    if (step) {
+        selectRange(editor.posFromIndex(Number(step.dataset.from)), editor.posFromIndex(Number(step.dataset.to)));
     }
 });
 
