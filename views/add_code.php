@@ -3,8 +3,8 @@
 use PsalmDotOrg\Settings;
 require_once dirname(__DIR__) . '/src/Settings.php';
 
-ini_set("display_errors", 1);
-ini_set("display_startup_errors", 1);
+// errors go to the server log; the response body is shown to the user by "Get link"
+ini_set('display_errors', '0');
 error_reporting(-1);
 http_response_code(500);
 
@@ -54,33 +54,39 @@ $db_config = require_once('../dbconfig.php');
 try {
     $pdo = new PDO($db_config['dsn'], $db_config['user'], $db_config['password']);
 } catch (PDOException $e) {
-    die('Connection to database failed');
+    error_log('add_code: ' . $e->getMessage());
+    die('Could not save the snippet, please try again later');
 }
 
-$stmt = $pdo->prepare('select `code`, `created_on` from `codes` where `hash` = :hash');
-$stmt->execute([':hash' => $hash]);
-$result = $stmt->fetch(PDO::FETCH_ASSOC);
+try {
+    $stmt = $pdo->prepare('select `code`, `created_on` from `codes` where `hash` = :hash');
+    $stmt->execute([':hash' => $hash]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$port = (int) $_SERVER['SERVER_PORT'];
-$server = $_SERVER['SERVER_NAME'] . ($port === 80 || $port === 443 ? '' : ':' . $port);
+    $port = (int) $_SERVER['SERVER_PORT'];
+    $server = $_SERVER['SERVER_NAME'] . ($port === 80 || $port === 443 ? '' : ':' . $port);
 
-if ($result) {
-    http_response_code(200);
-    echo $server . '/r/' . $hash;
-    exit();
+    if ($result) {
+        http_response_code(200);
+        echo $server . '/r/' . $hash;
+        exit();
+    }
+
+    $data = ['hash' => $hash, 'code' => $code, 'ip' => $_SERVER['REMOTE_ADDR']];
+
+    $settings_fields = Settings::names();
+
+    foreach ($settings_fields as $field) {
+        $data[$field] = ($settings[$field] ?? false) ? '1' : '';
+    }
+    $insert_sql = 'insert into `codes` (`' . implode('`,`', array_keys($data)) .  '`) values (:' . implode(', :', array_keys($data)) . ')';
+
+    $stmt = $pdo->prepare($insert_sql);
+    $stmt->execute($data);
+} catch (PDOException $e) {
+    error_log('add_code: ' . $e->getMessage());
+    die('Could not save the snippet, please try again later');
 }
-
-$data = ['hash' => $hash, 'code' => $code, 'ip' => $_SERVER['REMOTE_ADDR']];
-
-$settings_fields = Settings::names();
-
-foreach ($settings_fields as $field) {
-    $data[$field] = ($settings[$field] ?? false) ? '1' : '';
-}
-$insert_sql = 'insert into `codes` (`' . implode('`,`', array_keys($data)) .  '`) values (:' . implode(', :', array_keys($data)) . ')';
-
-$stmt = $pdo->prepare($insert_sql);
-$stmt->execute($data);
 
 http_response_code(200);
 echo $server . '/r/' . $hash;
