@@ -16,6 +16,9 @@
     --pg-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono",
         "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
     --pg-bar-height: 36px;
+    /* #L5-L12 line links; translucent, so selection and lint squiggles still show through */
+    --pg-line-hl: rgba(255, 212, 0, 0.18);
+    --pg-line-hl-gutter: rgba(255, 212, 0, 0.45);
 }
 
 .playground [hidden] {
@@ -198,6 +201,28 @@
     max-width: none;
     border: 0;
     box-shadow: none;
+}
+
+/* line numbers are links: click selects a line, Shift+click a range (#L5-L12) */
+.playground .CodeMirror-linenumber {
+    cursor: pointer;
+}
+
+.playground .CodeMirror-linenumber:hover {
+    color: var(--pg-muted);
+}
+
+.playground .pg_line_hl_bg {
+    background: var(--pg-line-hl);
+}
+
+.playground .pg_line_hl_gutter {
+    background: var(--pg-line-hl-gutter);
+}
+
+.playground .pg_line_hl .CodeMirror-linenumber {
+    color: var(--pg-ink);
+    font-weight: 600;
 }
 
 .pg_splitter {

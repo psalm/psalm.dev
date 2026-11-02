@@ -61,6 +61,7 @@ var setPhpVersion = function(version) {
 
     const query = params.toString();
     window.history.replaceState(null, '', window.location.pathname + (query ? '?' + query : '') + window.location.hash);
+    loadedPage = window.location.pathname + window.location.search;
 
     editor.performLint();
 };
@@ -269,8 +270,8 @@ var shareSnippet = async function() {
         return;
     }
 
-    // the PHP version is stored with the snippet, so the link needs no query params
-    const fullUrl = window.location.protocol + '//' + url.trim();
+    // the PHP version is stored with the snippet, so the link needs no query params; highlighted lines stay linked
+    const fullUrl = window.location.protocol + '//' + url.trim() + lineLink.fragment();
     let copied = true;
 
     try {
@@ -284,7 +285,8 @@ var shareSnippet = async function() {
         const target = new URL(fullUrl);
 
         if (target.origin === window.location.origin && target.pathname !== window.location.pathname) {
-            window.history.pushState({snippet: target.pathname}, '', target.pathname);
+            window.history.pushState({snippet: target.pathname}, '', target.pathname + target.hash);
+            loadedPage = window.location.pathname + window.location.search;
         }
 
         // the snippet now carries the chosen version, so the picker no longer needs ?php=
@@ -300,9 +302,15 @@ var shareSnippet = async function() {
     }
 };
 
-// pushState only changes the address bar; going back or forward has to load that page for real
+// the path and query the editor currently shows; entries that only differ in the #L fragment share it
+var loadedPage = window.location.pathname + window.location.search;
+
+// pushState only changes the address bar; going back or forward has to load that page for real,
+// unless only the fragment changed (hashchange re-applies the line highlight)
 window.addEventListener('popstate', function () {
-    window.location.reload();
+    if (window.location.pathname + window.location.search !== loadedPage) {
+        window.location.reload();
+    }
 });
 
 var serializeJSON = function(data) {
@@ -897,6 +905,166 @@ document.getElementById('pg_tabs').addEventListener('keydown', function (event) 
 })();
 
 redrawSettings();
+
+/**
+ * GitHub-style line links: #L5 or #L5-L12 highlights those editor lines. Clicking a line number
+ * selects it (Shift+click extends the range) and keeps the fragment in the address bar.
+ * The highlight is tied to CodeMirror line handles, so it follows edits.
+ */
+var lineLink = (function () {
+    var handles = [];
+    // the line a Shift+click range extends from (a line handle, so it also follows edits)
+    var anchor = null;
+
+    var parse = function (hash) {
+        var match = /^#L(\d+)(?:-L(\d+))?$/.exec(hash || '');
+
+        if (!match) {
+            return null;
+        }
+
+        var from = Number(match[1]);
+        var to = match[2] ? Number(match[2]) : from;
+
+        if (to < from) {
+            var swap = from;
+            from = to;
+            to = swap;
+        }
+
+        // 1-based in the URL; a start past the end is ignored, the end is clamped to the last line
+        if (from < 1 || from > editor.lineCount()) {
+            return null;
+        }
+
+        return {from: from - 1, to: Math.min(to, editor.lineCount()) - 1};
+    };
+
+    var paint = function (add) {
+        var method = add ? 'addLineClass' : 'removeLineClass';
+
+        editor.operation(function () {
+            handles.forEach(function (handle) {
+                editor[method](handle, 'wrap', 'pg_line_hl');
+                editor[method](handle, 'background', 'pg_line_hl_bg');
+                editor[method](handle, 'gutter', 'pg_line_hl_gutter');
+            });
+        });
+    };
+
+    var range = function () {
+        if (!handles.length) {
+            return null;
+        }
+
+        return {from: editor.getLineNumber(handles[0]), to: editor.getLineNumber(handles[handles.length - 1])};
+    };
+
+    var fragment = function () {
+        var current = range();
+
+        if (!current) {
+            return '';
+        }
+
+        return '#L' + (current.from + 1) + (current.to > current.from ? '-L' + (current.to + 1) : '');
+    };
+
+    // replaceState: no navigation, no hashchange, no extra history entry
+    var writeUrl = function () {
+        var url = window.location.pathname + window.location.search + fragment();
+
+        if (url !== window.location.pathname + window.location.search + window.location.hash) {
+            window.history.replaceState(window.history.state, '', url);
+        }
+    };
+
+    var set = function (next) {
+        paint(false);
+        handles = [];
+
+        if (next) {
+            for (var line = next.from; line <= next.to; line++) {
+                handles.push(editor.getLineHandle(line));
+            }
+        }
+
+        paint(true);
+    };
+
+    var scrollToStart = function () {
+        var current = range();
+
+        if (current) {
+            // scroll the editor itself, a third from the top, instead of jumping the page
+            var top = editor.heightAtLine(current.from, 'local');
+            editor.scrollTo(null, Math.max(0, top - editor.getScrollInfo().clientHeight / 3));
+        }
+    };
+
+    var applyHash = function (scroll) {
+        var next = parse(window.location.hash);
+
+        set(next);
+        anchor = next ? handles[0] : null;
+
+        if (scroll) {
+            scrollToStart();
+        }
+    };
+
+    editor.on('gutterClick', function (cm, line, gutter, event) {
+        if (gutter !== 'CodeMirror-linenumbers' || event.button !== 0) {
+            return;
+        }
+
+        var current = range();
+        var from = anchor && editor.getLineNumber(anchor);
+
+        if (event.shiftKey && current) {
+            from = from === null ? current.from : from;
+            set({from: Math.min(from, line), to: Math.max(from, line)});
+        } else if (current && current.from === line && current.to === line) {
+            set(null);
+            anchor = null;
+        } else {
+            set({from: line, to: line});
+            anchor = handles[0];
+        }
+
+        writeUrl();
+    });
+
+    // follow edits: inserted lines inside the range join it, deleted lines drop out
+    editor.on('changes', function () {
+        if (!handles.length) {
+            return;
+        }
+
+        var alive = handles.filter(function (handle) {
+            return editor.getLineNumber(handle) !== null;
+        });
+
+        if (!alive.length) {
+            set(null);
+            anchor = null;
+        } else {
+            set({from: editor.getLineNumber(alive[0]), to: editor.getLineNumber(alive[alive.length - 1])});
+        }
+
+        writeUrl();
+    });
+
+    window.addEventListener('hashchange', function () {
+        applyHash(true);
+    });
+
+    applyHash(true);
+
+    return {
+        fragment: fragment,
+    };
+})();
 
 // keyboard shortcuts; capture phase, so they also work while CodeMirror has focus
 window.addEventListener('keydown', function (event) {
