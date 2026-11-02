@@ -37,6 +37,13 @@ $stmt->execute([':hash' => $hash]);
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$result) {
+    if (($_GET['format'] ?? null) === 'json') {
+        http_response_code(404);
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'not found']);
+        exit;
+    }
+
     http_response_code(303);
     header('Location: /');
     exit;
@@ -55,6 +62,31 @@ if (isset($_GET['format'])) {
         http_response_code(200);
         header('Content-Type: text/plain');
         echo $code;
+        exit;
+    }
+
+    if ($_GET['format'] === 'json') {
+        // The codes table has no php version column, so it is always null.
+        $stored_settings = [];
+
+        foreach ($settings_fields as $field) {
+            $val = $result[$field] ?? null;
+
+            if ($val !== null) {
+                // BIT columns may come back as "\x00" / "\x01" or as plain digits
+                $stored_settings[$field] = $val === "\x00" ? false : ($val === "\x01" ? true : (bool) intval($val));
+            }
+        }
+
+        http_response_code(200);
+        header('Content-Type: application/json');
+
+        echo json_encode([
+            'hash' => $result['hash'],
+            'code' => $code,
+            'settings' => array_merge(Settings::defaultValues(), $stored_settings),
+            'php_version' => null,
+        ]);
         exit;
     }
 
