@@ -27,6 +27,14 @@ var toggleSettings = function() {
 };
 
 var settingsText = <?php echo json_encode(\PsalmDotOrg\Settings::descriptions()); ?>;
+var defaultSettings = <?php echo json_encode(\PsalmDotOrg\Settings::defaultValues()); ?>;
+
+// drawer sections; a setting missing here still shows up, under "Other"
+var settingsGroups = [
+    ['Unused code', ['unused_variables', 'unused_methods', 'find_unused_psalm_suppress']],
+    ['Inference', ['memoize_properties', 'memoize_method_calls', 'disable_var_parsing', 'use_phpdoc_without_magic_call']],
+    ['Checks', ['check_throws', 'restrict_return_types', 'ensure_override_attribute', 'strict_internal_functions', 'ensure_array_offsets_exist']],
+];
 
 var defaultPhpVersion = <?= json_encode(\PsalmDotOrg\OnlineChecker::defaultPhpVersion()) ?>;
 var phpVersions = <?= json_encode(\PsalmDotOrg\OnlineChecker::PHP_VERSIONS) ?>;
@@ -57,6 +65,31 @@ var setPhpVersion = function(version) {
     editor.performLint();
 };
 
+var isSettingChanged = function(key) {
+    return !!settings[key] !== !!defaultSettings[key];
+};
+
+/**
+ * Updates the Settings button label ("Settings · N changed") and the per-setting markers,
+ * without rebuilding the drawer, so keyboard focus stays where it is.
+ */
+var updateSettingsSummary = function() {
+    var changed = Object.keys(settingsText).filter(isSettingChanged);
+
+    document.getElementById('settings').textContent = changed.length
+        ? 'Settings \u00B7 ' + changed.length + ' changed'
+        : 'Settings';
+
+    Object.keys(settingsText).forEach(function (key) {
+        var input = document.getElementById(key);
+
+        if (input) {
+            input.checked = !!settings[key];
+            input.closest('.pg_check').classList.toggle('changed', isSettingChanged(key));
+        }
+    });
+};
+
 var toggleSetting = function(key) {
     if (key in settings) {
         settings[key] = !settings[key];
@@ -64,9 +97,79 @@ var toggleSetting = function(key) {
         settings[key] = true;
     }
 
+    updateSettingsSummary();
     editor.performLint();
 
     return false;
+};
+
+var resetSettings = function() {
+    Object.keys(defaultSettings).forEach(function (key) {
+        settings[key] = defaultSettings[key];
+    });
+
+    updateSettingsSummary();
+    editor.performLint();
+};
+
+var buildSettingsPanel = function() {
+    var panel = document.getElementById('settings_panel');
+    var grouped = [];
+    var groups = settingsGroups.map(function (group) {
+        grouped = grouped.concat(group[1]);
+        return [group[0], group[1].filter(function (key) { return key in settingsText; })];
+    });
+    var others = Object.keys(settingsText).filter(function (key) { return grouped.indexOf(key) === -1; });
+
+    if (others.length) {
+        groups.push(['Other', others]);
+    }
+
+    panel.textContent = '';
+
+    var head = document.createElement('div');
+    head.className = 'pg_drawer_head';
+    head.appendChild(document.createTextNode('Settings'));
+
+    var reset = document.createElement('button');
+    reset.type = 'button';
+    reset.textContent = 'Reset';
+    reset.title = 'Restore the default settings';
+    reset.addEventListener('click', resetSettings);
+    head.appendChild(reset);
+    panel.appendChild(head);
+
+    groups.forEach(function (group) {
+        var fieldset = document.createElement('fieldset');
+        fieldset.className = 'pg_group';
+
+        var legend = document.createElement('legend');
+        legend.textContent = group[0];
+        fieldset.appendChild(legend);
+
+        group[1].forEach(function (key) {
+            var label = document.createElement('label');
+            label.className = 'pg_check';
+
+            var input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = key;
+            input.checked = !!settings[key];
+            input.addEventListener('change', function () {
+                toggleSetting(key);
+            });
+
+            var text = document.createElement('span');
+            // descriptions are fixed strings from Settings::AVAILABLE_SETTINGS and may contain <code>
+            text.innerHTML = settingsText[key];
+
+            label.appendChild(input);
+            label.appendChild(text);
+            fieldset.appendChild(label);
+        });
+
+        panel.appendChild(fieldset);
+    });
 };
 
 var renderPhpVersions = function() {
@@ -86,19 +189,8 @@ var renderPhpVersions = function() {
 
 var redrawSettings = function() {
     renderPhpVersions();
-
-    var settingsLines = [];
-
-    Object.keys(settingsText).forEach(function (key) {
-        var checked = key in settings && settings[key];
-        var clickHandler = 'javascript:toggleSetting(\'' + key + '\')';
-        var input = '<input id="' + key + '" type="checkbox" onclick="' + clickHandler + '"' + (checked ? ' checked' : '') + '>';
-
-        settingsLines.push(
-            '<div>' + input + ' <label for="' + key + '">' + settingsText[key] + '</label></div>'
-        );
-    });
-    document.getElementById('settings_panel').innerHTML = settingsLines.join('\n');
+    buildSettingsPanel();
+    updateSettingsSummary();
 };
 
 var getLink = async function() {
