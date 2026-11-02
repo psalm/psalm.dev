@@ -164,7 +164,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
         }
 
         if ('results' in response) {
-            var psalm_version = response.version;
+            var psalm_version = response.version_label;
 
             const psalm_version_link = document.createElement('a');
             psalm_version_link.href = response.version_url;
