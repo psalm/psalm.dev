@@ -521,12 +521,48 @@ var renderReferences = function(title, references, className) {
         + '</div>';
 };
 
+var errorLevelsDocs = '/docs/running_psalm/error_levels/';
+
+/**
+ * Psalm's ERROR_LEVEL for an issue type, as sent by /check: N (1-7) is an error at errorLevel N and stricter,
+ * info above it; -1 and 8 are errors at every level; -2 only shows up when its feature is enabled.
+ * Returns null for anything else (older snippets, unknown values).
+ */
+var describeErrorLevel = function(level) {
+    if (level === -1 || level === 8) {
+        return {label: 'any level', anchor: 'always-treated-as-errors', title: 'An error at every errorLevel (1 to 8)'};
+    }
+
+    if (level === -2) {
+        return {
+            label: 'feature',
+            anchor: 'feature-specific-errors',
+            title: 'Only reported when its feature (unused code, taint analysis, ...) is enabled; then an error at every errorLevel'
+        };
+    }
+
+    if (typeof level !== 'number' || level < 1 || level > 7) {
+        return null;
+    }
+
+    return {
+        label: 'level ' + level,
+        anchor: level === 1 ? 'errors-that-only-appear-at-level-1' : 'errors-at-level-' + level + '-and-below',
+        title: level === 1
+            ? 'An error only at errorLevel 1; info at 2 to 8'
+            : 'An error at errorLevel ' + level + ' and stricter (1 to ' + level + '); info at ' + (level + 1) + (level + 1 < 8 ? ' to 8' : '')
+    };
+};
+
 var renderIssue = function(issue, index) {
+    var level = describeErrorLevel(issue.error_level);
     var isError = issue.severity === 'error';
     var html = '<div class="pg_issue ' + (isError ? 'pg_issue_error' : 'pg_issue_info') + '" data-issue="' + index + '">'
         + '<div class="pg_issue_head">'
         + '<span class="pg_sev">' + (isError ? 'ERROR' : 'INFO') + '</span>'
         + '<a href="' + escapeHtml(issue.link) + '" target="_blank" rel="noopener" title="Open the ' + escapeHtml(issue.type) + ' docs">' + escapeHtml(issue.type) + '</a>'
+        + (level ? '<a class="pg_level" href="' + errorLevelsDocs + '#' + level.anchor + '" target="_blank" rel="noopener" title="'
+            + escapeHtml(level.title) + '">' + escapeHtml(level.label) + '</a>' : '')
         + '<button type="button" class="pg_loc" data-issue="' + index + '" title="Jump to this issue">'
         + escapeHtml(issue.line_from) + ':' + escapeHtml(issue.column_from) + '</button>'
         + '</div>'

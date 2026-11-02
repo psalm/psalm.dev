@@ -540,6 +540,25 @@ body.pg_resizing {
     color: var(--pg-ink);
 }
 
+/* Psalm's errorLevel for the issue type: quiet, still a link to the levels docs */
+.pg_issue_head a.pg_level {
+    margin-left: -4px;
+    color: var(--pg-muted);
+    font-size: 12px;
+    text-decoration-color: var(--pg-faint);
+    text-underline-offset: 2px;
+}
+
+.pg_issue_head a.pg_level::before {
+    content: "\00B7";
+    display: inline-block; /* keeps the dot out of the underline */
+    margin-right: 8px;
+}
+
+.pg_issue_head a.pg_level:hover {
+    color: var(--pg-ink);
+}
+
 button.pg_loc {
     appearance: none;
     margin: 0 0 0 auto;
