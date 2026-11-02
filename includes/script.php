@@ -172,13 +172,13 @@ var fetchAnnotations = function (code, callback, options, cm) {
                 return link.outerHTML;
             };
 
-            // "7.0.0+2 (ca4690d)": release, compare view and commit links
+            // "7.0.0+2 (ca4690d)": release, compare view (the number) and commit links
             let psalm_version_html = response.version_tag
                 ? versionLink(response.version_tag_url, response.version_tag)
                 : versionLink(response.version_url, response.version_label);
 
             if (response.version_tag && response.version_compare_url) {
-                psalm_version_html += versionLink(response.version_compare_url, '+' + response.version_ahead);
+                psalm_version_html += '+' + versionLink(response.version_compare_url, String(response.version_ahead));
             }
 
             if (response.version_commit) {
