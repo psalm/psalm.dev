@@ -21,7 +21,7 @@
         <div class="pg_pane pg_editor">
             <textarea name="code" id="code" rows="20" style="visibility: hidden;"><?= $playground_code ?></textarea>
         </div>
-        <div class="pg_splitter" id="pg_splitter" role="separator" aria-orientation="vertical" aria-label="Resize editor and output" tabindex="0"></div>
+        <div class="pg_splitter" id="pg_splitter" role="separator" aria-orientation="vertical" aria-label="Resize editor and output" title="Drag to resize, double-click to reset" tabindex="0"></div>
         <div class="pg_pane pg_output">
             <div class="pg_bar pg_tabs" role="tablist" id="pg_tabs">
                 <button type="button" role="tab" id="pg_tab_issues" class="active" aria-selected="true" aria-controls="psalm_output">Issues <span class="pg_count" id="pg_issue_count"></span></button>

@@ -491,4 +491,110 @@ document.getElementById('psalm_output').addEventListener('click', function (even
 
 redrawSettings();
 
+/**
+ * Draggable editor/output splitter. The split is a percentage of the width the two panes share,
+ * stored as --pg-split on #pg_panes and remembered per browser.
+ */
+(function () {
+    var panes = document.getElementById('pg_panes');
+    var splitter = document.getElementById('pg_splitter');
+    var editorPane = panes.querySelector('.pg_editor');
+    var outputPane = panes.querySelector('.pg_output');
+    var storageKey = 'psalm.playground.split';
+    var defaultSplit = 60;
+    var minSplit = 20;
+    var maxSplit = 80;
+    var refreshQueued = false;
+
+    var refreshEditor = function () {
+        if (refreshQueued) {
+            return;
+        }
+
+        refreshQueued = true;
+        requestAnimationFrame(function () {
+            refreshQueued = false;
+            editor.refresh();
+        });
+    };
+
+    var applySplit = function (value, persist) {
+        value = Math.min(maxSplit, Math.max(minSplit, value));
+        panes.style.setProperty('--pg-split', value.toFixed(1));
+        splitter.setAttribute('aria-valuenow', String(Math.round(value)));
+        refreshEditor();
+
+        if (persist) {
+            try {
+                localStorage.setItem(storageKey, value.toFixed(1));
+            } catch (e) {
+                // storage can be unavailable (private mode, blocked site data); the split just is not remembered
+            }
+        }
+    };
+
+    splitter.setAttribute('aria-valuemin', String(minSplit));
+    splitter.setAttribute('aria-valuemax', String(maxSplit));
+
+    var savedSplit = null;
+
+    try {
+        savedSplit = parseFloat(localStorage.getItem(storageKey));
+    } catch (e) {
+        savedSplit = null;
+    }
+
+    applySplit(savedSplit > 0 ? savedSplit : defaultSplit, false);
+
+    var splitFromPointer = function (clientX) {
+        var left = editorPane.getBoundingClientRect().left;
+        var shared = outputPane.getBoundingClientRect().right - left - splitter.offsetWidth;
+
+        return shared > 0 ? (clientX - left - splitter.offsetWidth / 2) / shared * 100 : defaultSplit;
+    };
+
+    splitter.addEventListener('pointerdown', function (event) {
+        if (event.button !== 0) {
+            return;
+        }
+
+        event.preventDefault();
+        splitter.setPointerCapture(event.pointerId);
+        splitter.classList.add('dragging');
+        document.body.classList.add('pg_resizing');
+    });
+
+    splitter.addEventListener('pointermove', function (event) {
+        if (splitter.classList.contains('dragging')) {
+            applySplit(splitFromPointer(event.clientX), false);
+        }
+    });
+
+    var endDrag = function (event) {
+        if (!splitter.classList.contains('dragging')) {
+            return;
+        }
+
+        splitter.classList.remove('dragging');
+        document.body.classList.remove('pg_resizing');
+        applySplit(splitFromPointer(event.clientX), true);
+    };
+
+    splitter.addEventListener('pointerup', endDrag);
+    splitter.addEventListener('pointercancel', endDrag);
+
+    splitter.addEventListener('dblclick', function () {
+        applySplit(defaultSplit, true);
+    });
+
+    splitter.addEventListener('keydown', function (event) {
+        var current = parseFloat(panes.style.getPropertyValue('--pg-split')) || defaultSplit;
+
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+            event.preventDefault();
+            applySplit(current + (event.key === 'ArrowLeft' ? -2 : 2), true);
+        }
+    });
+})();
+
 </script>
