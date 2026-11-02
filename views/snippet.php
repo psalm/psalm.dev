@@ -54,6 +54,7 @@ $created_on = (new DateTime())->setTimestamp($result['created_on']);
 $created_on->setTimezone(new DateTimeZone("UTC"));
 
 $settings_fields = Settings::names();
+$settings = Settings::fromRow($result);
 
 const PHP_PARSER_VERSION = '4.0.0';
 
@@ -66,38 +67,26 @@ if (isset($_GET['format'])) {
     }
 
     if ($_GET['format'] === 'json') {
-        // The codes table has no php version column, so it is always null.
-        $stored_settings = [];
+        header('Content-Type: application/json');
+        set_exception_handler([\PsalmDotOrg\ExceptionHandler::class, 'json']);
 
-        foreach ($settings_fields as $field) {
-            $val = $result[$field] ?? null;
-
-            if ($val !== null) {
-                // BIT columns may come back as "\x00" / "\x01" or as plain digits
-                $stored_settings[$field] = $val === "\x00" ? false : ($val === "\x01" ? true : (bool) intval($val));
-            }
-        }
+        $body = json_encode(
+            [
+                'hash' => $result['hash'],
+                'code' => $code,
+                'settings' => $settings,
+                // the codes table does not store a PHP version
+                'php_version' => null,
+            ],
+            JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+        );
 
         http_response_code(200);
-        header('Content-Type: application/json');
-
-        echo json_encode([
-            'hash' => $result['hash'],
-            'code' => $code,
-            'settings' => array_merge(Settings::defaultValues(), $stored_settings),
-            'php_version' => null,
-        ]);
+        echo $body;
         exit;
     }
 
     if ($_GET['format'] === 'results') {
-        $settings = array_intersect_key(
-            array_map(function (?string $val): bool {
-                return (bool) intval($val);
-            }, $result),
-            array_flip($settings_fields)
-        );
-
         $php_version = $_GET['php'] ?? OnlineChecker::DEFAULT_PHP_VERSION;
 
         if (!preg_match('/^[578]\.\d$/', $php_version)) {
@@ -153,7 +142,7 @@ http_response_code(200);
 <script>
 var settings = {
 <?php foreach ($settings_fields as $field) : ?>
-    <?php echo $field ?>: <?php echo $result[$field] ? 'true' : 'false' ?>,
+    <?php echo $field ?>: <?php echo $settings[$field] ? 'true' : 'false' ?>,
 <?php endforeach ?>
 };
 </script>
