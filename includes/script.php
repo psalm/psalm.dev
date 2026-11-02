@@ -284,10 +284,6 @@ var renderPsalmVersion = function(response) {
         element.appendChild(commitLink);
         element.appendChild(document.createTextNode(')'));
     }
-
-    if (response.php_version) {
-        element.appendChild(document.createTextNode(' on PHP ' + response.php_version));
-    }
 };
 
 var renderPlainOutput = function(text) {
