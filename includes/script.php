@@ -147,6 +147,8 @@ var fetchKey = 0;
 
 // issues from the latest successful run, in Psalm's order; read by the issue navigation
 var lastIssues = [];
+// index into lastIssues of the issue last jumped to, or null
+var currentIssue = null;
 
 var escapeHtml = function(snippet) {
     return String(snippet).replace(/[ -香<>\&"']/gim, function(i) {
@@ -266,6 +268,7 @@ var jumpToIssue = function(index) {
         return;
     }
 
+    currentIssue = index;
     editor.focus();
     editor.setSelection(issue.from, issue.to);
     editor.scrollIntoView({from: issue.from, to: issue.to}, 60);
@@ -283,6 +286,38 @@ var jumpToIssue = function(index) {
         element.classList.add('current');
         element.scrollIntoView({block: 'nearest'});
     }
+};
+
+/**
+ * F8 / Shift+F8: the next (direction 1) or previous (-1) issue by position in the code, wrapping around.
+ */
+var jumpToAdjacentIssue = function(direction) {
+    if (!lastIssues.length) {
+        return;
+    }
+
+    var order = lastIssues
+        .map(function (issue, index) { return index; })
+        .sort(function (a, b) {
+            return CodeMirror.cmpPos(lastIssues[a].from, lastIssues[b].from) || a - b;
+        });
+
+    var cursor = editor.getCursor('from');
+    var position = order.indexOf(currentIssue);
+    var target;
+
+    if (currentIssue !== null && CodeMirror.cmpPos(cursor, lastIssues[currentIssue].from) === 0) {
+        // still on the issue we jumped to: step through the list, so issues sharing a position are all visited
+        target = order[(position + direction + order.length) % order.length];
+    } else if (direction > 0) {
+        target = order.find(function (index) { return CodeMirror.cmpPos(lastIssues[index].from, cursor) > 0; });
+        target = target === undefined ? order[0] : target;
+    } else {
+        target = order.slice().reverse().find(function (index) { return CodeMirror.cmpPos(lastIssues[index].from, cursor) < 0; });
+        target = target === undefined ? order[order.length - 1] : target;
+    }
+
+    jumpToIssue(target);
 };
 
 var setFixableCount = function(response, cm) {
@@ -354,6 +389,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
                 };
             });
 
+            currentIssue = null;
             setIssueCount(response.results.length);
             setRunState('done', 'done in ' + Math.round(performance.now() - startedAt) + ' ms');
 
@@ -378,6 +414,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
         }
         else if ('error' in response) {
             lastIssues = [];
+            currentIssue = null;
             setIssueCount(null);
             document.getElementById('fixer').hidden = true;
 
@@ -490,6 +527,22 @@ document.getElementById('psalm_output').addEventListener('click', function (even
 });
 
 redrawSettings();
+
+// keyboard shortcuts; capture phase, so they also work while CodeMirror has focus
+window.addEventListener('keydown', function (event) {
+    var mod = (event.metaKey || event.ctrlKey) && !event.altKey;
+
+    if (mod && event.key === 'Enter') {
+        event.preventDefault();
+        editor.performLint();
+    } else if (mod && !event.shiftKey && (event.key === 's' || event.key === 'S')) {
+        event.preventDefault();
+        getLink();
+    } else if (event.key === 'F8' && !event.metaKey && !event.ctrlKey && !event.altKey) {
+        event.preventDefault();
+        jumpToAdjacentIssue(event.shiftKey ? -1 : 1);
+    }
+}, true);
 
 /**
  * Draggable editor/output splitter. The split is a percentage of the width the two panes share,
