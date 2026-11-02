@@ -129,32 +129,29 @@
     }
 }
 
-/* ---- /playground: one-line heading, playground right below ---- */
+/* ---- /playground: nav plus the playground, which fills the rest of the viewport ---- */
 
-.pg_page_title {
-    margin: 0;
-    padding: 0 20px 14px;
-    font-family: "National 2", "Helvetica Neue", Helvetica, sans-serif;
-    font-size: 26px;
-    font-weight: 600;
-    line-height: 1.2;
+.playground_page {
+    min-height: 100vh;
 }
 
-.pg_page_title span {
-    margin-left: 12px;
-    font-size: 16px;
-    font-weight: 400;
-    color: var(--pg-muted);
+.playground_page .container.front {
+    display: flex;
+    flex-direction: column;
+    padding-top: 12px;
 }
 
-@media (max-width: 600px) {
-    .pg_page_title {
-        padding: 0 8px 12px;
+@media (min-width: 1000px) {
+    .playground_page .playground {
+        flex: 1 1 0;
+        padding-bottom: 12px;
     }
 
-    .pg_page_title span {
-        display: block;
-        margin: 6px 0 0;
+    /* basis 0: an open settings drawer scrolls instead of stretching the page */
+    .playground_page .pg_panes {
+        flex: 1 1 0;
+        height: auto;
+        min-height: 420px;
     }
 }
 
@@ -798,6 +795,30 @@ li.pg_step > .pg_step_label {
     padding: 0 2px;
 }
 
+/* docs link beside each setting: small, quiet, still a visible link */
+.pg_check_row {
+    clear: left;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.pg_check_row .pg_check {
+    flex: 1 1 auto;
+}
+
+.pg_doc_link {
+    flex: none;
+    padding: 4px 0;
+    color: var(--pg-muted);
+    font-size: 12px;
+    text-underline-offset: 2px;
+}
+
+.pg_doc_link:hover {
+    color: var(--pg-ink);
+}
+
 /* ---- status bar ---- */
 
 .pg_statusbar {
@@ -826,6 +847,18 @@ li.pg_step > .pg_step_label {
 
 .pg_status_item a {
     color: inherit;
+}
+
+.pg_docs {
+    gap: 8px;
+}
+
+.pg_docs a {
+    text-underline-offset: 2px;
+}
+
+.pg_docs a:hover {
+    color: var(--pg-ink);
 }
 
 .pg_run_state {
@@ -959,5 +992,10 @@ li.pg_step > .pg_step_label {
 
     .pg_statusbar .pg_spacer {
         display: none;
+    }
+
+    .pg_docs {
+        flex-wrap: wrap;
+        row-gap: 2px;
     }
 }

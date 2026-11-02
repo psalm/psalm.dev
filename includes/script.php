@@ -52,6 +52,7 @@ var toggleSettings = function() {
 };
 
 var settingsText = <?php echo json_encode(\PsalmDotOrg\Settings::descriptions()); ?>;
+var settingsDocs = <?= json_encode(\PsalmDotOrg\Settings::docsLinks(), JSON_UNESCAPED_SLASHES) ?>;
 var defaultSettings = <?php echo json_encode(\PsalmDotOrg\Settings::defaultValues()); ?>;
 
 // drawer sections; a setting missing here still shows up, under "Other"
@@ -212,7 +213,24 @@ var buildSettingsPanel = function() {
 
             label.appendChild(input);
             label.appendChild(text);
-            fieldset.appendChild(label);
+
+            // the docs link sits next to the label, so clicking it never toggles the checkbox
+            var row = document.createElement('div');
+            row.className = 'pg_check_row';
+            row.appendChild(label);
+
+            if (settingsDocs[key]) {
+                var docs = document.createElement('a');
+                docs.className = 'pg_doc_link';
+                docs.href = settingsDocs[key];
+                docs.target = '_blank';
+                docs.rel = 'noopener';
+                docs.textContent = 'docs';
+                docs.setAttribute('aria-label', 'Configuration docs for: ' + text.textContent);
+                row.appendChild(docs);
+            }
+
+            fieldset.appendChild(row);
         });
 
         panel.appendChild(fieldset);
@@ -508,7 +526,7 @@ var renderIssue = function(issue, index) {
     var html = '<div class="pg_issue ' + (isError ? 'pg_issue_error' : 'pg_issue_info') + '" data-issue="' + index + '">'
         + '<div class="pg_issue_head">'
         + '<span class="pg_sev">' + (isError ? 'ERROR' : 'INFO') + '</span>'
-        + '<a href="' + escapeHtml(issue.link) + '" target="_blank">' + escapeHtml(issue.type) + '</a>'
+        + '<a href="' + escapeHtml(issue.link) + '" target="_blank" rel="noopener" title="Open the ' + escapeHtml(issue.type) + ' docs">' + escapeHtml(issue.type) + '</a>'
         + '<button type="button" class="pg_loc" data-issue="' + index + '" title="Jump to this issue">'
         + escapeHtml(issue.line_from) + ':' + escapeHtml(issue.column_from) + '</button>'
         + '</div>'

@@ -2,7 +2,8 @@
 
 use PsalmDotOrg\Settings;
 require_once dirname(__DIR__) . '/src/Settings.php';
-// views/playground.php sets this: the same playground, expanded, without the intro
+
+// views/playground.php sets this: nav plus the playground filling the viewport, nothing else
 $playground_page = !empty($playground_page);
 $canonical_url = $playground_page ? 'https://psalm.dev/playground' : 'https://psalm.dev/';
 ?>
@@ -40,9 +41,7 @@ $canonical_url = $playground_page ? 'https://psalm.dev/playground' : 'https://ps
 <a class="pg_skip" href="#playground" onclick="return focusEditor();">Skip to editor</a>
 <?php require('../includes/nav.php'); ?>
 <div class="container front" id="page_container">
-<?php if ($playground_page) : ?>
-    <h1 class="pg_page_title">Playground <span>Paste PHP code to see what Psalm finds, then share a link to the result.</span></h1>
-<?php else : ?>
+<?php if (!$playground_page) : ?>
     <div class="intro">
         <h1>Give PHP the <span class="CodeMirror-lint-mark-error">love</span> it&nbsp;deserves</h1>
 
@@ -78,7 +77,9 @@ require('../includes/playground.php');
 <script>
 var settings = <?php echo json_encode(Settings::defaultValues()) ?>;
 </script>
+<?php if (!$playground_page) : ?>
 <?php require('../includes/footer.php'); ?>
+<?php endif ?>
 <?php require('../includes/script.php'); ?>
 </body>
 </html>
