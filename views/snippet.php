@@ -135,7 +135,7 @@ $canonical_url = false;
 <meta name="robots" content="noindex, follow" />
 <script src="/assets/js/codemirror.min.js?2"></script>
 <?php require('../includes/meta.php'); ?>
-<link rel="stylesheet" href="/assets/css/playground.css?6">
+<link rel="stylesheet" href="/assets/css/playground.css?7">
 </head>
 <body class="front snippet_page">
 <a class="pg_skip" href="#playground" onclick="return focusEditor();">Skip to editor</a>

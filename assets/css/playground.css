@@ -115,6 +115,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    border-left: var(--pg-rule);
     text-decoration: none;
 }
 
@@ -244,12 +245,13 @@
     align-items: stretch;
 }
 
-.pg_toolgroup_config > :last-child {
-    border-right: var(--pg-rule);
+/* actions on the left (Share first), config and view on the right, above the settings drawer */
+.pg_toolgroup_actions > :first-child {
+    border-left: 0;
 }
 
-.pg_toolgroup_config > :first-child {
-    border-left: 0;
+.pg_toolgroup_config > .pg_field {
+    border-left: var(--pg-rule);
 }
 
 /* compact "PHP 8.6" face; the transparent native select on top opens the full "8.6 (default)" list */
@@ -962,17 +964,17 @@ li.pg_step > .pg_step_label {
         padding: 0 8px 24px;
     }
 
-    /* config on one row, actions on the next */
+    /* actions on one row, config on the next */
     .pg_toolgroup {
         flex: 1 0 100%;
     }
 
-    .pg_toolgroup_config {
+    .pg_toolgroup_actions {
         border-bottom: var(--pg-rule);
     }
 
-    .pg_toolgroup_config > :last-child {
-        border-right: 0;
+    .pg_toolgroup_config > .pg_field {
+        border-left: 0;
     }
 
     .pg_topbar .pg_spacer {
