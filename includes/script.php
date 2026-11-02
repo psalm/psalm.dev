@@ -1,19 +1,28 @@
 <?php require_once dirname(__DIR__) . '/src/Settings.php' ?>
 <?php require_once dirname(__DIR__) . '/src/OnlineChecker.php' ?>
 <script>
+// the playground is always expanded now; kept as no-ops for old bookmarklets and inline handlers
 var expandCode = function() {
-    document.querySelector('body').classList.add('code_expanded');
     return false;
 };
 
 var shrinkCode = function() {
-    document.querySelector('body').classList.remove('code_expanded');
     return false;
 };
 
 var toggleSettings = function() {
-    document.querySelector('#settings_panel').classList.toggle('hidden');
-    document.querySelector('#psalm_output').classList.toggle('hidden');
+    var panel = document.getElementById('settings_panel');
+    var open = panel.hasAttribute('hidden');
+
+    if (open) {
+        panel.removeAttribute('hidden');
+    } else {
+        panel.setAttribute('hidden', '');
+    }
+
+    document.getElementById('settings').setAttribute('aria-expanded', open ? 'true' : 'false');
+    // the drawer takes width from the panes, so CodeMirror has to re-measure
+    editor.refresh();
     return false;
 };
 
@@ -60,19 +69,25 @@ var toggleSetting = function(key) {
     return false;
 };
 
-var redrawSettings = function() {
-    var settingsLines = [];
-
+var renderPhpVersions = function() {
+    var select = document.getElementById('php_version');
     var versions = phpVersions.indexOf(phpVersion) === -1 ? phpVersions.concat([phpVersion]) : phpVersions;
-    var options = versions.map(function (version) {
-        return '<option value="' + escapeHtml(version) + '"' + (version === phpVersion ? ' selected' : '') + '>'
-            + escapeHtml(version) + (version === defaultPhpVersion ? ' (default)' : '') + '</option>';
-    });
 
-    settingsLines.push(
-        '<div class="php_version"><label for="php_version">Analyse code as PHP</label> '
-            + '<select id="php_version" onchange="setPhpVersion(this.value)">' + options.join('') + '</select></div>'
-    );
+    select.textContent = '';
+
+    versions.forEach(function (version) {
+        var option = document.createElement('option');
+        option.value = version;
+        option.textContent = version + (version === defaultPhpVersion ? ' (default)' : '');
+        option.selected = version === phpVersion;
+        select.appendChild(option);
+    });
+};
+
+var redrawSettings = function() {
+    renderPhpVersions();
+
+    var settingsLines = [];
 
     Object.keys(settingsText).forEach(function (key) {
         var checked = key in settings && settings[key];
@@ -128,14 +143,168 @@ var serializeJSON = function(data) {
 }
 
 var latestFetch = 0;
+var fetchKey = 0;
 
-let fix_button = null;
+// issues from the latest successful run, in Psalm's order; read by the issue navigation
+var lastIssues = [];
 
 var escapeHtml = function(snippet) {
-    return snippet.replace(/[\u00A0-\u9999<>\&]/gim, function(i) {
+    return String(snippet).replace(/[ -香<>\&"']/gim, function(i) {
         return '&#' + i.charCodeAt(0) + ';';
     });
-}
+};
+
+var outputElement = function() {
+    return document.getElementById('psalm_output');
+};
+
+/**
+ * Status bar run state: idle | busy | done | parse_error | error.
+ */
+var setRunState = function(state, label) {
+    var element = document.getElementById('pg_run_state');
+    element.dataset.state = state;
+    element.textContent = label;
+};
+
+var setIssueCount = function(count) {
+    document.getElementById('pg_issue_count').textContent = count === null ? '' : String(count);
+};
+
+var renderPsalmVersion = function(response) {
+    var element = document.getElementById('pg_psalm_version');
+    element.textContent = 'Psalm ';
+
+    var versionLink = document.createElement('a');
+    versionLink.href = response.version_url;
+    versionLink.target = '_blank';
+    versionLink.textContent = response.version;
+    element.appendChild(versionLink);
+
+    if (response.version_commit) {
+        var commitLink = document.createElement('a');
+        commitLink.href = response.version_commit_url;
+        commitLink.target = '_blank';
+        commitLink.textContent = response.version_commit;
+        element.appendChild(document.createTextNode(' ('));
+        element.appendChild(commitLink);
+        element.appendChild(document.createTextNode(')'));
+    }
+
+    if (response.php_version) {
+        element.appendChild(document.createTextNode(' on PHP ' + response.php_version));
+    }
+};
+
+var renderPlainOutput = function(text) {
+    var element = document.createElement('div');
+    element.className = 'pg_plain';
+    element.textContent = text;
+    outputElement().textContent = '';
+    outputElement().appendChild(element);
+};
+
+var renderReference = function(reference) {
+    var html = '<div class="pg_ref">' + escapeHtml(reference.label);
+
+    if (!('snippet' in reference)) {
+        return html + '</div>';
+    }
+
+    var snippet = reference.snippet;
+    var selection_start = reference.from - reference.snippet_from;
+    var selection_end = reference.to - reference.snippet_from;
+
+    return html + ' - ' + escapeHtml(reference.line_from) + ':' + escapeHtml(reference.column_from)
+        + '<span class="pg_ref_snippet">'
+        + escapeHtml(snippet.substring(0, selection_start))
+        + '<mark>' + escapeHtml(snippet.substring(selection_start, selection_end)) + '</mark>'
+        + escapeHtml(snippet.substring(selection_end))
+        + '</span></div>';
+};
+
+var renderIssue = function(issue, index) {
+    var isError = issue.severity === 'error';
+    var html = '<div class="pg_issue ' + (isError ? 'pg_issue_error' : 'pg_issue_info') + '" data-issue="' + index + '">'
+        + '<div class="pg_issue_head">'
+        + '<span class="pg_sev">' + (isError ? 'ERROR' : 'INFO') + '</span>'
+        + '<a href="' + escapeHtml(issue.link) + '" target="_blank">' + escapeHtml(issue.type) + '</a>'
+        + '<button type="button" class="pg_loc" data-issue="' + index + '" title="Jump to this issue">'
+        + escapeHtml(issue.line_from) + ':' + escapeHtml(issue.column_from) + '</button>'
+        + '</div>'
+        + '<div class="pg_issue_msg">' + escapeHtml(issue.message) + '</div>';
+
+    if (issue.other_references) {
+        html += '<div class="pg_refs">' + issue.other_references.map(renderReference).join('') + '</div>';
+    }
+
+    if (issue.taint_trace) {
+        html += '<div class="pg_refs pg_taint_trace">' + issue.taint_trace.map(renderReference).join('') + '</div>';
+    }
+
+    return html + '</div>';
+};
+
+var typeAnnotations = function(response, cm) {
+    return response.type_map.map(function (type_data) {
+        return {
+            severity: 'type',
+            message: type_data.type,
+            from: cm.posFromIndex(type_data.from),
+            to: cm.posFromIndex(type_data.to)
+        };
+    });
+};
+
+/**
+ * Moves the editor cursor to an issue from the latest run and highlights it in the output.
+ */
+var jumpToIssue = function(index) {
+    var issue = lastIssues[index];
+
+    if (!issue) {
+        return;
+    }
+
+    editor.focus();
+    editor.setSelection(issue.from, issue.to);
+    editor.scrollIntoView({from: issue.from, to: issue.to}, 60);
+
+    var output = outputElement();
+    var current = output.querySelector('.pg_issue.current');
+
+    if (current) {
+        current.classList.remove('current');
+    }
+
+    var element = output.querySelector('.pg_issue[data-issue="' + index + '"]');
+
+    if (element) {
+        element.classList.add('current');
+        element.scrollIntoView({block: 'nearest'});
+    }
+};
+
+var setFixableCount = function(response, cm) {
+    var fixButton = document.getElementById('fixer');
+    var error_count = 0;
+
+    if ('fixable_errors' in response && response.fixable_errors) {
+        for (var type in response.fixable_errors) {
+            error_count += response.fixable_errors[type];
+        }
+    }
+
+    fixButton.hidden = error_count === 0;
+
+    if (error_count) {
+        outputElement().insertAdjacentHTML(
+            'beforeend',
+            '<div class="pg_fixable">Psalm detected ' + error_count
+                + ' <a href="/docs/manipulating_code/fixing/" target="_blank">fixable issue(s)</a></div>'
+        );
+    }
+};
 
 var fetchAnnotations = function (code, callback, options, cm) {
     // A prerendered page must not run Psalm until the user actually opens it
@@ -148,6 +317,9 @@ var fetchAnnotations = function (code, callback, options, cm) {
 
     latestFetch++;
     fetchKey = latestFetch;
+
+    var startedAt = performance.now();
+    setRunState('busy', 'analysing…');
 
     var submitData = {
         code: code,
@@ -172,167 +344,62 @@ var fetchAnnotations = function (code, callback, options, cm) {
         }
 
         if ('results' in response) {
-            var psalm_version = response.version_label;
+            renderPsalmVersion(response);
 
-            const psalm_version_link = document.createElement('a');
-            psalm_version_link.href = response.version_url;
-            psalm_version_link.target = '_blank';
-            psalm_version_link.textContent = psalm_version;
+            lastIssues = response.results.map(function (issue) {
+                return {
+                    severity: issue.severity,
+                    from: cm.posFromIndex(issue.from),
+                    to: cm.posFromIndex(issue.to)
+                };
+            });
 
-            let psalm_version_html = psalm_version_link.outerHTML;
-
-            if (response.version_commit) {
-                const psalm_commit_link = document.createElement('a');
-                psalm_commit_link.href = response.version_commit_url;
-                psalm_commit_link.target = '_blank';
-                psalm_commit_link.textContent = response.version_commit;
-                // "7.x-dev (ca4690d, 2 Nov 2026)"
-                psalm_version_html += '&nbsp;(' + psalm_commit_link.outerHTML
-                    + (response.version_date ? ', ' + response.version_date.replace(/ /g, '&nbsp;') : '') + ')';
-            }
-
-            const psalm_header = 'Psalm output (using Psalm&nbsp;' + psalm_version_html + '): <br><br>'
+            setIssueCount(response.results.length);
+            setRunState('done', 'done in ' + Math.round(performance.now() - startedAt) + ' ms');
 
             if (response.results.length === 0) {
-                document.getElementById('psalm_output').innerHTML = psalm_header + 'No issues!';
-
-                callback(
-                    response.type_map.map(
-                        function (type_data) {
-                            return {
-                                severity: 'type',
-                                message: type_data.type,
-                                from: cm.posFromIndex(type_data.from),
-                                to: cm.posFromIndex(type_data.to)
-                            };
-                        }
-                    )
-                );
-            }
-            else {
-                var text = response.results.map(
-                    function (issue) {
-                        let message = (issue.severity === 'error' ? 'ERROR' : 'INFO') + ': '
-                            + '<a href="' + issue.link + '" target="_blank">' + issue.type + '</a> - ' + issue.line_from + ':'
-                            + issue.column_from + ' - ' + escapeHtml(issue.message);
-
-                        if (issue.other_references) {
-                            message += "<br><br>"
-                                + issue.other_references.map(
-                                    function (reference) {
-                                        let snippet = reference.snippet;
-
-                                        let selection_start = reference.from - reference.snippet_from;
-                                        let selection_end = reference.to - reference.snippet_from;
-
-                                        snippet = escapeHtml(snippet.substring(0, selection_start))
-                                            + "<span style='color: black;background-color:#ddd;'>"
-                                            + escapeHtml(snippet.substring(selection_start, selection_end))
-                                            + "</span>" + escapeHtml(snippet.substring(selection_end));
-                                        return '&nbsp;&nbsp;' + reference.label
-                                            + ' - ' + reference.line_from
-                                            + ':' + reference.column_from
-                                            + '<br>&nbsp;&nbsp;&nbsp;&nbsp;' + snippet;
-                                    }
-                                ).join("<br><br>");
-                        }
-
-                        if (issue.taint_trace) {
-                            message += "<br><br>"
-                                + issue.taint_trace.map(
-                                    function (reference) {
-                                        if (!("snippet" in reference)) {
-                                            return '&nbsp;&nbsp;' + reference.label;
-                                        }
-
-                                        let snippet = reference.snippet;
-
-                                        let selection_start = reference.from - reference.snippet_from;
-                                        let selection_end = reference.to - reference.snippet_from;
-
-                                        snippet = escapeHtml(snippet.substring(0, selection_start))
-                                            + "<span style='color: black;background-color:#ddd;'>"
-                                            + escapeHtml(snippet.substring(selection_start, selection_end))
-                                            + "</span>" + escapeHtml(snippet.substring(selection_end));
-                                        return '&nbsp;&nbsp;' + reference.label
-                                            + ' - ' + reference.line_from
-                                            + ':' + reference.column_from
-                                            + '<br>&nbsp;&nbsp;&nbsp;&nbsp;' + snippet;
-                                    }
-                                ).join("<br><br>");
-                        }
-
-                        return message;
-                    }
-                );
-
-                document.getElementById('psalm_output').innerHTML = psalm_header + text.join('<br><br>') + '<br>&nbsp;';
-
-                callback(
-                    response.results.map(
-                        function (issue) {
-                            return {
-                                severity: issue.severity === 'error' ? 'error' : 'warning',
-                                message: issue.message,
-                                from: cm.posFromIndex(issue.from),
-                                to: cm.posFromIndex(issue.to)
-                            };
-                        }
-                    ).concat(
-                        response.type_map.map(
-                            function (type_data) {
-                                return {
-                                    severity: 'type',
-                                    message: type_data.type,
-                                    from: cm.posFromIndex(type_data.from),
-                                    to: cm.posFromIndex(type_data.to)
-                                };
-                            }
-                        )
-                    )
-                );
+                outputElement().innerHTML = '<div class="pg_empty">No issues!</div>';
+            } else {
+                outputElement().innerHTML = response.results.map(renderIssue).join('');
             }
 
-            if ('fixable_errors' in response && response.fixable_errors) {
-                let error_count = 0;
+            setFixableCount(response, cm);
 
-                for (type in response.fixable_errors) {
-                    error_count += response.fixable_errors[type];
-                }
-
-                if (error_count) {
-                    document.getElementById('psalm_output').innerHTML += '<br>Psalm detected ' + error_count + ' <a href="/docs/manipulating_code/fixing/" target="_blank">fixable issue(s)</a><br>&nbsp;';
-
-                    const textarea = cm.getTextArea()
-                    const container = textarea.parentNode;
-
-                    if (!fix_button) {
-                        fix_button = document.createElement('button');
-                        fix_button.id = "fixer";
-                        fix_button.innerHTML = '<svg width="18" height="18" viewBox="0 0 147 149" xmlns="http://www.w3.org/2000/svg"><path d="M67 84V71h14l64 57c0 4-2 8-6 12-3 4-7 6-11 7L67 84z" fill="#000"/><path d="M55 85l2-27 27 1-23-16 14-23-24 12L37 9l-2 27-27-1 23 16-14 23 24-12 14 23z" stroke="#000" stroke-width="5" fill="#FFF"/></g></svg> Fix code';
-                        container.querySelector('.button_bar').appendChild(fix_button);
-
-                        fix_button.addEventListener(
-                            'click',
-                            function() {
-                                fetchFixedContents(cm.getValue(), cm);
-                            }
-                        );
-                    }
-                } else if (fix_button) {
-                    // fixable_errors is [] when nothing is fixable, which is truthy, so the button may not exist
-                    fix_button.parentNode.removeChild(fix_button);
-                    fix_button = null;
-                }
-            }
+            callback(
+                response.results.map(function (issue) {
+                    return {
+                        severity: issue.severity === 'error' ? 'error' : 'warning',
+                        message: issue.message,
+                        from: cm.posFromIndex(issue.from),
+                        to: cm.posFromIndex(issue.to)
+                    };
+                }).concat(typeAnnotations(response, cm))
+            );
         }
         else if ('error' in response) {
-            var error_type = response.error.type === 'parser_error' ? 'Parser' : 'Internal Psalm';
-            document.getElementById('psalm_output').innerText = 'Psalm runner output: \n\n'
-                + error_type + ' error on line ' + response.error.line_from + ' - '
-                + response.error.message;
+            lastIssues = [];
+            setIssueCount(null);
+            document.getElementById('fixer').hidden = true;
 
-            console.log(cm.posFromIndex(response.error.to));
+            // check.php answers a few failures (bad PHP version) with a bare string
+            if (typeof response.error === 'string') {
+                setRunState('error', 'error');
+                renderPlainOutput(response.error);
+                callback([]);
+                return;
+            }
+
+            var isParserError = response.error.type === 'parser_error';
+            setRunState(isParserError ? 'parse_error' : 'error', isParserError ? 'parse error' : 'error');
+            renderPlainOutput(
+                (isParserError ? 'Parser' : 'Internal Psalm') + ' error on line ' + response.error.line_from + ' - '
+                    + response.error.message
+            );
+
+            if (typeof response.error.from !== 'number') {
+                callback([]);
+                return;
+            }
 
             callback({
                message: response.error.message,
@@ -343,6 +410,9 @@ var fetchAnnotations = function (code, callback, options, cm) {
         }
     })
     .catch (function (error) {
+        if (latestFetch == fetchKey) {
+            setRunState('error', 'request failed');
+        }
         console.log('Request failed', error);
     });
 };
@@ -350,6 +420,8 @@ var fetchAnnotations = function (code, callback, options, cm) {
 var fetchFixedContents = function (code, cm) {
     latestFetch++;
     fetchKey = latestFetch;
+    setRunState('busy', 'fixing…');
+
     fetch('/check', {
         method: 'POST',
         headers: {
@@ -359,6 +431,7 @@ var fetchFixedContents = function (code, cm) {
         body: serializeJSON({
             code: code,
             settings: JSON.stringify({...settings, ...{unused_methods: true}}),
+            php: phpVersion,
             fix: true,
         })
     })
@@ -370,23 +443,21 @@ var fetchFixedContents = function (code, cm) {
             return;
         }
 
-        if (fix_button) {
-            fix_button.parentNode.removeChild(fix_button);
-            fix_button = null;
-        }
+        document.getElementById('fixer').hidden = true;
 
         if ('fixed_contents' in response && response.fixed_contents) {
+            // setValue triggers a fresh lint run, which updates the run state
             cm.setValue(response.fixed_contents);
         }
         else if ('error' in response) {
-            // No lint callback here: report the failure where lint errors are shown
-            var error_type = response.error.type === 'parser_error' ? 'Parser' : 'Internal Psalm';
-            document.getElementById('psalm_output').innerText = 'Psalm runner output: \n\n'
-                + error_type + ' error on line ' + response.error.line_from + ' - '
-                + response.error.message;
+            setRunState('error', 'fix failed');
+            renderPlainOutput(typeof response.error === 'string' ? response.error : response.error.message);
+        } else {
+            setRunState('done', 'nothing to fix');
         }
     })
     .catch (function (error) {
+        setRunState('error', 'request failed');
         console.log('Request failed', error);
     });
 };
@@ -406,8 +477,17 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     }
 });
 
-//editor.focus();
-//editor.setCursor(editor.lineCount(), 0);
+document.getElementById('fixer').addEventListener('click', function () {
+    fetchFixedContents(editor.getValue(), editor);
+});
+
+document.getElementById('psalm_output').addEventListener('click', function (event) {
+    var location = event.target.closest('button.pg_loc');
+
+    if (location) {
+        jumpToIssue(Number(location.dataset.issue));
+    }
+});
 
 redrawSettings();
 

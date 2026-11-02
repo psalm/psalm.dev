@@ -1,0 +1,579 @@
+/*
+ * Playground layout: top bar, editor | splitter | output (| settings drawer), status bar.
+ * Hand-written on purpose and loaded after site.css (which is built by an old webpack chain);
+ * it overrides the legacy .cm_container / .code_expanded rules instead of editing site.css.
+ */
+
+:root {
+    --pg-bg: #f1f0f0;
+    --pg-panel: #fff;
+    --pg-ink: #000;
+    --pg-muted: #666;
+    --pg-faint: #999;
+    --pg-hover: #eee;
+    --pg-error: #c42020;
+    --pg-rule: 2px solid var(--pg-ink);
+    --pg-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono",
+        "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+    --pg-bar-height: 36px;
+}
+
+.playground [hidden] {
+    display: none !important;
+}
+
+/* ---- homepage intro: kept, but laid out above a full-width playground ---- */
+
+.container.front {
+    padding-top: 24px;
+}
+
+.container.front .intro {
+    float: none;
+    max-width: none;
+    margin-top: 0;
+    padding: 0 20px 30px;
+}
+
+@media (min-width: 1000px) {
+    .container.front .intro {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+        column-gap: 48px;
+    }
+
+    .container.front .intro h2 {
+        grid-row: 1 / span 4;
+        margin-top: 1.1em;
+    }
+
+    .container.front .intro p {
+        margin: 0.9em 0 0;
+    }
+}
+
+/* ---- snippet pages: compact nav, as before ---- */
+
+.snippet_page nav ul {
+    display: none;
+}
+
+.snippet_page nav h1 a {
+    padding: 10px 0;
+    font-size: 30px;
+}
+
+.snippet_page .playground {
+    padding-top: 16px;
+}
+
+/* ---- playground frame ---- */
+
+.playground {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0 20px 32px;
+    font-family: var(--pg-mono);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--pg-ink);
+}
+
+.playground *,
+.playground *::before,
+.playground *::after {
+    box-sizing: border-box;
+}
+
+/* bars: one 2px frame, children share borders */
+.pg_bar {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    min-height: var(--pg-bar-height);
+    background: var(--pg-panel);
+    border: var(--pg-rule);
+}
+
+.pg_spacer {
+    flex: 1 1 auto;
+}
+
+.pg_bar button {
+    appearance: none;
+    margin: 0;
+    padding: 0 14px;
+    min-height: calc(var(--pg-bar-height) - 4px);
+    border: 0;
+    border-left: var(--pg-rule);
+    border-radius: 0;
+    background: var(--pg-panel);
+    color: var(--pg-ink);
+    font: inherit;
+    line-height: 1;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.pg_bar button:hover {
+    background: var(--pg-hover);
+}
+
+.pg_bar button:active,
+.pg_bar button.active,
+.pg_bar button[aria-expanded="true"],
+.pg_bar button[aria-pressed="true"] {
+    background: var(--pg-ink);
+    color: var(--pg-panel);
+}
+
+.playground button:focus-visible,
+.playground select:focus-visible,
+.pg_splitter:focus-visible {
+    outline: 2px dashed currentColor;
+    outline-offset: -5px;
+}
+
+.pg_field {
+    display: flex;
+    align-items: stretch;
+    padding: 0 0 0 12px;
+    border-right: var(--pg-rule);
+    white-space: nowrap;
+}
+
+.pg_field_label {
+    display: flex;
+    align-items: center;
+    padding-right: 12px;
+}
+
+/* the select fills the bar height and shares the bar's rules */
+.pg_field select {
+    appearance: none;
+    margin: 0;
+    padding: 0 30px 0 12px;
+    border: 0;
+    border-left: var(--pg-rule);
+    border-radius: 0;
+    background: var(--pg-panel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0h10L5 6z'/%3E%3C/svg%3E") no-repeat right 12px center;
+    color: var(--pg-ink);
+    font: inherit;
+    cursor: pointer;
+}
+
+/* ---- panes ---- */
+
+.pg_panes {
+    --pg-split: 60;
+    display: flex;
+    height: clamp(420px, calc(100vh - 170px), 1000px);
+    border: var(--pg-rule);
+    border-top: 0;
+    background: var(--pg-panel);
+}
+
+.pg_pane {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+}
+
+.pg_editor {
+    flex: var(--pg-split) 1 0;
+}
+
+.pg_output {
+    flex: calc(100 - var(--pg-split)) 1 0;
+}
+
+.playground .CodeMirror,
+.playground .CodeMirror.CodeMirror-focused {
+    flex: 1 1 auto;
+    height: 100%;
+    width: 100%;
+    max-width: none;
+    border: 0;
+    box-shadow: none;
+}
+
+.pg_splitter {
+    flex: 0 0 10px;
+    border-left: var(--pg-rule);
+    border-right: var(--pg-rule);
+    background: var(--pg-bg);
+    cursor: col-resize;
+    touch-action: none;
+}
+
+.pg_splitter:hover,
+.pg_splitter.dragging {
+    background: var(--pg-ink);
+}
+
+body.pg_resizing {
+    cursor: col-resize;
+    user-select: none;
+}
+
+/* output tab bar sits inside the output pane: only the bottom rule is needed */
+.pg_tabs {
+    flex: 0 0 auto;
+    border: 0;
+    border-bottom: var(--pg-rule);
+}
+
+.pg_tabs button:first-child {
+    border-left: 0;
+}
+
+.pg_tabs button {
+    border-right: var(--pg-rule);
+}
+
+.pg_count:empty {
+    display: none;
+}
+
+.pg_count::before {
+    content: "(";
+}
+
+.pg_count::after {
+    content: ")";
+}
+
+.playground #psalm_output {
+    display: block;
+    flex: 1 1 auto;
+    height: auto;
+    width: auto;
+    min-height: 0;
+    overflow: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--pg-panel);
+    color: #222;
+    font-family: var(--pg-mono);
+    font-size: 13px;
+    line-height: 1.55;
+    white-space: normal;
+}
+
+.pg_empty,
+.pg_plain {
+    padding: 12px 14px;
+}
+
+.pg_plain {
+    white-space: pre-wrap;
+}
+
+.pg_issue {
+    padding: 10px 14px;
+    border-bottom: 1px solid #ddd;
+}
+
+.pg_issue.current {
+    background: var(--pg-hover);
+}
+
+.pg_issue_head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 10px;
+    align-items: baseline;
+}
+
+.pg_sev {
+    font-weight: 700;
+}
+
+.pg_issue_error .pg_sev {
+    color: var(--pg-error);
+}
+
+.pg_issue_info .pg_sev {
+    color: var(--pg-muted);
+}
+
+.pg_issue_head a {
+    color: var(--pg-ink);
+}
+
+button.pg_loc {
+    appearance: none;
+    margin: 0 0 0 auto;
+    padding: 0 4px;
+    border: 1px solid var(--pg-ink);
+    border-radius: 0;
+    background: var(--pg-panel);
+    color: var(--pg-ink);
+    font: inherit;
+    cursor: pointer;
+}
+
+button.pg_loc:hover {
+    background: var(--pg-ink);
+    color: var(--pg-panel);
+}
+
+.pg_issue_msg {
+    margin-top: 2px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.pg_refs {
+    margin: 8px 0 0;
+    padding: 0 0 0 12px;
+    border-left: 2px solid #ddd;
+    color: var(--pg-muted);
+}
+
+.pg_ref + .pg_ref {
+    margin-top: 6px;
+}
+
+.pg_ref_snippet {
+    display: block;
+    color: #222;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.pg_ref_snippet mark {
+    background: #ddd;
+    color: var(--pg-ink);
+}
+
+.pg_fixable {
+    padding: 10px 14px;
+    color: var(--pg-muted);
+}
+
+/* ---- settings drawer: a third column, so the output stays visible ---- */
+
+.playground #settings_panel {
+    display: block;
+    flex: 0 0 320px;
+    overflow: auto;
+    padding: 0;
+    border: 0;
+    border-left: var(--pg-rule);
+    background: var(--pg-panel);
+    color: var(--pg-ink);
+    font-family: var(--pg-mono);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.pg_drawer_head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: calc(var(--pg-bar-height) - 2px);
+    padding: 0 0 0 14px;
+    border-bottom: var(--pg-rule);
+    font-weight: 700;
+}
+
+.pg_drawer_head button {
+    align-self: stretch;
+    margin: 0;
+    padding: 0 12px;
+    border: 0;
+    border-left: var(--pg-rule);
+    border-radius: 0;
+    background: var(--pg-panel);
+    color: var(--pg-ink);
+    font: inherit;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.pg_drawer_head button:hover {
+    background: var(--pg-hover);
+}
+
+.pg_drawer_head button:active {
+    background: var(--pg-ink);
+    color: var(--pg-panel);
+}
+
+.pg_group {
+    margin: 0;
+    padding: 10px 14px 12px;
+    border: 0;
+    border-bottom: var(--pg-rule);
+}
+
+.pg_group:last-child {
+    border-bottom: 0;
+}
+
+.pg_group legend {
+    float: left;
+    width: 100%;
+    margin: 0 0 6px;
+    padding: 0;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 12px;
+}
+
+.pg_check {
+    clear: left;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    padding: 4px 0;
+    color: #222;
+    cursor: pointer;
+}
+
+.pg_check input {
+    flex: 0 0 auto;
+    margin: 2px 0 0;
+    accent-color: var(--pg-ink);
+}
+
+.pg_check.changed span::after {
+    content: " *";
+    font-weight: 700;
+}
+
+.pg_check code {
+    font-family: inherit;
+    background: var(--pg-hover);
+    padding: 0 2px;
+}
+
+/* ---- status bar ---- */
+
+.pg_statusbar {
+    border-top: 0;
+    min-height: 30px;
+    font-size: 12px;
+    color: var(--pg-muted);
+}
+
+.pg_status_item {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    border-right: var(--pg-rule);
+    white-space: nowrap;
+}
+
+.pg_spacer + .pg_status_item {
+    border-right: 0;
+    border-left: var(--pg-rule);
+}
+
+.pg_status_item:empty {
+    display: none;
+}
+
+.pg_status_item a {
+    color: inherit;
+}
+
+.pg_run_state {
+    min-width: 13ch;
+    color: var(--pg-ink);
+}
+
+.pg_run_state[data-state="busy"] {
+    background: var(--pg-ink);
+    color: var(--pg-panel);
+}
+
+.pg_run_state[data-state="parse_error"],
+.pg_run_state[data-state="error"] {
+    color: var(--pg-error);
+    font-weight: 700;
+}
+
+.pg_keys kbd {
+    font: inherit;
+    color: var(--pg-ink);
+    margin-left: 10px;
+}
+
+.pg_keys kbd:first-child {
+    margin-left: 0;
+}
+
+/* ---- narrow: stack editor over output, drawer above both ---- */
+
+@media (max-width: 999px) {
+    .pg_panes {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .pg_editor {
+        flex: 0 0 auto;
+        height: 55vh;
+        min-height: 300px;
+    }
+
+    .pg_splitter {
+        display: none;
+    }
+
+    .pg_output {
+        flex: 0 0 auto;
+        min-height: 240px;
+        border-top: var(--pg-rule);
+    }
+
+    .playground #psalm_output {
+        max-height: 70vh;
+    }
+
+    .playground #settings_panel {
+        order: -1;
+        flex: 0 0 auto;
+        max-height: 60vh;
+        border-left: 0;
+        border-bottom: var(--pg-rule);
+    }
+
+    .pg_keys {
+        display: none !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .playground {
+        padding: 0 8px 24px;
+    }
+
+    .pg_field {
+        flex: 1 0 100%;
+        border-right: 0;
+        border-bottom: var(--pg-rule);
+        min-height: calc(var(--pg-bar-height) - 2px);
+    }
+
+    .pg_field + .pg_spacer {
+        display: none;
+    }
+
+    .pg_topbar button {
+        flex: 1 1 auto;
+    }
+
+    /* the first visible button after the full-width version row starts the line */
+    .pg_topbar .pg_spacer + button:not([hidden]),
+    .pg_topbar .pg_spacer + button[hidden] + button {
+        border-left: 0;
+    }
+}
