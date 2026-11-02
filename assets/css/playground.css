@@ -500,14 +500,13 @@ button.pg_loc:hover {
     font-weight: 700;
 }
 
+.pg_keys {
+    gap: 16px;
+}
+
 .pg_keys kbd {
     font: inherit;
     color: var(--pg-ink);
-    margin-left: 10px;
-}
-
-.pg_keys kbd:first-child {
-    margin-left: 0;
 }
 
 /* ---- narrow: stack editor over output, drawer above both ---- */

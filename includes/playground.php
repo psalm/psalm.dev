@@ -37,6 +37,6 @@
         <span class="pg_status_item pg_saved_on"><?= htmlspecialchars($playground_saved_on) ?></span>
 <?php endif ?>
         <span class="pg_spacer"></span>
-        <span class="pg_status_item pg_keys"><kbd>⌘/Ctrl+Enter</kbd> run <kbd>⌘/Ctrl+S</kbd> share <kbd>F8</kbd>/<kbd>⇧F8</kbd> next/prev issue</span>
+        <span class="pg_status_item pg_keys"><span><kbd>⌘/Ctrl+Enter</kbd> run</span><span><kbd>⌘/Ctrl+S</kbd> share</span><span><kbd>F8</kbd>/<kbd>⇧F8</kbd> next/prev issue</span></span>
     </div>
 </section>
