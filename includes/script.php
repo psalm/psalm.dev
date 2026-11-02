@@ -116,10 +116,11 @@ var getLink = async function() {
     const url = await response.text();
 
     if (!response.ok || url.indexOf('/r/') === -1) {
-        // 4xx bodies are short validation messages written for users; anything else may be a raw server error
-        alert(response.status >= 400 && response.status < 500 && url.length < 200
+        // add_code.php answers with short plain-text messages; anything else (HTML, a PHP error, nothing) is not shown
+        const isPlainMessage = url.length > 0 && url.length < 300 && url.indexOf('<') === -1;
+        alert(isPlainMessage
             ? url
-            : 'Could not create a link, please try again later');
+            : 'Could not create a link: the server returned HTTP ' + response.status + '. Please try again later');
         return false;
     }
 

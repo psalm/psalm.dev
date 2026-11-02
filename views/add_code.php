@@ -55,7 +55,10 @@ try {
     $pdo = new PDO($db_config['dsn'], $db_config['user'], $db_config['password']);
 } catch (PDOException $e) {
     error_log('add_code: ' . $e->getMessage());
-    die('Could not save the snippet, please try again later');
+    die(
+        'Could not save the snippet: cannot connect to the database (error ' . $e->getCode() . '). '
+        . 'Please try again later or report it at https://github.com/psalm/psalm.dev/issues'
+    );
 }
 
 try {
@@ -85,7 +88,11 @@ try {
     $stmt->execute($data);
 } catch (PDOException $e) {
     error_log('add_code: ' . $e->getMessage());
-    die('Could not save the snippet, please try again later');
+    // the SQLSTATE code says what kind of failure it was without exposing queries or server paths
+    die(
+        'Could not save the snippet: database error (SQLSTATE ' . $e->getCode() . '). '
+        . 'Please try again later or report it at https://github.com/psalm/psalm.dev/issues'
+    );
 }
 
 http_response_code(200);
