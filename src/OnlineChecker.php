@@ -117,6 +117,10 @@ class OnlineChecker
                 $project_checker->trackTaintedInputs();
             }
 
+            if ($settings['find_unused_psalm_suppress'] ?? false) {
+                $project_checker->trackUnusedSuppressions();
+            }
+
             $file_checker->analyze($context);
 
             if ($codebase->taint_flow_graph) {
@@ -125,6 +129,10 @@ class OnlineChecker
 
             if (($settings['unused_methods'] ?? false) || strpos($file_contents, '<?php // findUnusedCode') === 0) {
                 $project_checker->consolidateAnalyzedData();
+            }
+
+            if ($codebase->track_unused_suppressions) {
+                IssueBuffer::processUnusedSuppressions($codebase->file_provider);
             }
 
             $issues = IssueBuffer::getIssuesData();
@@ -248,8 +256,8 @@ class OnlineChecker
         $config->cache_directory = null;
         $config->allow_includes = false;
         $config->show_mixed_issues = true;
-        $config->ensure_array_string_offsets_exist = true;
-        $config->ensure_array_int_offsets_exist = true;
+        $config->ensure_array_string_offsets_exist = $settings['ensure_array_offsets_exist'] ?? true;
+        $config->ensure_array_int_offsets_exist = $settings['ensure_array_offsets_exist'] ?? true;
         $config->check_for_throws_docblock = $settings['check_throws'] ?? true;
         $config->remember_property_assignments_after_call = $settings['memoize_properties'] ?? true;;
         $config->memoize_method_calls = $settings['memoize_method_calls'] ?? false;

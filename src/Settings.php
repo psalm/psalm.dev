@@ -16,11 +16,12 @@ final class Settings
         'memoize_properties' => [true, 'Memoize property assignments'],
         'memoize_method_calls' => [false, 'Memoize simple method calls'],
         'check_throws' => [false, 'Check for <code>@throws</code> docblock'],
-        // it's a hidden setting
-        'strict_internal_functions' => [false, ''],
+        'strict_internal_functions' => [false, 'Report <code>false</code> and <code>null</code> returned by built-in functions'],
         'restrict_return_types' => [false, 'Force return types to be as tight as possible'],
         'use_phpdoc_without_magic_call' => [false, 'Use PHPDoc methods and properties without magic call.'],
-        'ensure_override_attribute' => [false, 'Ensure methods marked as override are actually overriding something']
+        'ensure_override_attribute' => [false, 'Ensure methods marked as override are actually overriding something'],
+        'ensure_array_offsets_exist' => [true, 'Require array offsets to be known to exist (<code>ensureArrayStringOffsetsExist</code>, <code>ensureArrayIntOffsetsExist</code>)'],
+        'find_unused_psalm_suppress' => [false, 'Report unused <code>@psalm-suppress</code> annotations'],
     ];
 
     /** @return list<string> */
