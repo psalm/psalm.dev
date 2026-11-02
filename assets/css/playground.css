@@ -246,7 +246,8 @@ body.pg_resizing {
     content: ")";
 }
 
-.playground #psalm_output {
+.playground #psalm_output,
+.playground #pg_types {
     position: relative; /* offsetParent for issue scrolling */
     display: block;
     flex: 1 1 auto;
@@ -263,6 +264,11 @@ body.pg_resizing {
     font-size: 13px;
     line-height: 1.55;
     white-space: normal;
+}
+
+.playground #psalm_output[hidden],
+.playground #pg_types[hidden] {
+    display: none;
 }
 
 .pg_empty,
@@ -352,6 +358,45 @@ button.pg_loc:hover {
 .pg_ref_snippet mark {
     background: #ddd;
     color: var(--pg-ink);
+}
+
+/* ---- types tab: location | expression | inferred type ---- */
+
+.pg_type_list {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr) minmax(0, 1.4fr);
+}
+
+.pg_type_row {
+    display: contents;
+}
+
+.pg_type_row > * {
+    padding: 4px 8px;
+    border-bottom: 1px solid #ddd;
+    overflow-wrap: anywhere;
+}
+
+.pg_type_loc {
+    padding-left: 14px;
+    text-align: right;
+}
+
+.pg_type_code {
+    padding: 4px 8px;
+    background: none;
+    font: inherit;
+    color: var(--pg-ink);
+    white-space: pre-wrap;
+}
+
+.pg_type_type {
+    color: var(--pg-muted);
+}
+
+.pg_note {
+    padding: 10px 14px;
+    color: var(--pg-muted);
 }
 
 .pg_fixable {
@@ -558,7 +603,8 @@ button.pg_loc:hover {
         border-top: var(--pg-rule);
     }
 
-    .playground #psalm_output {
+    .playground #psalm_output,
+    .playground #pg_types {
         max-height: 70vh;
     }
 

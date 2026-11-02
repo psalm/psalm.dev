@@ -423,6 +423,134 @@ var typeAnnotations = function(response, cm) {
     });
 };
 
+var maxTypeRows = 500;
+// typed ranges from the latest successful run, as rendered in the Types tab
+var lastTypes = [];
+
+/**
+ * Psalm reports a type for nearly every expression, often the same range more than once and
+ * wrappers (parentheses, casts to the same type) around an identical inner type. Identical ranges
+ * are merged, and a range nested inside a wider one with the same type is dropped.
+ */
+var collectTypes = function(typeMap) {
+    var byRange = {};
+    var ranges = [];
+
+    typeMap.forEach(function (entry) {
+        if (typeof entry.from !== 'number' || typeof entry.to !== 'number' || entry.to <= entry.from) {
+            return;
+        }
+
+        var key = entry.from + ':' + entry.to;
+
+        if (!(key in byRange)) {
+            byRange[key] = {from: entry.from, to: entry.to, types: []};
+            ranges.push(byRange[key]);
+        }
+
+        if (byRange[key].types.indexOf(entry.type) === -1) {
+            byRange[key].types.push(entry.type);
+        }
+    });
+
+    // source order; wider ranges first, so a nested range comes after the one containing it
+    ranges.sort(function (a, b) {
+        return a.from - b.from || b.to - a.to;
+    });
+
+    var open = [];
+
+    return ranges.filter(function (range) {
+        range.type = range.types.join(' | ');
+
+        // ranges still open at this position, i.e. ones that may contain it
+        open = open.filter(function (outer) { return outer.to > range.from; });
+
+        var redundant = open.some(function (outer) {
+            return outer.to >= range.to && outer.type === range.type;
+        });
+
+        open.push(range);
+        return !redundant;
+    });
+};
+
+var codeSnippet = function(code, from, to) {
+    var text = code.substring(from, to).replace(/\s+/g, ' ').trim();
+
+    return text.length > 60 ? text.substring(0, 59) + '\u2026' : text;
+};
+
+var renderTypes = function(typeMap, code, cm) {
+    var panel = document.getElementById('pg_types');
+    var types = collectTypes(typeMap || []);
+    var shown = types.slice(0, maxTypeRows);
+
+    lastTypes = shown.map(function (range) {
+        return {from: cm.posFromIndex(range.from), to: cm.posFromIndex(range.to)};
+    });
+
+    document.getElementById('pg_type_count').textContent = String(types.length);
+
+    if (!types.length) {
+        panel.innerHTML = '<div class="pg_empty">No types to show</div>';
+        return;
+    }
+
+    var html = '<div class="pg_type_list">' + shown.map(function (range, index) {
+        var pos = lastTypes[index].from;
+
+        return '<div class="pg_type_row">'
+            + '<span class="pg_type_loc"><button type="button" class="pg_loc" data-type="' + index + '" title="Select this expression">'
+            + (pos.line + 1) + ':' + (pos.ch + 1) + '</button></span>'
+            + '<code class="pg_type_code">' + escapeHtml(codeSnippet(code, range.from, range.to)) + '</code>'
+            + '<span class="pg_type_type">' + escapeHtml(range.type) + '</span>'
+            + '</div>';
+    }).join('') + '</div>';
+
+    if (types.length > shown.length) {
+        html += '<div class="pg_note">Showing the first ' + shown.length + ' of ' + types.length + ' typed expressions</div>';
+    }
+
+    panel.innerHTML = html;
+};
+
+var clearTypes = function(message) {
+    lastTypes = [];
+    document.getElementById('pg_type_count').textContent = '';
+    document.getElementById('pg_types').innerHTML = '<div class="pg_empty">' + escapeHtml(message) + '</div>';
+};
+
+/**
+ * Selects a range in the editor (CodeMirror positions) and scrolls it into view.
+ */
+var selectRange = function(from, to) {
+    editor.focus();
+    editor.setSelection(from, to);
+    editor.scrollIntoView({from: from, to: to}, 60);
+};
+
+var outputTabStorageKey = 'psalm.playground.tab';
+
+var selectOutputTab = function(name, persist) {
+    document.querySelectorAll('#pg_tabs [role="tab"]').forEach(function (tab) {
+        var active = tab.dataset.tab === name;
+
+        tab.classList.toggle('active', active);
+        tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        tab.tabIndex = active ? 0 : -1;
+        document.getElementById(tab.getAttribute('aria-controls')).hidden = !active;
+    });
+
+    if (persist) {
+        try {
+            localStorage.setItem(outputTabStorageKey, name);
+        } catch (e) {
+            // storage can be unavailable; the tab just is not remembered
+        }
+    }
+};
+
 /**
  * Moves the editor cursor to an issue from the latest run and highlights it in the output.
  */
@@ -434,9 +562,8 @@ var jumpToIssue = function(index) {
     }
 
     currentIssue = index;
-    editor.focus();
-    editor.setSelection(issue.from, issue.to);
-    editor.scrollIntoView({from: issue.from, to: issue.to}, 60);
+    selectOutputTab('issues', false);
+    selectRange(issue.from, issue.to);
 
     var output = outputElement();
     var current = output.querySelector('.pg_issue.current');
@@ -571,6 +698,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
             }
 
             setFixableCount(response, cm);
+            renderTypes(response.type_map, code, cm);
 
             callback(
                 response.results.map(function (issue) {
@@ -587,6 +715,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
             lastIssues = [];
             currentIssue = null;
             setIssueCount(null);
+            clearTypes('No types: the analysis did not finish');
             document.getElementById('fixer').hidden = true;
 
             // check.php answers a few failures (bad PHP version) with a bare string
@@ -696,6 +825,54 @@ document.getElementById('psalm_output').addEventListener('click', function (even
         jumpToIssue(Number(location.dataset.issue));
     }
 });
+
+document.getElementById('pg_types').addEventListener('click', function (event) {
+    var location = event.target.closest('button.pg_loc');
+    var range = location && lastTypes[Number(location.dataset.type)];
+
+    if (range) {
+        selectRange(range.from, range.to);
+    }
+});
+
+document.getElementById('pg_tabs').addEventListener('click', function (event) {
+    var tab = event.target.closest('[role="tab"]');
+
+    if (tab) {
+        selectOutputTab(tab.dataset.tab, true);
+    }
+});
+
+// arrow keys move between tabs, as in other tab lists
+document.getElementById('pg_tabs').addEventListener('keydown', function (event) {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
+        return;
+    }
+
+    var tabs = Array.prototype.slice.call(document.querySelectorAll('#pg_tabs [role="tab"]'));
+    var index = tabs.indexOf(document.activeElement);
+
+    if (index === -1) {
+        return;
+    }
+
+    event.preventDefault();
+    var next = tabs[(index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+    selectOutputTab(next.dataset.tab, true);
+    next.focus();
+});
+
+(function () {
+    var saved = null;
+
+    try {
+        saved = localStorage.getItem(outputTabStorageKey);
+    } catch (e) {
+        saved = null;
+    }
+
+    selectOutputTab(saved === 'types' ? 'types' : 'issues', false);
+})();
 
 redrawSettings();
 
