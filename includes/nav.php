@@ -7,6 +7,8 @@
 
 	        <li class="doc_link"><a href="/docs/">Documentation</a></li>
 
+	        <li class="playground_link"><a href="/playground">Playground</a></li>
+
 	        <li class="support_link"><a href="/support">Paid support</a></li>
 
 	        <li class="plugins_link"><a href="/plugins">Plugins</a></li>
