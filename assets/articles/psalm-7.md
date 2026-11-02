@@ -51,6 +51,8 @@ function body() {
 eval((string) body()); // TaintedEval: php://input is a source
 ```
 
+**[Try it on psalm.dev »](https://psalm.dev/r/7631291cc5)**
+
 - **New taint kinds:** [`TaintedNosql`](https://psalm.dev/docs/running_psalm/issues/TaintedNosql/) (MongoDB sinks), [`TaintedLlmPrompt`](https://psalm.dev/docs/running_psalm/issues/TaintedLlmPrompt/) (prompt injection), and [`TaintedUrlComponent`](https://psalm.dev/docs/running_psalm/issues/TaintedUrlComponent/) / [`TaintedUrlPath`](https://psalm.dev/docs/running_psalm/issues/TaintedUrlPath/) (query and path injection). curl options and `CURLFile` are reported by what they do: SSRF, header injection, file access, sleep or callables. [Every taint type is now documented](https://psalm.dev/docs/security_analysis/) ([#11944](https://github.com/vimeo/psalm/pull/11944), [#11746](https://github.com/vimeo/psalm/pull/11746), [#12097](https://github.com/vimeo/psalm/pull/12097), [#12099](https://github.com/vimeo/psalm/pull/12099), [#12468](https://github.com/vimeo/psalm/pull/12468)).
 - **New sources:** `php://input`, `STDIN`, the client-sent entries of `$_SERVER` and `$_FILES`, `getopt()`, `$argv`, DNS answers, exception messages, and the files, paths and URLs builtins read ([#11945](https://github.com/vimeo/psalm/pull/11945), [#12086](https://github.com/vimeo/psalm/pull/12086), [#12246](https://github.com/vimeo/psalm/pull/12246), [#12245](https://github.com/vimeo/psalm/pull/12245), [#12135](https://github.com/vimeo/psalm/pull/12135), [#12139](https://github.com/vimeo/psalm/pull/12139)).
 - **Taint now flows through** closures and callable parameters, generators and iterators, by-reference parameters, `foreach` by reference, global and static variables, trait method bodies, promoted constructor properties, `__toString()`, inherited methods and their overrides, exceptions, and builtin functions and objects ([#12147](https://github.com/vimeo/psalm/pull/12147), [#12096](https://github.com/vimeo/psalm/pull/12096), [#12095](https://github.com/vimeo/psalm/pull/12095), [#12121](https://github.com/vimeo/psalm/pull/12121), [#12243](https://github.com/vimeo/psalm/pull/12243), [#12255](https://github.com/vimeo/psalm/pull/12255), [#12272](https://github.com/vimeo/psalm/pull/12272), [#12091](https://github.com/vimeo/psalm/pull/12091), [#12127](https://github.com/vimeo/psalm/pull/12127), [#12262](https://github.com/vimeo/psalm/pull/12262), [#12084](https://github.com/vimeo/psalm/pull/12084), [#12102](https://github.com/vimeo/psalm/pull/12102)).
@@ -82,6 +84,8 @@ function todayWrong(): string {
     return date('Y-m-d'); // ImpureFunctionCall: ... requires time
 }
 ```
+
+**[Try it on psalm.dev »](https://psalm.dev/r/be7eb39420)**
 
 - Psalm **infers purity across the call graph**. Where an annotation could be added, it can suggest one: set `<psalm suggestPurityAnnotations="true">` to get `MissingPureAnnotation` and `MissingImmutableAnnotation` (and their abstract and interface variants), and run `--alter --issues=MissingPureAnnotation,MissingImmutableAnnotation` to add the annotations. The `--alter` command works without the attribute. The suggestions are opt-in.
 - Pure and read-only functions are **taint-specialized automatically**, so annotating your code also removes false positives from security analysis.
@@ -244,6 +248,8 @@ final class Pong {                                     // UnusedClass
 (new Service())->run(1);
 ```
 
+**[Try it on psalm.dev »](https://psalm.dev/r/31c62c069b)**
+
 `--find-unused-psalm-suppress` now also checks suppressions on classes and on `Tainted*` issues.
 
 ## Type system
@@ -282,6 +288,8 @@ final class Pong {                                     // UnusedClass
   }
   ```
 
+  **[Try it on psalm.dev »](https://psalm.dev/r/4e21eb262e)**
+
 - New types and syntax: `decimal-int-string` and `non-decimal-int-string`, global constant wildcards, conditional types on types that depend on a template, `is not` in conditional types, and exact intersections of scalar and conditional types.
 - Constructor `@return` types.
 - New [`IntMaskComparison`](https://psalm.dev/docs/running_psalm/issues/IntMaskComparison/) issue for int-masks compared by value.
@@ -308,6 +316,8 @@ final class Pong {                                     // UnusedClass
       return $title |> trim(...) |> strlen(...); // InvalidReturnStatement: 'int<0, max>' does not match 'string'
   }
   ```
+
+  **[Try it on psalm.dev »](https://psalm.dev/r/3c08a570e0)**
 
 ## Plugins
 
