@@ -753,33 +753,42 @@ var jumpToIssue = function(index) {
     }
 };
 
+// by position, errors before info on the same spot, then by type; Array.prototype.sort is stable for the rest
+var sortIssues = function(results) {
+    var rank = function (issue) { return issue.severity === 'error' ? 0 : 1; };
+
+    return results.slice().sort(function (a, b) {
+        return a.line_from - b.line_from
+            || a.column_from - b.column_from
+            || rank(a) - rank(b)
+            || (a.type < b.type ? -1 : a.type > b.type ? 1 : 0);
+    });
+};
+
 /**
- * F8 / Shift+F8: the next (direction 1) or previous (-1) issue by position in the code, wrapping around.
+ * F8 / Shift+F8: the next (direction 1) or previous (-1) issue in list order (already sorted by position),
+ * wrapping around. With no issue selected, F8 starts at the first issue at or after the cursor and
+ * Shift+F8 at the last one before it.
  */
 var jumpToAdjacentIssue = function(direction) {
-    if (!lastIssues.length) {
+    var count = lastIssues.length;
+
+    if (!count) {
         return;
     }
 
-    var order = lastIssues
-        .map(function (issue, index) { return index; })
-        .sort(function (a, b) {
-            return CodeMirror.cmpPos(lastIssues[a].from, lastIssues[b].from) || a - b;
-        });
-
     var cursor = editor.getCursor('from');
-    var position = order.indexOf(currentIssue);
     var target;
 
     if (currentIssue !== null && CodeMirror.cmpPos(cursor, lastIssues[currentIssue].from) === 0) {
         // still on the issue we jumped to: step through the list, so issues sharing a position are all visited
-        target = order[(position + direction + order.length) % order.length];
+        target = (currentIssue + direction + count) % count;
     } else if (direction > 0) {
-        target = order.find(function (index) { return CodeMirror.cmpPos(lastIssues[index].from, cursor) > 0; });
-        target = target === undefined ? order[0] : target;
+        target = lastIssues.findIndex(function (issue) { return CodeMirror.cmpPos(issue.from, cursor) >= 0; });
+        target = target === -1 ? 0 : target;
     } else {
-        target = order.slice().reverse().find(function (index) { return CodeMirror.cmpPos(lastIssues[index].from, cursor) < 0; });
-        target = target === undefined ? order[order.length - 1] : target;
+        target = count - 1 - lastIssues.slice().reverse().findIndex(function (issue) { return CodeMirror.cmpPos(issue.from, cursor) < 0; });
+        target = target === count ? count - 1 : target;
     }
 
     jumpToIssue(target);
@@ -843,6 +852,8 @@ var fetchAnnotations = function (code, callback, options, cm) {
         }
 
         if ('results' in response) {
+            // Psalm reports issues in analysis order; the list, F8, markers and bug reports all use this order
+            response.results = sortIssues(response.results);
             renderPsalmVersion(response);
 
             lastIssues = response.results.map(function (issue) {
