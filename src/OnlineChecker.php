@@ -11,6 +11,10 @@ use Psalm\Internal\Provider\FakeFileProvider;
 class OnlineChecker
 {
     public const DEFAULT_PHP_VERSION = '8.5';
+    // offered in the settings panel
+    public const PHP_VERSIONS = ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5', '8.6'];
+    // every version Psalm can analyse (ProjectAnalyzer::PHP_SUPPORTED_VERSIONS_REGEX), still accepted via ?php= for old links
+    public const SUPPORTED_PHP_VERSION_REGEX = '^(5\.[456]|7\.[0-4]|8\.[0-6])$';
     // psalm.dev version shown in the REPL output
     public const SITE_VERSION = '1.0.2';
     // written by bin/generate_psalm_version.php on composer install/update
@@ -24,7 +28,7 @@ class OnlineChecker
     ): array {
         $config = self::getPsalmConfig($settings, $fix_file, $file_contents);
 
-        [$psalm_version, $psalm_version_url] = self::getPsalmVersion();
+        $psalm_version = self::getPsalmVersion();
         $file_provider = new FakeFileProvider();
         $output_options = new \Psalm\Report\ReportOptions();
         $output_options->format = \Psalm\Report::TYPE_JSON;
@@ -113,6 +117,10 @@ class OnlineChecker
                 $project_checker->trackTaintedInputs();
             }
 
+            if ($settings['find_unused_psalm_suppress'] ?? false) {
+                $project_checker->trackUnusedSuppressions();
+            }
+
             $file_checker->analyze($context);
 
             if ($codebase->taint_flow_graph) {
@@ -121,6 +129,10 @@ class OnlineChecker
 
             if (($settings['unused_methods'] ?? false) || strpos($file_contents, '<?php // findUnusedCode') === 0) {
                 $project_checker->consolidateAnalyzedData();
+            }
+
+            if ($codebase->track_unused_suppressions) {
+                IssueBuffer::processUnusedSuppressions($codebase->file_provider);
             }
 
             $issues = IssueBuffer::getIssuesData();
@@ -158,8 +170,10 @@ class OnlineChecker
 
             return [
                 'results' => $issue_data,
-                'version' => $psalm_version,
-                'version_url' => $psalm_version_url,
+                'version' => $psalm_version['version'],
+                'version_url' => $psalm_version['version_url'],
+                'version_commit' => $psalm_version['commit'],
+                'version_commit_url' => $psalm_version['commit_url'],
                 'site_version' => self::SITE_VERSION,
                 'php_version' => PHP_VERSION,
                 'fixed_contents' => $fixed_file_contents,
@@ -183,27 +197,47 @@ class OnlineChecker
     }
 
     /**
-     * Returns the vimeo/psalm tag, "$last_tag+$commit_hash", or just the commit hash if the tag is unknown,
-     * along with its GitHub URL
+     * Describes the installed vimeo/psalm build as a label plus up to two GitHub links:
+     * - exact tag: "7.0.0" linking to the release, no commit part;
+     * - commits on top of a tag: "7.0.0+42" linking to the compare view, plus the short commit hash linking to the commit;
+     * - unknown tag (psalm_version.json missing or stale): the short commit hash linking to the commit.
      *
-     * @return array{string, string}
+     * @return array{version: string, version_url: string, commit: ?string, commit_url: ?string}
      */
     private static function getPsalmVersion(): array
     {
         $commit = (string) \Composer\InstalledVersions::getReference('vimeo/psalm');
+        $short_commit = substr($commit, 0, 7);
         $commit_url = 'https://github.com/vimeo/psalm/commit/' . $commit;
         $data = @file_get_contents(self::PSALM_VERSION_FILE);
         $data = $data !== false ? json_decode($data, true) : null;
 
-        if (is_array($data) && ($data['commit'] ?? null) === $commit && is_string($data['version'] ?? null)) {
-            if (($data['is_tag'] ?? false) === true) {
-                return [$data['version'], 'https://github.com/vimeo/psalm/releases/tag/' . rawurlencode($data['version'])];
-            }
-
-            return [$data['version'], $commit_url];
+        if (!is_array($data)
+            || ($data['commit'] ?? null) !== $commit
+            || !is_string($data['tag'] ?? null)
+            || !is_int($data['commits_ahead'] ?? null)
+        ) {
+            return ['version' => $short_commit, 'version_url' => $commit_url, 'commit' => null, 'commit_url' => null];
         }
 
-        return [substr($commit, 0, 7), $commit_url];
+        $tag = $data['tag'];
+        $commits_ahead = $data['commits_ahead'];
+
+        if ($commits_ahead === 0) {
+            return [
+                'version' => $tag,
+                'version_url' => 'https://github.com/vimeo/psalm/releases/tag/' . rawurlencode($tag),
+                'commit' => null,
+                'commit_url' => null,
+            ];
+        }
+
+        return [
+            'version' => $tag . '+' . $commits_ahead,
+            'version_url' => 'https://github.com/vimeo/psalm/compare/' . rawurlencode($tag) . '...' . $commit,
+            'commit' => $short_commit,
+            'commit_url' => $commit_url,
+        ];
     }
 
     private static function getPsalmConfig(array $settings, bool $fix_file, string $file_contents): \Psalm\Config
@@ -222,8 +256,8 @@ class OnlineChecker
         $config->cache_directory = null;
         $config->allow_includes = false;
         $config->show_mixed_issues = true;
-        $config->ensure_array_string_offsets_exist = true;
-        $config->ensure_array_int_offsets_exist = true;
+        $config->ensure_array_string_offsets_exist = $settings['ensure_array_offsets_exist'] ?? true;
+        $config->ensure_array_int_offsets_exist = $settings['ensure_array_offsets_exist'] ?? true;
         $config->check_for_throws_docblock = $settings['check_throws'] ?? true;
         $config->remember_property_assignments_after_call = $settings['memoize_properties'] ?? true;;
         $config->memoize_method_calls = $settings['memoize_method_calls'] ?? false;

@@ -89,7 +89,7 @@ if (isset($_GET['format'])) {
     if ($_GET['format'] === 'results') {
         $php_version = $_GET['php'] ?? OnlineChecker::DEFAULT_PHP_VERSION;
 
-        if (!preg_match('/^[578]\.\d$/', $php_version)) {
+        if (!is_string($php_version) || !preg_match('/' . OnlineChecker::SUPPORTED_PHP_VERSION_REGEX . '/', $php_version)) {
             http_response_code(422);
             echo json_encode(['error' => ['message' => 'PHP version ' . $php_version . ' not supported']]);
             exit;
@@ -116,7 +116,7 @@ http_response_code(200);
 <title>Psalm - a static analysis tool for PHP</title>
 <script src="/assets/js/codemirror.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cloud.typography.com/751592/7707372/css/fonts.css" />
-<link rel="stylesheet" href="/assets/css/site.css?13">
+<link rel="stylesheet" href="/assets/css/site.css?23">
 <link rel="icon" type="image/png" href="/favicon.png">
 <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 </head>
