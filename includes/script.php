@@ -349,7 +349,7 @@ var renderPsalmVersion = function(response) {
     var versionLink = document.createElement('a');
     versionLink.href = response.version_url;
     versionLink.target = '_blank';
-    versionLink.textContent = response.version;
+    versionLink.textContent = response.version_label;
     element.appendChild(versionLink);
 
     if (response.version_commit) {
