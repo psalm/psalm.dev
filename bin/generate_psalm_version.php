@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Resolves the installed vimeo/psalm commit to a tag (if it is tagged exactly), or to
- * "$last_tag+$commit_hash" otherwise, and stores it for OnlineChecker.
+ * Resolves the installed vimeo/psalm commit to the nearest reachable tag and the number of
+ * commits on top of it, and stores both for OnlineChecker.
  *
  * vimeo/psalm is installed from a dist zip, so the tag history is read from a treeless clone.
  */
@@ -58,8 +58,8 @@ if (strpos($pretty_version, 'dev-') === 0) {
 }
 
 $clone_dir = sys_get_temp_dir() . '/psalm-version-' . bin2hex(random_bytes(8));
-$version = null;
-$is_tag = false;
+$tag = null;
+$commits_ahead = null;
 
 try {
     $clone_args = ['clone', '--quiet', '--bare', '--filter=tree:0'];
@@ -69,19 +69,19 @@ try {
     }
 
     if (git(array_merge($clone_args, ['https://github.com/vimeo/psalm.git', $clone_dir])) !== null) {
-        $tag = git(['-C', $clone_dir, 'describe', '--tags', '--abbrev=0', $commit]);
+        // e.g. "7.0.0-rc28-12-gb4ab875"; the tag itself may contain dashes, so match from the end
+        $description = git(['-C', $clone_dir, 'describe', '--tags', '--long', $commit]);
 
-        if ($tag !== null) {
-            $tag_commit = git(['-C', $clone_dir, 'rev-parse', $tag . '^{commit}']);
-            $is_tag = $tag_commit === $commit;
-            $version = $is_tag ? $tag : $tag . '+' . substr($commit, 0, 7);
+        if ($description !== null && preg_match('/^(.+)-(\d+)-g[0-9a-f]+$/', $description, $matches) === 1) {
+            $tag = $matches[1];
+            $commits_ahead = (int) $matches[2];
         }
     }
 } finally {
     removeDir($clone_dir);
 }
 
-if ($version === null) {
+if ($tag === null || $commits_ahead === null) {
     @unlink(OnlineChecker::PSALM_VERSION_FILE);
     echo 'Cannot determine the vimeo/psalm tag for commit ' . $commit . PHP_EOL;
     exit(0);
@@ -89,7 +89,7 @@ if ($version === null) {
 
 file_put_contents(
     OnlineChecker::PSALM_VERSION_FILE,
-    json_encode(['commit' => $commit, 'version' => $version, 'is_tag' => $is_tag], JSON_PRETTY_PRINT) . PHP_EOL
+    json_encode(['commit' => $commit, 'tag' => $tag, 'commits_ahead' => $commits_ahead], JSON_PRETTY_PRINT) . PHP_EOL
 );
 
-echo 'vimeo/psalm version: ' . $version . PHP_EOL;
+echo 'vimeo/psalm version: ' . $tag . ($commits_ahead > 0 ? '+' . $commits_ahead : '') . ' (' . substr($commit, 0, 7) . ')' . PHP_EOL;

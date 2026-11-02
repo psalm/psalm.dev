@@ -24,7 +24,7 @@ class OnlineChecker
     ): array {
         $config = self::getPsalmConfig($settings, $fix_file, $file_contents);
 
-        [$psalm_version, $psalm_version_url] = self::getPsalmVersion();
+        $psalm_version = self::getPsalmVersion();
         $file_provider = new FakeFileProvider();
         $output_options = new \Psalm\Report\ReportOptions();
         $output_options->format = \Psalm\Report::TYPE_JSON;
@@ -158,8 +158,10 @@ class OnlineChecker
 
             return [
                 'results' => $issue_data,
-                'version' => $psalm_version,
-                'version_url' => $psalm_version_url,
+                'version' => $psalm_version['version'],
+                'version_url' => $psalm_version['version_url'],
+                'version_commit' => $psalm_version['commit'],
+                'version_commit_url' => $psalm_version['commit_url'],
                 'site_version' => self::SITE_VERSION,
                 'php_version' => PHP_VERSION,
                 'fixed_contents' => $fixed_file_contents,
@@ -183,27 +185,47 @@ class OnlineChecker
     }
 
     /**
-     * Returns the vimeo/psalm tag, "$last_tag+$commit_hash", or just the commit hash if the tag is unknown,
-     * along with its GitHub URL
+     * Describes the installed vimeo/psalm build as a label plus up to two GitHub links:
+     * - exact tag: "7.0.0" linking to the release, no commit part;
+     * - commits on top of a tag: "7.0.0+42" linking to the compare view, plus the short commit hash linking to the commit;
+     * - unknown tag (psalm_version.json missing or stale): the short commit hash linking to the commit.
      *
-     * @return array{string, string}
+     * @return array{version: string, version_url: string, commit: ?string, commit_url: ?string}
      */
     private static function getPsalmVersion(): array
     {
         $commit = (string) \Composer\InstalledVersions::getReference('vimeo/psalm');
+        $short_commit = substr($commit, 0, 7);
         $commit_url = 'https://github.com/vimeo/psalm/commit/' . $commit;
         $data = @file_get_contents(self::PSALM_VERSION_FILE);
         $data = $data !== false ? json_decode($data, true) : null;
 
-        if (is_array($data) && ($data['commit'] ?? null) === $commit && is_string($data['version'] ?? null)) {
-            if (($data['is_tag'] ?? false) === true) {
-                return [$data['version'], 'https://github.com/vimeo/psalm/releases/tag/' . rawurlencode($data['version'])];
-            }
-
-            return [$data['version'], $commit_url];
+        if (!is_array($data)
+            || ($data['commit'] ?? null) !== $commit
+            || !is_string($data['tag'] ?? null)
+            || !is_int($data['commits_ahead'] ?? null)
+        ) {
+            return ['version' => $short_commit, 'version_url' => $commit_url, 'commit' => null, 'commit_url' => null];
         }
 
-        return [substr($commit, 0, 7), $commit_url];
+        $tag = $data['tag'];
+        $commits_ahead = $data['commits_ahead'];
+
+        if ($commits_ahead === 0) {
+            return [
+                'version' => $tag,
+                'version_url' => 'https://github.com/vimeo/psalm/releases/tag/' . rawurlencode($tag),
+                'commit' => null,
+                'commit_url' => null,
+            ];
+        }
+
+        return [
+            'version' => $tag . '+' . $commits_ahead,
+            'version_url' => 'https://github.com/vimeo/psalm/compare/' . rawurlencode($tag) . '...' . $commit,
+            'commit' => $short_commit,
+            'commit_url' => $commit_url,
+        ];
     }
 
     private static function getPsalmConfig(array $settings, bool $fix_file, string $file_contents): \Psalm\Config
