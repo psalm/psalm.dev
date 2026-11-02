@@ -15,6 +15,9 @@ final class PsalmVersion
     private const API_URL = 'https://api.github.com/repos/vimeo/psalm';
     private const MAX_COMPARES = 5;
     private const RETRY_FAILED_AFTER = 3600;
+    // the tag ends up in the label and in URLs, so anything unusual is ignored
+    private const TAG_PATTERN = '/^v?\d+\.\d+\.\d+(?:-[0-9A-Za-z.]+)?$/D';
+    private const COMMIT_PATTERN = '/^[0-9a-f]{40}$/D';
 
     /**
      * @return array{
@@ -72,20 +75,19 @@ final class PsalmVersion
      */
     private static function cached(string $commit, float $time_budget): ?array
     {
-        if ($commit === '') {
+        if (preg_match(self::COMMIT_PATTERN, $commit) !== 1) {
             return null;
         }
 
-        foreach (self::cacheFiles() as $file) {
-            $data = @file_get_contents($file);
-            $data = $data !== false ? json_decode($data, true) : null;
+        $data = @file_get_contents(self::CACHE_FILE);
+        $data = $data !== false ? json_decode($data, true) : null;
 
-            if (!is_array($data) || ($data['commit'] ?? null) !== $commit) {
-                continue;
-            }
+        if (is_array($data) && ($data['commit'] ?? null) === $commit) {
+            $tag = $data['tag'] ?? null;
+            $commits_ahead = $data['commits_ahead'] ?? null;
 
-            if (is_string($data['tag'] ?? null) && is_int($data['commits_ahead'] ?? null)) {
-                return [$data['tag'], $data['commits_ahead']];
+            if (self::isValidTag($tag) && is_int($commits_ahead) && $commits_ahead >= 0) {
+                return [$tag, $commits_ahead];
             }
 
             if (is_int($data['failed_at'] ?? null) && time() - $data['failed_at'] < self::RETRY_FAILED_AFTER) {
@@ -93,10 +95,19 @@ final class PsalmVersion
             }
         }
 
-        // one resolver at a time; concurrent requests show the bare commit instead of piling onto GitHub
-        $lock = @fopen(sys_get_temp_dir() . '/psalm_version.lock', 'c');
+        // without a writable cache every request would call GitHub (and soon hit the 60/h anonymous limit)
+        if (!is_writable(dirname(self::CACHE_FILE))) {
+            return null;
+        }
 
-        if ($lock !== false && !@flock($lock, LOCK_EX | LOCK_NB)) {
+        // one resolver at a time; concurrent requests show the bare commit instead of piling onto GitHub
+        $lock = @fopen(self::CACHE_FILE . '.lock', 'c');
+
+        if ($lock === false) {
+            return null;
+        }
+
+        if (!@flock($lock, LOCK_EX | LOCK_NB)) {
             fclose($lock);
             return null;
         }
@@ -111,10 +122,8 @@ final class PsalmVersion
 
             return $resolved;
         } finally {
-            if ($lock !== false) {
-                flock($lock, LOCK_UN);
-                fclose($lock);
-            }
+            flock($lock, LOCK_UN);
+            fclose($lock);
         }
     }
 
@@ -125,6 +134,10 @@ final class PsalmVersion
      */
     public static function resolve(string $commit, float $time_budget = 3.0): ?array
     {
+        if (preg_match(self::COMMIT_PATTERN, $commit) !== 1) {
+            return null;
+        }
+
         $deadline = microtime(true) + $time_budget;
         $tags = self::get('/tags?per_page=100', $deadline);
 
@@ -135,7 +148,7 @@ final class PsalmVersion
         $names = [];
 
         foreach ($tags as $tag) {
-            if (!is_string($tag['name'] ?? null)) {
+            if (!self::isValidTag($tag['name'] ?? null)) {
                 continue;
             }
 
@@ -156,7 +169,10 @@ final class PsalmVersion
                 return null;
             }
 
-            if (($comparison['behind_by'] ?? null) === 0 && is_int($comparison['ahead_by'] ?? null)) {
+            if (($comparison['behind_by'] ?? null) === 0
+                && is_int($comparison['ahead_by'] ?? null)
+                && $comparison['ahead_by'] >= 0
+            ) {
                 return [$name, $comparison['ahead_by']];
             }
         }
@@ -202,27 +218,21 @@ final class PsalmVersion
 
     private static function store(array $data): void
     {
-        $json = json_encode($data, JSON_PRETTY_PRINT) . PHP_EOL;
+        $tmp = self::CACHE_FILE . '.' . bin2hex(random_bytes(4)) . '.tmp';
 
-        foreach (self::cacheFiles() as $file) {
-            $tmp = $file . '.' . bin2hex(random_bytes(4)) . '.tmp';
-
-            if (@file_put_contents($tmp, $json) !== false) {
-                if (@rename($tmp, $file)) {
-                    return;
-                }
-
-                @unlink($tmp);
-            }
+        if (@file_put_contents($tmp, json_encode($data, JSON_PRETTY_PRINT) . PHP_EOL) !== false
+            && !@rename($tmp, self::CACHE_FILE)
+        ) {
+            @unlink($tmp);
         }
     }
 
     /**
-     * @return list<string>
+     * @param mixed $tag
+     * @psalm-assert-if-true string $tag
      */
-    private static function cacheFiles(): array
+    private static function isValidTag($tag): bool
     {
-        // the temp dir keeps the negative cache working when the project dir is read-only
-        return [self::CACHE_FILE, sys_get_temp_dir() . '/psalm_version.json'];
+        return is_string($tag) && preg_match(self::TAG_PATTERN, $tag) === 1;
     }
 }
