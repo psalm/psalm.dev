@@ -89,7 +89,7 @@ if (isset($_GET['format'])) {
     if ($_GET['format'] === 'results') {
         $php_version = $_GET['php'] ?? OnlineChecker::DEFAULT_PHP_VERSION;
 
-        if (!preg_match('/^[578]\.\d$/', $php_version)) {
+        if (!is_string($php_version) || !preg_match('/' . OnlineChecker::SUPPORTED_PHP_VERSION_REGEX . '/', $php_version)) {
             http_response_code(422);
             echo json_encode(['error' => ['message' => 'PHP version ' . $php_version . ' not supported']]);
             exit;

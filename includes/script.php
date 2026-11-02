@@ -23,8 +23,8 @@ var defaultPhpVersion = <?= json_encode(\PsalmDotOrg\OnlineChecker::DEFAULT_PHP_
 var phpVersions = <?= json_encode(\PsalmDotOrg\OnlineChecker::PHP_VERSIONS) ?>;
 var phpVersion = new URLSearchParams(window.location.search).get('php');
 
-// same format check.php accepts; anything else falls back to the default
-if (!phpVersion || !/^[578]\.\d$/.test(phpVersion)) {
+// same versions check.php accepts; anything else falls back to the default
+if (!phpVersion || !new RegExp(<?= json_encode(\PsalmDotOrg\OnlineChecker::SUPPORTED_PHP_VERSION_REGEX) ?>).test(phpVersion)) {
     phpVersion = defaultPhpVersion;
 }
 
@@ -57,7 +57,8 @@ var redrawRuntimeInfo = function() {
     }
 
     container.textContent = runtimeInfo
-        ? 'psalm.dev ' + runtimeInfo.site_version + ', Psalm running on PHP ' + runtimeInfo.php_version
+        ? 'Psalm ' + runtimeInfo.psalm_version + ' runs on PHP ' + runtimeInfo.php_version
+            + '; your code is analysed as PHP ' + runtimeInfo.analysed_as + '. psalm.dev ' + runtimeInfo.site_version + '.'
         : '';
 };
 
@@ -196,6 +197,8 @@ var fetchAnnotations = function (code, callback, options, cm) {
             const psalm_header = 'Psalm output (using Psalm&nbsp;' + psalm_version_html + '): <br><br>'
 
             runtimeInfo = {
+                psalm_version: response.version,
+                analysed_as: submitData.php,
                 site_version: response.site_version || <?= json_encode(\PsalmDotOrg\OnlineChecker::SITE_VERSION) ?>,
                 php_version: response.php_version
             };
