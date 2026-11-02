@@ -5,6 +5,7 @@ namespace PsalmDotOrg;
 use function array_keys;
 use function array_map;
 use function array_filter;
+use function intval;
 
 final class Settings 
 {
@@ -32,6 +33,23 @@ final class Settings
     public static function defaultValues(): array
     {
         return array_map(fn($row) => $row[0], self::AVAILABLE_SETTINGS);
+    }
+
+    /**
+     * Decodes the BIT(1) setting columns of a `codes` row; mysqlnd returns them as ints or digit strings.
+     *
+     * @param array<string, mixed> $row
+     * @return array<string, bool>
+     */
+    public static function fromRow(array $row): array
+    {
+        $settings = [];
+
+        foreach (self::names() as $name) {
+            $settings[$name] = (bool) intval($row[$name]);
+        }
+
+        return $settings;
     }
 
     /** @return array<string, string> */

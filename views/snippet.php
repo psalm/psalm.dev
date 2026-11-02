@@ -37,6 +37,13 @@ $stmt->execute([':hash' => $hash]);
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$result) {
+    if (($_GET['format'] ?? null) === 'json') {
+        http_response_code(404);
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'not found']);
+        exit;
+    }
+
     http_response_code(303);
     header('Location: /');
     exit;
@@ -47,6 +54,7 @@ $created_on = (new DateTime())->setTimestamp($result['created_on']);
 $created_on->setTimezone(new DateTimeZone("UTC"));
 
 $settings_fields = Settings::names();
+$settings = Settings::fromRow($result);
 
 const PHP_PARSER_VERSION = '4.0.0';
 
@@ -58,14 +66,27 @@ if (isset($_GET['format'])) {
         exit;
     }
 
-    if ($_GET['format'] === 'results') {
-        $settings = array_intersect_key(
-            array_map(function (?string $val): bool {
-                return (bool) intval($val);
-            }, $result),
-            array_flip($settings_fields)
+    if ($_GET['format'] === 'json') {
+        header('Content-Type: application/json');
+        set_exception_handler([\PsalmDotOrg\ExceptionHandler::class, 'json']);
+
+        $body = json_encode(
+            [
+                'hash' => $result['hash'],
+                'code' => $code,
+                'settings' => $settings,
+                // the codes table does not store a PHP version
+                'php_version' => null,
+            ],
+            JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
         );
 
+        http_response_code(200);
+        echo $body;
+        exit;
+    }
+
+    if ($_GET['format'] === 'results') {
         $php_version = $_GET['php'] ?? OnlineChecker::DEFAULT_PHP_VERSION;
 
         if (!preg_match('/^[578]\.\d$/', $php_version)) {
@@ -121,7 +142,7 @@ http_response_code(200);
 <script>
 var settings = {
 <?php foreach ($settings_fields as $field) : ?>
-    <?php echo $field ?>: <?php echo $result[$field] ? 'true' : 'false' ?>,
+    <?php echo $field ?>: <?php echo $settings[$field] ? 'true' : 'false' ?>,
 <?php endforeach ?>
 };
 </script>
