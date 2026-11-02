@@ -21,20 +21,22 @@ var settingsText = <?php echo json_encode(\PsalmDotOrg\Settings::descriptions())
 
 var defaultPhpVersion = <?= json_encode(\PsalmDotOrg\OnlineChecker::DEFAULT_PHP_VERSION) ?>;
 var phpVersions = <?= json_encode(\PsalmDotOrg\OnlineChecker::PHP_VERSIONS) ?>;
+// a saved snippet opens with the version it was saved with; ?php= overrides it
+var basePhpVersion = (typeof snippetPhpVersion !== 'undefined' && snippetPhpVersion) || defaultPhpVersion;
 var phpVersion = new URLSearchParams(window.location.search).get('php');
 
-// same versions check.php accepts; anything else falls back to the default
+// same versions check.php accepts; anything else falls back to the base version
 if (!phpVersion || !new RegExp(<?= json_encode(\PsalmDotOrg\OnlineChecker::SUPPORTED_PHP_VERSION_REGEX) ?>).test(phpVersion)) {
-    phpVersion = defaultPhpVersion;
+    phpVersion = basePhpVersion;
 }
 
 var setPhpVersion = function(version) {
     phpVersion = version;
 
-    // keep the choice in the URL, so reloading and "Get link" preserve it
+    // keep the choice in the URL, so reloading preserves it
     const params = new URLSearchParams(window.location.search);
 
-    if (version === defaultPhpVersion) {
+    if (version === basePhpVersion) {
         params.delete('php');
     } else {
         params.set('php', version);
@@ -91,7 +93,7 @@ var getLink = async function() {
             'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
             'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
         },
-        body: serializeJSON({code: editor.getValue(), settings: JSON.stringify(settings)})
+        body: serializeJSON({code: editor.getValue(), settings: JSON.stringify(settings), php: phpVersion})
     });
 
     const url = await response.text();
@@ -105,9 +107,9 @@ var getLink = async function() {
         return false;
     }
 
-    // keep query params, e.g. ?php=8.1 set from the settings panel
+    // the PHP version is stored with the snippet, so the link needs no query params
     const scheme = window.location.protocol;
-    const fullUrl = scheme + '//' + url + window.location.search;
+    const fullUrl = scheme + '//' + url;
 
     try {
         await navigator.clipboard.writeText(fullUrl);

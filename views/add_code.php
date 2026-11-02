@@ -1,5 +1,6 @@
 <?php
 
+use PsalmDotOrg\OnlineChecker;
 use PsalmDotOrg\Settings;
 require_once dirname(__DIR__) . '/src/Settings.php';
 
@@ -44,7 +45,16 @@ if (strlen($code) > 6000) {
 
 require_once('../vendor/autoload.php');
 
-$hash = substr(hash_hmac('sha256', $code . json_encode($settings), 'not much of a secret'), 0, 10);
+$php_version = $_POST['php'] ?? OnlineChecker::DEFAULT_PHP_VERSION;
+
+if (!is_string($php_version) || !preg_match('/' . OnlineChecker::SUPPORTED_PHP_VERSION_REGEX . '/', $php_version)) {
+    http_response_code(412);
+    echo 'Unsupported PHP version';
+    exit();
+}
+
+// the version is part of the hash so the same code saved for different PHP versions gets separate links
+$hash = substr(hash_hmac('sha256', $code . json_encode($settings) . $php_version, 'not much of a secret'), 0, 10);
 
 /**
  * @var array{dsn:string, user:string, password:string}
@@ -75,7 +85,7 @@ try {
         exit();
     }
 
-    $data = ['hash' => $hash, 'code' => $code, 'ip' => $_SERVER['REMOTE_ADDR']];
+    $data = ['hash' => $hash, 'code' => $code, 'ip' => $_SERVER['REMOTE_ADDR'], 'php_version' => $php_version];
 
     $settings_fields = Settings::names();
 

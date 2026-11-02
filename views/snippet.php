@@ -56,6 +56,14 @@ $created_on->setTimezone(new DateTimeZone("UTC"));
 $settings_fields = Settings::names();
 $settings = Settings::fromRow($result);
 
+$php_version_regex = '/' . OnlineChecker::SUPPORTED_PHP_VERSION_REGEX . '/';
+// NULL for snippets saved before the version was stored
+$stored_php_version = $result['php_version'] ?? null;
+
+if (!is_string($stored_php_version) || !preg_match($php_version_regex, $stored_php_version)) {
+    $stored_php_version = null;
+}
+
 const PHP_PARSER_VERSION = '4.0.0';
 
 if (isset($_GET['format'])) {
@@ -75,8 +83,7 @@ if (isset($_GET['format'])) {
                 'hash' => $result['hash'],
                 'code' => $code,
                 'settings' => $settings,
-                // the codes table does not store a PHP version
-                'php_version' => null,
+                'php_version' => $stored_php_version,
             ],
             JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
         );
@@ -87,9 +94,9 @@ if (isset($_GET['format'])) {
     }
 
     if ($_GET['format'] === 'results') {
-        $php_version = $_GET['php'] ?? OnlineChecker::DEFAULT_PHP_VERSION;
+        $php_version = $_GET['php'] ?? $stored_php_version ?? OnlineChecker::DEFAULT_PHP_VERSION;
 
-        if (!is_string($php_version) || !preg_match('/' . OnlineChecker::SUPPORTED_PHP_VERSION_REGEX . '/', $php_version)) {
+        if (!is_string($php_version) || !preg_match($php_version_regex, $php_version)) {
             http_response_code(422);
             echo json_encode(['error' => ['message' => 'PHP version ' . $php_version . ' not supported']]);
             exit;
@@ -145,6 +152,7 @@ var settings = {
     <?php echo $field ?>: <?php echo $settings[$field] ? 'true' : 'false' ?>,
 <?php endforeach ?>
 };
+var snippetPhpVersion = <?= json_encode($stored_php_version, JSON_HEX_TAG) ?>;
 </script>
 <?php require('../includes/script.php'); ?>
 </body>
