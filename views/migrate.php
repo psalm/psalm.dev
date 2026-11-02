@@ -3,7 +3,7 @@
 /**
  * Applies pending phinx migrations: GET /migrate?run=1
  *
- * Public on purpose: the deploy doesn't run composer scripts, so this is how migrations reach production.
+ * Public on purpose: migrations don't reach production otherwise (composer scripts don't seem to run on deploy).
  * It can only apply migrations that are already committed, and applied ones are skipped, so repeated calls are harmless.
  */
 
@@ -17,7 +17,16 @@ if (($_GET['run'] ?? null) !== '1') {
     exit;
 }
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+// phinx lives in vendor-bin (composer bin plugin) to keep its dependencies apart from vimeo/psalm's
+$phinx_autoload = dirname(__DIR__) . '/vendor-bin/phinx/vendor/autoload.php';
+
+if (!is_file($phinx_autoload)) {
+    http_response_code(500);
+    echo "phinx is not installed: run `composer bin all install` on the server\n";
+    exit;
+}
+
+require_once $phinx_autoload;
 
 /** @var array{dsn: string, user: string, password: string} $db_config */
 $db_config = require dirname(__DIR__) . '/dbconfig.php';
