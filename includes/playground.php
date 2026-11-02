@@ -18,7 +18,7 @@
         <span class="pg_spacer"></span>
         <div class="pg_toolgroup pg_toolgroup_actions">
             <button type="button" id="fixer" class="pg_ghost" title="Let Psalm rewrite the code to fix the fixable issues" hidden>Fix code</button>
-            <button type="button" id="getlink" class="pg_primary" onclick="getLink();" title="Save the snippet and copy its link">Share</button>
+            <button type="button" id="getlink" class="pg_primary" onclick="getLink();" title="Save the snippet and copy its link"><svg width="22" height="12" viewBox="0 0 28 15" fill="currentColor" aria-hidden="true" focusable="false"><g fill-rule="evenodd"><path d="M17.3 2.5A5 5 0 0 0 13 0H5a5 5 0 0 0-5 5v1a5 5 0 0 0 5 5h8a5 5 0 0 0 4.8-3.5H16a4 4 0 0 1-3.5 2h-7a4 4 0 1 1 0-8h7c1 0 2 .4 2.6 1h2.2z"/><path d="M10.4 12.5a5 5 0 0 0 4.4 2.5h8a5 5 0 0 0 5-5V9a5 5 0 0 0-5-5h-8A5 5 0 0 0 10 7.5h1.8a4 4 0 0 1 3.5-2h7a4 4 0 1 1 0 8h-7c-1 0-2-.4-2.7-1h-2.2z"/></g></svg><span class="pg_share_label">Share</span></button>
         </div>
     </div>
     <div class="pg_panes" id="pg_panes">

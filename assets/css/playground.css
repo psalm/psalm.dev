@@ -187,9 +187,20 @@
 
 /* Share is the one primary action */
 .pg_bar button.pg_primary {
-    min-width: calc(12ch + 30px);
+    min-width: calc(12ch + 60px);
     background: var(--pg-ink);
     color: var(--pg-panel);
+}
+
+.pg_bar button.pg_primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.pg_bar button.pg_primary svg {
+    flex: none;
 }
 
 .pg_bar button.pg_primary:hover {

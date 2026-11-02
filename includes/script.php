@@ -250,14 +250,15 @@ var shareLabelTimer = null;
 
 var setShareLabel = function(text, state) {
     var button = document.getElementById('getlink');
+    var label = button.querySelector('.pg_share_label');
 
     clearTimeout(shareLabelTimer);
-    button.textContent = text;
+    label.textContent = text;
     button.dataset.state = state;
 
     if (state !== 'busy') {
         shareLabelTimer = setTimeout(function () {
-            button.textContent = 'Share';
+            label.textContent = 'Share';
             delete button.dataset.state;
         }, 2000);
     }
@@ -738,7 +739,6 @@ var fetchAnnotations = function (code, callback, options, cm) {
     latestFetch++;
     fetchKey = latestFetch;
 
-    var startedAt = performance.now();
     setRunState('busy', 'analysing…');
 
     var submitData = {
@@ -776,7 +776,7 @@ var fetchAnnotations = function (code, callback, options, cm) {
 
             currentIssue = null;
             setIssueCount(response.results.length);
-            setRunState('done', 'done in ' + Math.round(performance.now() - startedAt) + ' ms');
+            setRunState('done', '');
 
             if (response.results.length === 0) {
                 outputElement().innerHTML = /^\s*(<\?php)?\s*$/i.test(code)
