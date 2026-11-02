@@ -458,23 +458,38 @@ var setIssueCount = function(count) {
     document.getElementById('pg_issue_count').textContent = count === null ? '' : String(count);
 };
 
+// "Psalm 7.0.0+2 (ca4690d)": release, compare view and commit links; label/url when no tag was resolved
 var renderPsalmVersion = function(response) {
     var element = document.getElementById('pg_psalm_version');
-    element.textContent = 'Psalm ';
+    var link = function (href, text, title) {
+        var a = document.createElement('a');
+        a.href = href;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.textContent = text;
+        a.title = title;
+        return a;
+    };
 
-    var versionLink = document.createElement('a');
-    versionLink.href = response.version_url;
-    versionLink.target = '_blank';
-    versionLink.textContent = response.version_label;
-    element.appendChild(versionLink);
+    element.textContent = 'Psalm ';
+
+    if (response.version_tag) {
+        element.appendChild(link(response.version_tag_url, response.version_tag, 'Release notes for ' + response.version_tag));
+
+        if (response.version_compare_url) {
+            element.appendChild(link(
+                response.version_compare_url,
+                '+' + response.version_ahead,
+                response.version_ahead + ' commits after ' + response.version_tag
+            ));
+        }
+    } else {
+        element.appendChild(link(response.version_url, response.version_label, 'This Psalm build'));
+    }
 
     if (response.version_commit) {
-        var commitLink = document.createElement('a');
-        commitLink.href = response.version_commit_url;
-        commitLink.target = '_blank';
-        commitLink.textContent = response.version_commit;
-        element.appendChild(document.createTextNode(' ('));
-        element.appendChild(commitLink);
+        element.appendChild(document.createTextNode(' ('));
+        element.appendChild(link(response.version_commit_url, response.version_commit, 'The commit psalm.dev runs'));
         element.appendChild(document.createTextNode(')'));
     }
 };
