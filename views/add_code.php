@@ -45,9 +45,9 @@ if (strlen($code) > 6000) {
 
 require_once('../vendor/autoload.php');
 
-$php_version = $_POST['php'] ?? OnlineChecker::DEFAULT_PHP_VERSION;
+$php_version = $_POST['php'] ?? OnlineChecker::defaultPhpVersion();
 
-if (!is_string($php_version) || !preg_match('/' . OnlineChecker::SUPPORTED_PHP_VERSION_REGEX . '/', $php_version)) {
+if (!is_string($php_version) || !preg_match('/' . OnlineChecker::SUPPORTED_PHP_VERSION_REGEX . '/D', $php_version)) {
     http_response_code(412);
     echo 'Unsupported PHP version';
     exit();

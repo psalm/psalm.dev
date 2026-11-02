@@ -10,8 +10,7 @@ use Psalm\Internal\Provider\FakeFileProvider;
 
 class OnlineChecker
 {
-    public const DEFAULT_PHP_VERSION = '8.5';
-    // offered in the settings panel
+    // offered in the settings panel; the last one is the default
     public const PHP_VERSIONS = ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5', '8.6'];
     // every version Psalm can analyse (ProjectAnalyzer::PHP_SUPPORTED_VERSIONS_REGEX), still accepted via ?php= for old links
     public const SUPPORTED_PHP_VERSION_REGEX = '^(5\.[456]|7\.[0-4]|8\.[0-6])$';
@@ -20,11 +19,16 @@ class OnlineChecker
     // written by bin/generate_psalm_version.php on composer install/update
     public const PSALM_VERSION_FILE = __DIR__ . '/../psalm_version.json';
 
+    public static function defaultPhpVersion(): string
+    {
+        return self::PHP_VERSIONS[array_key_last(self::PHP_VERSIONS)];
+    }
+
     public static function getResults(
         string $file_contents,
         array $settings,
         bool $fix_file,
-        string $php_version = self::DEFAULT_PHP_VERSION
+        string $php_version
     ): array {
         $config = self::getPsalmConfig($settings, $fix_file, $file_contents);
 
