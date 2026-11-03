@@ -90,12 +90,18 @@ try {
     $settings_fields = Settings::names();
 
     foreach ($settings_fields as $field) {
-        $data[$field] = ($settings[$field] ?? false) ? '1' : '';
+        $data[$field] = ($settings[$field] ?? false) ? 1 : 0;
     }
     $insert_sql = 'insert into `codes` (`' . implode('`,`', array_keys($data)) .  '`) values (:' . implode(', :', array_keys($data)) . ')';
 
     $stmt = $pdo->prepare($insert_sql);
-    $stmt->execute($data);
+
+    // the setting columns are BIT(1): a quoted '1' is 8 bits wide and strict SQL mode rejects it, so bind them as integers
+    foreach ($data as $column => $value) {
+        $stmt->bindValue(':' . $column, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
+    }
+
+    $stmt->execute();
 } catch (PDOException $e) {
     error_log('add_code: ' . $e->getMessage());
     // the SQLSTATE code says what kind of failure it was without exposing queries or server paths
