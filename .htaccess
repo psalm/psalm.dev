@@ -11,6 +11,7 @@ Header set Access-Control-Allow-Origin "*"
 <IfModule mod_deflate.c>
   # Compress HTML, CSS, JavaScript, Text, XML and fonts
   AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/json
   AddOutputFilterByType DEFLATE application/rss+xml
   AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
   AddOutputFilterByType DEFLATE application/x-font
@@ -32,19 +33,29 @@ Header set Access-Control-Allow-Origin "*"
   AddOutputFilterByType DEFLATE text/javascript
   AddOutputFilterByType DEFLATE text/plain
   AddOutputFilterByType DEFLATE text/xml
-  Header append Vary User-Agent
 </IfModule>
 
 # Without explicit headers browsers guess a cache lifetime from the file age
-# and can keep stale copies for weeks. Most stylesheets and scripts aren't
-# fingerprinted (they're versioned with ?N query strings when they change),
-# so cache them briefly; mkdocs-material's hashed assets never change.
+# and can keep stale copies for weeks. Stylesheets and scripts are linked with
+# a ?N or ?v=N version that is bumped on every change, so a versioned URL never
+# changes and is cached for good; unversioned requests get a short lifetime.
+# mkdocs-material's hashed assets never change either.
 <IfModule mod_headers.c>
   <FilesMatch "\.(css|js)$">
     Header set Cache-Control "public, max-age=3600"
+    <If "%{QUERY_STRING} =~ /^(v=)?[0-9]+$/">
+      Header set Cache-Control "public, max-age=31536000, immutable"
+    </If>
   </FilesMatch>
   <FilesMatch "\.[0-9a-f]{8}\.(css|js)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  # The web fonts in /extra/ have not changed in years
+  <FilesMatch "\.(woff2?)$">
+    Header set Cache-Control "public, max-age=31536000"
+  </FilesMatch>
+  <FilesMatch "\.(png|jpe?g|svg|ico)$">
+    Header set Cache-Control "public, max-age=86400"
   </FilesMatch>
 </IfModule>
 

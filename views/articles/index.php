@@ -11,7 +11,6 @@ $articles = $blog->articles->getAll();
 <head>
 <title>Psalm - Blog</title>
 <?php require('../../includes/meta.php'); ?>
-<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 </head>
 <body>
 <?php require('../../includes/nav.php'); ?>

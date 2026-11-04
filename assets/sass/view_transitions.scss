@@ -1,0 +1,18 @@
+// Cross-document view transitions: same-origin navigations cross-fade
+// instead of flashing a blank page. Browsers without support ignore this.
+@view-transition {
+    navigation: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    @view-transition {
+        navigation: none;
+    }
+}
+
+// Short enough to feel instant, long enough to hide the swap
+::view-transition-group(*),
+::view-transition-old(*),
+::view-transition-new(*) {
+    animation-duration: 150ms;
+}

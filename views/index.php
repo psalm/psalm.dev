@@ -9,6 +9,7 @@ use PsalmDotOrg\Settings;
 require_once dirname(__DIR__) . '/src/Settings.php';
 
  require('../includes/meta.php'); ?>
+<script src="/assets/js/codemirror.min.js?2"></script>
 </head>
 <body class="front">
 <?php require('../includes/nav.php'); ?>
