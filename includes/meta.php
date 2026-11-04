@@ -2,10 +2,13 @@
 /**
  * Shared <head> tags. Pages may set before including:
  * - $meta_description: text for <meta name="description">
- * - $canonical_url: canonical URL; defaults to this page without a trailing slash, false for none
+ * - $canonical_url: canonical URL, or false to omit it. When unset, it is https://psalm.dev plus
+ *   the request path without query, repeated slashes or a trailing slash (pages with fixed
+ *   URLs set it explicitly, since routes are case-insensitive)
  */
 if (!isset($canonical_url)) {
-    $canonical_path = rtrim((string) parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');
+    // Not parse_url(): it reads "//plugins" as a host and returns no path
+    $canonical_path = rtrim((string) preg_replace('#/+#', '/', strtok($_SERVER['REQUEST_URI'] ?? '/', '?')), '/');
     $canonical_url = 'https://psalm.dev' . ($canonical_path === '' ? '/' : $canonical_path);
 }
 ?>

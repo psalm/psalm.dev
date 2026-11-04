@@ -1,5 +1,6 @@
 User-agent: *
-# Raw snippet formats; snippet pages themselves send noindex
+# Snippet format variants (/r/<id>/raw, /r/<id>/results, /r/<id>.json);
+# snippet pages themselves send noindex
 Disallow: /r/*/
 Disallow: /r/*.json
 

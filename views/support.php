@@ -12,6 +12,7 @@ $contribution_markdown = file_get_contents(dirname(__DIR__) . '/assets/pages/sup
 $html = Muglug\Blog\ArticleRepository::convertMarkdownToHtml($contribution_markdown, null);
 
 http_response_code(200);
+$canonical_url = 'https://psalm.dev/support';
 $meta_description = 'Paid support contracts for Psalm: integration into existing codebases, priority bug fixes and development of new Psalm features.';
 ?>
 <html lang="en">

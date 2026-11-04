@@ -7,6 +7,7 @@
 
 use PsalmDotOrg\Settings;
 require_once dirname(__DIR__) . '/src/Settings.php';
+$canonical_url = 'https://psalm.dev/';
 
  require('../includes/meta.php'); ?>
 <script type="application/ld+json">

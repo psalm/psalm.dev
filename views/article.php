@@ -21,19 +21,22 @@ $blog = new Muglug\Blog\MarkdownBlog(
 
 try {
     $article = $blog->articles->get($name);
-    // A failed GitHub preview lookup comes back as an article without front matter
+    // GitHub errors other than 404 (e.g. 401/403) come back as markdown without front matter,
+    // so an article with no title is treated as not found
     if ($article->title === '') {
-        throw new \UnexpectedValueException('Article not found');
+        throw new \UnexpectedValueException('Article "' . $name . '" has no title');
     }
     http_response_code(200);
 } catch (\Exception $e) {
+    // Logged so a broken preview token or a bad article is not mistaken for a mistyped URL
+    error_log('Article ' . $name . ': ' . $e->getMessage());
     $not_found_message = 'This article does not exist.';
     require dirname(__DIR__) . '/includes/not_found.php';
 }
 
 $e = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES);
 
-// Translations live next to the English article as <slug>-<language>.md
+// Translations are <slug>-<lang>.md next to the English file; add new two-letter codes here
 $translations = ['fr', 'it', 'uk'];
 $lang = preg_match('/-(' . implode('|', $translations) . ')$/', $name, $m) ? $m[1] : 'en';
 $base_name = $lang === 'en' ? $name : substr($name, 0, -3);
@@ -46,11 +49,18 @@ foreach (array_merge(['en'], $translations) as $language) {
 }
 
 $url = 'https://psalm.dev/articles/' . $name;
-$canonical_url = $article->canonical ?: $url;
+// Previews are unpublished drafts: keep them out of the index
+if ($article->is_preview) {
+    header('X-Robots-Tag: noindex');
+    $canonical_url = false;
+} else {
+    $canonical_url = $article->canonical ?: $url;
+}
 // The library builds the description from rendered HTML, so it holds entities like &amp;
 $description = trim(preg_replace('/\s+/u', ' ', html_entity_decode($article->description, ENT_QUOTES | ENT_HTML5, 'UTF-8')));
 $meta_description = $description;
-$published = date('c', strtotime($article->date));
+$timestamp = strtotime($article->date);
+$published = $timestamp === false ? null : date('c', $timestamp);
 
 ?>
 <html lang="<?= $lang ?>">
@@ -67,15 +77,17 @@ $published = date('c', strtotime($article->date));
 <meta property="og:type" content="article" />
 <meta property="og:title" content="<?= $e($article->title) ?>" />
 <meta property="og:description" content="<?= $e($description) ?>" />
-<meta property="og:url" content="<?= $e($url) ?>" />
+<meta property="og:url" content="<?= $e($canonical_url ?: $url) ?>" />
+<?php if ($published): ?>
 <meta property="article:published_time" content="<?= $published ?>" />
+<?php endif ?>
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@psalmphp" />
 <meta name="twitter:title" content="<?= $e($article->title) ?>" />
 <meta name="twitter:description" content="<?= $e($description) ?>" />
 <meta name="twitter:image" content="https://psalm.dev/article_thumbnail.png" />
 <script type="application/ld+json">
-<?= json_encode([
+<?= json_encode(array_filter([
     '@context' => 'https://schema.org',
     '@type' => 'BlogPosting',
     'headline' => $article->title,
@@ -85,8 +97,8 @@ $published = date('c', strtotime($article->date));
     'publisher' => ['@type' => 'Organization', 'name' => 'Psalm', 'url' => 'https://psalm.dev/'],
     'image' => 'https://psalm.dev/article_thumbnail.png',
     'inLanguage' => $lang,
-    'mainEntityOfPage' => $canonical_url,
-], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_PRETTY_PRINT) ?>
+    'mainEntityOfPage' => $canonical_url ?: $url,
+]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_INVALID_UTF8_SUBSTITUTE | JSON_PRETTY_PRINT) ?>
 
 </script>
 <?php if ($lang === 'uk'): ?>

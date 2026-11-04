@@ -12,6 +12,7 @@ $contribution_markdown = file_get_contents(dirname(__DIR__) . '/assets/pages/con
 $html = Muglug\Blog\ArticleRepository::convertMarkdownToHtml($contribution_markdown, null);
 
 http_response_code(200);
+$canonical_url = 'https://psalm.dev/contribute';
 $meta_description = 'How to contribute to Psalm, the open-source static analysis tool for PHP.';
 ?>
 <html lang="en">

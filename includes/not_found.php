@@ -1,6 +1,7 @@
 <?php
 /**
- * Renders a 404 page and stops. Set $not_found_message before including.
+ * Renders a noindex 404 page and exits. Include it before any output, or the status and
+ * headers are lost. Optional: $not_found_message (defaults to a generic message).
  */
 http_response_code(404);
 header('Content-Type: text/html; charset=utf-8');

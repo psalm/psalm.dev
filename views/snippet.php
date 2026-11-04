@@ -14,6 +14,13 @@ if (!isset($_GET['r']) ) {
 $hash = trim($_GET['r']);
 
 if (!preg_match('/^[a-z0-9]+$/', $hash)) {
+    if (($_GET['format'] ?? null) === 'json') {
+        http_response_code(404);
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'not found']);
+        exit;
+    }
+
     $not_found_message = 'This code snippet does not exist.';
     require dirname(__DIR__) . '/includes/not_found.php';
 }
@@ -28,6 +35,7 @@ $db_config = require_once('../dbconfig.php');
 try {
     $pdo = new PDO($db_config['dsn'], $db_config['user'], $db_config['password']);
 } catch (PDOException $e) {
+    error_log('Snippet database connection failed: ' . $e->getMessage());
     die('Connection to database failed');
 }
 
