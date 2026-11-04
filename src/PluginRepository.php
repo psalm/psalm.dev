@@ -14,7 +14,10 @@ final class PluginRepository
     private const PLUGIN_NAMES_ENDPOINT = 'https://packagist.org/packages/list.json?type=psalm-plugin';
     private const PSALM_RELEASES_ENDPOINT = 'https://repo.packagist.org/p2/vimeo/psalm.json';
     private const HTTP_TIMEOUT_SECONDS = 20;
+    // Packagist asks API clients to identify themselves with a way to contact them: https://packagist.org/apidoc
+    private const HTTP_USER_AGENT = 'psalm.dev plugin list (+https://github.com/psalm/psalm.dev/issues)';
 
+    // Unlisted at their author's request after they unintentionally skewed the plugin ranking (#101)
     private const EXCLUDED_PACKAGES = [
         'ghostwriter/example-psalm-plugin',
         'ghostwriter/phpunit-psalm-plugin',
@@ -295,7 +298,12 @@ final class PluginRepository
 
     private static function fetchJson(string $url, int $error_code): array
     {
-        $context = stream_context_create(['http' => ['timeout' => self::HTTP_TIMEOUT_SECONDS]]);
+        $context = stream_context_create([
+            'http' => [
+                'timeout' => self::HTTP_TIMEOUT_SECONDS,
+                'user_agent' => self::HTTP_USER_AGENT,
+            ],
+        ]);
         $json = @file_get_contents($url, false, $context);
         if ($json === false || $json === '') {
             throw new RuntimeException(
