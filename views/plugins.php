@@ -42,8 +42,10 @@ $works_classes = static function (Plugin $plugin): string {
     }
     return implode(' ', array_map(static fn (int $major): string => 'works-' . $major, $plugin->psalm_majors));
 };
+
+$meta_description = 'Psalm plugins for Laravel, Symfony, PHPUnit, Doctrine and other frameworks and libraries, ranked by monthly downloads.';
 ?>
-<html>
+<html lang="en">
 
 <head>
     <title>Psalm plugins</title>

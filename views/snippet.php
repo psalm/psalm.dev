@@ -14,9 +14,8 @@ if (!isset($_GET['r']) ) {
 $hash = trim($_GET['r']);
 
 if (!preg_match('/^[a-z0-9]+$/', $hash)) {
-    http_response_code(303);
-    header('Location: /');
-    exit;
+    $not_found_message = 'This code snippet does not exist.';
+    require dirname(__DIR__) . '/includes/not_found.php';
 }
 
 require_once('../vendor/autoload.php');
@@ -44,9 +43,8 @@ if (!$result) {
         exit;
     }
 
-    http_response_code(303);
-    header('Location: /');
-    exit;
+    $not_found_message = 'This code snippet does not exist.';
+    require dirname(__DIR__) . '/includes/not_found.php';
 }
 
 $code = $result['code'];
@@ -118,10 +116,14 @@ if (isset($_GET['format'])) {
 }
 
 http_response_code(200);
+// Snippets are user-submitted code: crawlable for their links, but kept out of the index
+header('X-Robots-Tag: noindex, follow');
+$canonical_url = false;
 ?>
-<html>
+<html lang="en">
 <head>
-<title>Psalm - a static analysis tool for PHP</title>
+<title>Psalm snippet <?= $hash ?></title>
+<meta name="robots" content="noindex, follow" />
 <script src="/assets/js/codemirror.min.js?2"></script>
 <?php require('../includes/meta.php'); ?>
 </head>

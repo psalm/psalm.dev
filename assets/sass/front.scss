@@ -18,12 +18,13 @@ body.front {
     float: left;
     margin-top: -10px;
 
-    h2 {
+    h1 {
         font-family: 'National 2', sans-serif;
         font-weight: 500;
         font-size: 34px;
         line-height: 1.3em;
         margin-top: 20px;
+        margin-bottom: 0.83em;
         color: #8e8585;
     }
 
@@ -160,7 +161,7 @@ div.cm_container {
 }
 
 .code_expanded {
-    h1 a {
+    nav .logo a {
         padding: 10px 0;
     }
 
@@ -173,7 +174,7 @@ div.cm_container {
         margin: 15px 0 10px;
     }
 
-    nav h1 a {
+    nav .logo a {
         font-size: 30px;
     }
 
