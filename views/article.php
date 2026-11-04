@@ -33,6 +33,7 @@ try {
 <head>
 <title><?= $article->title ?></title>
 <?php require('../includes/meta.php'); ?>
+<script src="/assets/js/codemirror.min.js?2"></script>
 <?php if ($article->canonical): ?><link rel="canonical" href="<?= $article->canonical ?>" /><?php endif; ?>
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@psalmphp" />
@@ -81,6 +82,14 @@ let fetchKey = null;
 const settings = <?php echo json_encode(Settings::defaultValues()) ?>;
 
 var fetchAnnotations = function (code, callback, options, cm) {
+    // A prerendered page must not run Psalm until the user actually opens it
+    if (document.prerendering) {
+        document.addEventListener('prerenderingchange', function () {
+            fetchAnnotations(code, callback, options, cm);
+        }, {once: true});
+        return;
+    }
+
     latestFetch++;
     fetchKey = latestFetch;
     fetch('/check', {

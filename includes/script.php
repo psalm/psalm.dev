@@ -138,6 +138,14 @@ var escapeHtml = function(snippet) {
 }
 
 var fetchAnnotations = function (code, callback, options, cm) {
+    // A prerendered page must not run Psalm until the user actually opens it
+    if (document.prerendering) {
+        document.addEventListener('prerenderingchange', function () {
+            fetchAnnotations(code, callback, options, cm);
+        }, {once: true});
+        return;
+    }
+
     latestFetch++;
     fetchKey = latestFetch;
 

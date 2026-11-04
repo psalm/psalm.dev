@@ -1,5 +1,6 @@
 @import 'tiempos_text.scss';
 @import 'national.scss';
+@import 'view_transitions.scss';
 
 body {
 	font-family: 'Tiempos Text', 'Times New Roman', serif;
@@ -385,4 +386,8 @@ $nav-active-bg: #f8eded;
 	.psalm-nav .psalm-nav__toc {
 		display: block;
 	}
+}
+// The header is the same on every docs page, so it stays put while the content changes
+.md-header {
+	view-transition-name: docs-header;
 }

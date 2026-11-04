@@ -47,10 +47,7 @@ $works_classes = static function (Plugin $plugin): string {
 
 <head>
     <title>Psalm plugins</title>
-    <link rel="stylesheet" type="text/css" href="https://cloud.typography.com/751592/7707372/css/fonts.css" />
-    <link rel="stylesheet" href="/assets/css/site.css?14">
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <?php require __DIR__ . "/../includes/meta.php" ?>
     <?php if ($filter_majors) : ?>
     <style>
         <?php foreach ($filter_majors as $major) : ?>
