@@ -5,30 +5,31 @@ namespace PsalmDotOrg;
 /** @psalm-immutable */
 final class Plugin
 {
-    public $name;
-    public $description;
-    public $monthly_downloads;
-    public $stars;
-
-    private function __construct(
-        string $name,
-        string $description,
-        int $monthly_downloads,
-        int $stars
+    /**
+     * @param list<int>|null $psalm_majors Psalm majors supported by at least one stable release,
+     *                                     null when no release declares a Psalm or plugin API requirement
+     * @param list<string> $libraries Packages whose presence makes Psalm enable a bundled plugin
+     */
+    public function __construct(
+        public readonly string $name,
+        public readonly string $description,
+        public readonly int $monthly_downloads,
+        public readonly int $stars,
+        public readonly ?string $last_release,
+        public readonly ?array $psalm_majors,
+        public readonly bool $bundled,
+        public readonly array $libraries,
     ) {
-        $this->name = $name;
-        $this->description = $description;
-        $this->monthly_downloads = $monthly_downloads;
-        $this->stars = $stars;
     }
 
-    public static function fromRepoEntry(array $entry): self
+    /** @param array<string, mixed> $data an entry as written by json_encode() of this class */
+    public static function fromArray(array $data): self
     {
-        return new self(
-            $entry['name'],
-            $entry['description'],
-            $entry['downloads']['monthly'],
-            $entry['github_stars']
-        );
+        return new self(...$data);
+    }
+
+    public function maxPsalmMajor(): ?int
+    {
+        return $this->psalm_majors === null || $this->psalm_majors === [] ? null : max($this->psalm_majors);
     }
 }
