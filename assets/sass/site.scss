@@ -9,6 +9,12 @@
 @import 'plugins.scss';
 @import 'view_transitions.scss';
 
+// Always reserve the scrollbar's space, so centred content (the nav) doesn't
+// jump sideways between pages with and without a vertical scrollbar
+html {
+    scrollbar-gutter: stable;
+}
+
 body {
     font-family: "Tiempos Text", Georgia;
     line-height: 1.5em;

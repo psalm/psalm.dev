@@ -391,3 +391,9 @@ $nav-active-bg: #f8eded;
 .md-header {
 	view-transition-name: docs-header;
 }
+
+// Always reserve the scrollbar's space, so the layout doesn't jump sideways
+// between pages with and without a vertical scrollbar
+html {
+	scrollbar-gutter: stable;
+}
