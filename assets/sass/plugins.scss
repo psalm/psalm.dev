@@ -1,6 +1,10 @@
 div.plugin_list {
     margin: 20px auto 80px;
-    max-width: 680px;
+    // body is a column flexbox, so without an explicit width the list shrinks to its content
+    // and shifts whenever the version filter changes which plugins are visible
+    width: 100%;
+    max-width: 720px;
+    box-sizing: border-box;
     padding-left: 20px;
     padding-right: 20px;
 
