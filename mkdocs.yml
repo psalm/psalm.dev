@@ -1,4 +1,4 @@
-site_name: Documentation
+site_name: Psalm
 # Canonical links and the sitemap need the /docs/ prefix
 site_url: https://psalm.dev/docs/
 repo_url: https://github.com/vimeo/psalm

@@ -61,18 +61,20 @@ Header set Access-Control-Allow-Origin "*"
 
 DirectoryIndex index.php index.html
 
-Redirect 301 /docs/installation https://psalm.dev/docs/running_psalm/installation
-Redirect 301 /docs/configuration https://psalm.dev/docs/running_psalm/configuration
-Redirect 301 /docs/using_plugins https://psalm.dev/docs/running_psalm/plugins/using_plugins
-Redirect 301 /docs/authoring_plugins https://psalm.dev/docs/running_psalm/plugins/authoring_plugins
-Redirect 301 /docs/plugins_type_system https://psalm.dev/docs/running_psalm/plugins/plugins_type_system
-Redirect 301 /docs/language_server https://psalm.dev/docs/running_psalm/language_server
-Redirect 301 /docs/typing_in_psalm https://psalm.dev/docs/annotating_code/typing_in_psalm
-Redirect 301 /docs/templated_annotations https://psalm.dev/docs/annotating_code/templated_annotations
-Redirect 301 /docs/supported_annotations  https://psalm.dev/docs/annotating_code/supported_annotations
-Redirect 301 /docs/annotating_code/docblock_type_syntax https://psalm.dev/docs/annotating_code/typing_in_psalm
+# Old docs URLs (through fixing_code below), with or without a trailing slash or index.html.
+# Targets end with a slash, as mkdocs serves them, so each is a single hop
+RedirectMatch 301 ^/docs/installation(/|/index\.html)?$ https://psalm.dev/docs/running_psalm/installation/
+RedirectMatch 301 ^/docs/configuration(/|/index\.html)?$ https://psalm.dev/docs/running_psalm/configuration/
+RedirectMatch 301 ^/docs/using_plugins(/|/index\.html)?$ https://psalm.dev/docs/running_psalm/plugins/using_plugins/
+RedirectMatch 301 ^/docs/authoring_plugins(/|/index\.html)?$ https://psalm.dev/docs/running_psalm/plugins/authoring_plugins/
+RedirectMatch 301 ^/docs/plugins_type_system(/|/index\.html)?$ https://psalm.dev/docs/running_psalm/plugins/plugins_type_system/
+RedirectMatch 301 ^/docs/language_server(/|/index\.html)?$ https://psalm.dev/docs/running_psalm/language_server/
+RedirectMatch 301 ^/docs/typing_in_psalm(/|/index\.html)?$ https://psalm.dev/docs/annotating_code/typing_in_psalm/
+RedirectMatch 301 ^/docs/templated_annotations(/|/index\.html)?$ https://psalm.dev/docs/annotating_code/templated_annotations/
+RedirectMatch 301 ^/docs/supported_annotations(/|/index\.html)?$ https://psalm.dev/docs/annotating_code/supported_annotations/
+RedirectMatch 301 ^/docs/annotating_code/docblock_type_syntax(/|/index\.html)?$ https://psalm.dev/docs/annotating_code/typing_in_psalm/
 
-Redirect 301 /docs/fixing_code https://psalm.dev/docs/manipulating_code/fixing.md
+RedirectMatch 301 ^/docs/fixing_code(/|/index\.html)?$ https://psalm.dev/docs/manipulating_code/fixing/
 
 Redirect 307 /v2/ https://registry.hub.docker.com/v2/
 
@@ -86,9 +88,10 @@ RewriteRule ^r/([a-z0-9]+)/(\w+)$ /views/snippet.php?r=$1&format=$2 [L,NC,QSA]
 RewriteRule ^r/([a-z0-9]+)\.json$ /views/snippet.php?r=$1&format=json [L,NC]
 RewriteRule ^r/([a-z0-9]+)$ /views/snippet.php?r=$1 [L,NC]
 RewriteRule ^check$ /views/check.php [L,NC]
+RewriteRule ^sitemap\.xml$ /views/sitemap.php [L,NC]
 RewriteRule ^add_code$ /views/add_code.php [L,NC]
 # RewriteRule ^migrate$ /views/migrate.php [L,NC,QSA]
-RewriteRule ^quickstart/?$ /docs/installation [R]
+RewriteRule ^quickstart/?$ https://psalm.dev/docs/running_psalm/installation/ [R=301,L]
 RewriteRule ^contribute/?$ /views/contribute.php [L,NC]
 RewriteRule ^support/?$ /views/support.php [L,NC]
 RewriteRule ^plugins/?$ /views/plugins.php [L,NC]

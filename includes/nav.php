@@ -1,11 +1,11 @@
 <nav>
 	<div class="container">
-	    <h1><a href="/">Psalm</a></h1>
+	    <p class="logo"><a href="/">Psalm</a></p>
 
 	    <ul>
-	        <li class="get_started"><a href="/docs/installation">Get started</a></li>
+	        <li class="get_started"><a href="/docs/running_psalm/installation/">Get started</a></li>
 
-	        <li class="doc_link"><a href="/docs">Documentation</a></li>
+	        <li class="doc_link"><a href="/docs/">Documentation</a></li>
 
 	        <li class="support_link"><a href="/support">Paid support</a></li>
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <title>Psalm - a static analysis tool for PHP</title>
 <meta name="description" content="Psalm is a free & open-source static analysis tool that helps you identify problems in your code, so you can sleep a little better" />
@@ -7,15 +7,30 @@
 
 use PsalmDotOrg\Settings;
 require_once dirname(__DIR__) . '/src/Settings.php';
+$canonical_url = 'https://psalm.dev/';
 
  require('../includes/meta.php'); ?>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Psalm",
+    "description": "A free and open-source static analysis tool for PHP that finds bugs and fixes them automatically.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Linux, macOS, Windows",
+    "url": "https://psalm.dev/",
+    "downloadUrl": "https://packagist.org/packages/vimeo/psalm",
+    "license": "https://opensource.org/licenses/MIT",
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}
+}
+</script>
 <script src="/assets/js/codemirror.min.js?2"></script>
 </head>
 <body class="front">
 <?php require('../includes/nav.php'); ?>
 <div class="container front" id="page_container">
     <div class="intro">
-        <h2>Give PHP the <span class="CodeMirror-lint-mark-error">love</span> it&nbsp;deserves</h2>
+        <h1>Give PHP the <span class="CodeMirror-lint-mark-error">love</span> it&nbsp;deserves</h1>
 
         <p>It’s easy to make great things in PHP, but bugs can creep in just as easily. Psalm is a free &amp; open-source static analysis tool that helps you identify problems in your code, so you can sleep a little better.</p>
 

@@ -32,7 +32,7 @@ if ($path) {
 
     if (isset($map[$path])) {
         http_response_code(301);
-        header("Location: /docs/running_psalm/issues/" . $map[$path]);
+        header("Location: /docs/running_psalm/issues/" . $map[$path] . "/");
         exit();
     }
 }

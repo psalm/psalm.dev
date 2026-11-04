@@ -1,1 +1,8 @@
-Disallow: /r/
+User-agent: *
+# Snippet format variants (/r/<id>/raw, /r/<id>/results, /r/<id>.json);
+# snippet pages themselves send noindex
+Disallow: /r/*/
+Disallow: /r/*.json
+
+Sitemap: https://psalm.dev/sitemap.xml
+Sitemap: https://psalm.dev/docs/sitemap.xml
