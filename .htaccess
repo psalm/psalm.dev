@@ -98,6 +98,9 @@ RewriteRule ^plugins/?$ /views/plugins.php [L,NC]
 RewriteRule ^$ /views/index.php [L,NC]
 RewriteRule ^schema/config$ /vendor/vimeo/psalm/config.xsd [L,NC]
 RewriteRule ^[0-9]{3}\)?$ /views/issue_redirect.php [L,NC]
+# Issue type shortcuts: /InvalidArgument -> its docs page, only when that page exists (#29)
+RewriteCond %{DOCUMENT_ROOT}/docs/running_psalm/issues/$1/index.html -f
+RewriteRule ^([A-Z][A-Za-z]+)/?$ https://psalm.dev/docs/running_psalm/issues/$1/ [R=301,L]
 
 
 RewriteRule ^composer\.*$ - [F,L]
