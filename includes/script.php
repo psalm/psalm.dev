@@ -317,7 +317,8 @@ var fetchAnnotations = function (code, callback, options, cm) {
                             }
                         );
                     }
-                } else {
+                } else if (fix_button) {
+                    // fixable_errors is [] when nothing is fixable, which is truthy, so the button may not exist
                     fix_button.parentNode.removeChild(fix_button);
                     fix_button = null;
                 }
@@ -367,19 +368,20 @@ var fetchFixedContents = function (code, cm) {
             return;
         }
 
-        fix_button.parentNode.removeChild(fix_button);
-        fix_button = null;
+        if (fix_button) {
+            fix_button.parentNode.removeChild(fix_button);
+            fix_button = null;
+        }
 
         if ('fixed_contents' in response && response.fixed_contents) {
             cm.setValue(response.fixed_contents);
         }
         else if ('error' in response) {
-            callback({
-               message: response.error.message,
-               severity: 'error',
-               from: cm.posFromIndex(response.error.from),
-               to: cm.posFromIndex(response.error.to),
-            });
+            // No lint callback here: report the failure where lint errors are shown
+            var error_type = response.error.type === 'parser_error' ? 'Parser' : 'Internal Psalm';
+            document.getElementById('psalm_output').innerText = 'Psalm runner output: \n\n'
+                + error_type + ' error on line ' + response.error.line_from + ' - '
+                + response.error.message;
         }
     })
     .catch (function (error) {
