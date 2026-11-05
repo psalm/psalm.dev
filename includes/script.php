@@ -172,25 +172,21 @@ var fetchAnnotations = function (code, callback, options, cm) {
         }
 
         if ('results' in response) {
-            const versionLink = function (href, text) {
-                const link = document.createElement('a');
-                link.href = href;
-                link.target = '_blank';
-                link.textContent = text;
-                return link.outerHTML;
-            };
+            var psalm_version = response.version_label;
 
-            // "7.0.0+2 (ca4690d)": release, compare view (the number) and commit links
-            let psalm_version_html = response.version_tag
-                ? versionLink(response.version_tag_url, response.version_tag)
-                : versionLink(response.version_url, response.version_label);
+            const psalm_version_link = document.createElement('a');
+            psalm_version_link.href = response.version_url;
+            psalm_version_link.target = '_blank';
+            psalm_version_link.textContent = psalm_version;
 
-            if (response.version_tag && response.version_compare_url) {
-                psalm_version_html += '+' + versionLink(response.version_compare_url, String(response.version_ahead));
-            }
+            let psalm_version_html = psalm_version_link.outerHTML;
 
             if (response.version_commit) {
-                psalm_version_html += '&nbsp;(' + versionLink(response.version_commit_url, response.version_commit) + ')';
+                const psalm_commit_link = document.createElement('a');
+                psalm_commit_link.href = response.version_commit_url;
+                psalm_commit_link.target = '_blank';
+                psalm_commit_link.textContent = response.version_commit;
+                psalm_version_html += '&nbsp;(' + psalm_commit_link.outerHTML + ')';
             }
 
             const psalm_header = 'Psalm output (using Psalm&nbsp;' + psalm_version_html + '): <br><br>'
