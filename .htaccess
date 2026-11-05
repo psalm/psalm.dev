@@ -31,6 +31,7 @@ Header set Access-Control-Allow-Origin "*"
   AddOutputFilterByType DEFLATE text/css
   AddOutputFilterByType DEFLATE text/html
   AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE text/markdown
   AddOutputFilterByType DEFLATE text/plain
   AddOutputFilterByType DEFLATE text/xml
 </IfModule>
@@ -97,6 +98,12 @@ RewriteRule ^support/?$ /views/support.php [L,NC]
 RewriteRule ^plugins/?$ /views/plugins.php [L,NC]
 RewriteRule ^$ /views/index.php [L,NC]
 RewriteRule ^schema/config$ /vendor/vimeo/psalm/config.xsd [L,NC]
+# Docs pages as Markdown (/docs/<path>.md) and llms.txt, read at runtime from
+# vendor/vimeo/psalm/docs, the mkdocs source. The path pattern is checked again in PHP
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^docs/((?:[A-Za-z0-9_-]+/)*[A-Za-z0-9_-]+\.md)$ /views/docs_markdown.php?path=$1 [L]
+RewriteRule ^llms\.txt$ /views/llms.php [L]
+RewriteRule ^llms-full\.txt$ /views/llms.php?full=1 [L]
 RewriteRule ^[0-9]{3}\)?$ /views/issue_redirect.php [L,NC]
 # Issue type shortcuts: /InvalidArgument -> its docs page, only when that page exists (#29)
 RewriteCond %{DOCUMENT_ROOT}/docs/running_psalm/issues/$1/index.html -f
