@@ -7,6 +7,10 @@
 {% endblock %}
 
 {% block extrahead %}
+{% if page and page.file %}
+<!-- The Markdown source of this page, served by views/docs_markdown.php -->
+<link rel="alternate" type="text/markdown" href="{{ config.site_url }}{{ page.file.src_path }}">
+{% endif %}
 <script src="{{ 'assets/javascripts/modernizr.86422ebf.js' | url }}"></script>
 <!-- Prerender docs pages on hover or touch start, so they open instantly -->
 <script type="speculationrules">
