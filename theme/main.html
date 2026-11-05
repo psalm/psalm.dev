@@ -8,6 +8,20 @@
 
 {% block extrahead %}
 <script src="{{ 'assets/javascripts/modernizr.86422ebf.js' | url }}"></script>
+<!-- Prerender docs pages on hover or touch start, so they open instantly -->
+<script type="speculationrules">
+{
+  "prerender": [{
+    "where": {
+      "and": [
+        {"href_matches": "/docs/*"},
+        {"not": {"href_matches": "/docs/*.json"}}
+      ]
+    },
+    "eagerness": "moderate"
+  }]
+}
+</script>
 {% endblock %}
 {% block scripts %}
 {{ super() }}

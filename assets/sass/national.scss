@@ -1,10 +1,12 @@
 @font-face {
+    font-display: swap;
     font-family: 'National 2';
     src: url(/extra/national-2-web-regular.woff2) format("woff2"),
         url(/extra/national-2-web-regular.woff) format("woff");
 }
 
 @font-face {
+    font-display: swap;
     font-family: 'National 2';
     font-weight: 500;
     src: url(/extra/national-2-web-medium.woff2) format("woff2"),
@@ -12,6 +14,7 @@
 }
 
 @font-face {
+    font-display: swap;
     font-family: 'National 2';
     font-weight: 600;
     src: url(/extra/national-2-web-bold.woff2) format("woff2"),

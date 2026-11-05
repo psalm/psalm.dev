@@ -14,9 +14,15 @@ if (!isset($_GET['r']) ) {
 $hash = trim($_GET['r']);
 
 if (!preg_match('/^[a-z0-9]+$/', $hash)) {
-    http_response_code(303);
-    header('Location: /');
-    exit;
+    if (($_GET['format'] ?? null) === 'json') {
+        http_response_code(404);
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'not found']);
+        exit;
+    }
+
+    $not_found_message = 'This code snippet does not exist.';
+    require dirname(__DIR__) . '/includes/not_found.php';
 }
 
 require_once('../vendor/autoload.php');
@@ -29,6 +35,7 @@ $db_config = require_once('../dbconfig.php');
 try {
     $pdo = new PDO($db_config['dsn'], $db_config['user'], $db_config['password']);
 } catch (PDOException $e) {
+    error_log('Snippet database connection failed: ' . $e->getMessage());
     die('Connection to database failed');
 }
 
@@ -44,9 +51,8 @@ if (!$result) {
         exit;
     }
 
-    http_response_code(303);
-    header('Location: /');
-    exit;
+    $not_found_message = 'This code snippet does not exist.';
+    require dirname(__DIR__) . '/includes/not_found.php';
 }
 
 $code = $result['code'];
@@ -118,15 +124,16 @@ if (isset($_GET['format'])) {
 }
 
 http_response_code(200);
+// Snippets are user-submitted code: crawlable for their links, but kept out of the index
+header('X-Robots-Tag: noindex, follow');
+$canonical_url = false;
 ?>
-<html>
+<html lang="en">
 <head>
-<title>Psalm - a static analysis tool for PHP</title>
-<script src="/assets/js/codemirror.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cloud.typography.com/751592/7707372/css/fonts.css" />
-<link rel="stylesheet" href="/assets/css/site.css?23">
-<link rel="icon" type="image/png" href="/favicon.png">
-<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Psalm snippet <?= $hash ?></title>
+<meta name="robots" content="noindex, follow" />
+<script src="/assets/js/codemirror.min.js?2"></script>
+<?php require('../includes/meta.php'); ?>
 </head>
 <body class="front code_expanded">
 <?php require('../includes/nav.php'); ?>

@@ -18,9 +18,15 @@ nav {
         background-size: 11px 4px;
     }
     
-    h1 {
+    // Logo and links share one text baseline
+    .container {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+    }
+
+    .logo {
         margin: 10px 0 10px 20px;
-        float: left;
 
         a {
             display: block;
@@ -37,9 +43,7 @@ nav {
 
     ul {
         list-style: none;
-        float: right;
-        margin-top: 25px;
-        margin: 25px 10px 0 0;
+        margin: 0 10px 0 0;
         padding-left: 0px;
 
         li {
@@ -75,7 +79,11 @@ nav {
         padding: 15px;
         margin-bottom: 10px;
 
-        h1 {
+        .container {
+            display: block;
+        }
+
+        .logo {
             margin: 10px;
             float: none;
 

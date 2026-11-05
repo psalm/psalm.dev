@@ -1,6 +1,10 @@
 div.plugin_list {
     margin: 20px auto 80px;
-    max-width: 680px;
+    // body is a column flexbox, so without an explicit width the list shrinks to its content
+    // and shifts whenever the version filter changes which plugins are visible
+    width: 100%;
+    max-width: 720px;
+    box-sizing: border-box;
     padding-left: 20px;
     padding-right: 20px;
 
@@ -30,6 +34,10 @@ div.plugin_list {
     .meta {
         margin: 0.5em 0 1em;
         color: #666;
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 1.25em;
+        row-gap: .25em;
 
         &.inline {
             margin-bottom: -1em;
@@ -39,34 +47,190 @@ div.plugin_list {
             text-decoration: none;
         }
 
-        .downloads {
-            color: #666;
+        .downloads, .stars, .released {
             line-height: 1em;
+
             &::before {
                 vertical-align: text-top;
                 display: inline-block;
                 content: "";
-                background-image: url('data:image/svg+xml,<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-down-circle" fill="%23666" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5A.5.5 0 0 1 8 4z"/></svg>');
+                margin-right: .25em;
                 background-repeat: no-repeat;
                 background-size: 1rem 1rem;
                 width: 1em;
                 height: 1em;
             }
         }
-        .stars {
-            color: #666;
-            line-height: 1em;
-            margin-left: 1em;
-            &::before {
-                vertical-align: text-top;
-                display: inline-block;
-                content: "";
-                background-image: url('data:image/svg+xml, <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-star" fill="%23666" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.523-3.356c.329-.314.158-.888-.283-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767l-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288l1.847-3.658 1.846 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.564.564 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/></svg>');
-                background-repeat: no-repeat;
-                background-size: 1rem 1rem;
-                width: 1em;
-                height: 1em;
+
+        .downloads::before {
+            background-image: url('data:image/svg+xml,<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-down-circle" fill="%23666" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5A.5.5 0 0 1 8 4z"/></svg>');
+        }
+
+        .stars::before {
+            background-image: url('data:image/svg+xml, <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-star" fill="%23666" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.523-3.356c.329-.314.158-.888-.283-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767l-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288l1.847-3.658 1.846 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.564.564 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/></svg>');
+        }
+
+        .released::before {
+            background-image: url('data:image/svg+xml,<svg width="1em" height="1em" viewBox="0 0 16 16" fill="%23666" xmlns="http://www.w3.org/2000/svg"><path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/><path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>');
+        }
+
+        .outdated {
+            color: #8a4a00;
+            font-weight: 500;
+        }
+
+    }
+
+
+
+    code {
+        font-size: .85em;
+        background: #f3f3f3;
+        padding: 2px 4px;
+    }
+
+    .plugin {
+        padding-bottom: .5em;
+        background-position: 0 100%;
+        background-repeat: repeat-x;
+        background-size: 11px 4px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 10'%3E%3Cpath fill='none' stroke='%23dddddd' stroke-width='3' d='M0 8.5c8 0 8-7 16-7s8 7 16 7 8-7 16-7 8 7 16 7' class='st0'/%3E%3C/svg%3E");
+    }
+
+    .works_with {
+        border: 0;
+        padding: 0;
+        margin: 2em 0 1em;
+        font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
+
+        legend {
+            float: left;
+            padding: 0;
+            margin-right: .75em;
+            line-height: 2.25em;
+            font-weight: 500;
+        }
+
+        label {
+            display: inline-block;
+            margin: 0 -2px .25em 0;
+            border: 2px solid #000;
+            line-height: 2em;
+            padding: 0 .75em;
+            cursor: pointer;
+
+            &:has(input:checked) {
+                background: #000;
+                color: #fff;
+            }
+
+            &:has(input:focus-visible) {
+                outline: 2px solid #a75251;
+                outline-offset: 2px;
             }
         }
+
+        input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .hint {
+            clear: both;
+            margin: .25em 0 0;
+            color: #666;
+            font-size: 14px;
+        }
+    }
+
+    .included {
+        color: #333;
+
+        strong {
+            font-weight: 600;
+        }
+    }
+
+    .install {
+        margin: 0 0 1em;
+
+        summary {
+            display: inline-block;
+            cursor: pointer;
+            list-style: none;
+            border: 2px solid #000;
+            padding: 0 .75em;
+            line-height: 2em;
+            font-family: ui-monospace, 
+             Menlo, Monaco, 
+             "Cascadia Mono", "Segoe UI Mono", 
+             "Roboto Mono", 
+             "Oxygen Mono", 
+             "Ubuntu Monospace", 
+             "Source Code Pro",
+             "Fira Mono", 
+             "Droid Sans Mono", 
+             "Courier New", monospace;
+            font-size: 14px;
+
+            &::-webkit-details-marker {
+                display: none;
+            }
+
+            &::after {
+                content: " +";
+            }
+        }
+
+        &[open] summary {
+            border-bottom-color: #fff;
+            position: relative;
+            z-index: 1;
+
+            &::after {
+                content: " \2212";
+            }
+        }
+
+        .commands {
+            display: flex;
+            border: 2px solid #000;
+            margin-top: -2px;
+        }
+
+        pre {
+            flex: 1;
+            margin: 0;
+            padding: .75em;
+            overflow-x: auto;
+            background: none;
+            font-size: 13px;
+            line-height: 1.6em;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            font-size: inherit;
+        }
+
+        .copy {
+            border: 0;
+            border-left: 2px solid #000;
+            background: #fff;
+            padding: 0 1em;
+            cursor: pointer;
+            font-family: inherit;
+
+            &:hover {
+                background: #eee;
+            }
+        }
+    }
+
+    .footnote {
+        margin-top: 2em;
+        color: #666;
+        font-size: 14px;
     }
 }
