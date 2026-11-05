@@ -236,12 +236,8 @@ var fetchFixedContents = function (code, cm) {
             cm.setValue(response.fixed_contents);
         }
         else if ('error' in response) {
-            callback({
-               message: response.error.message,
-               severity: 'error',
-               from: cm.posFromIndex(response.error.from),
-               to: cm.posFromIndex(response.error.to),
-            });
+            // No lint callback here: re-lint so the error is highlighted in the editor
+            cm.performLint();
         }
     })
     .catch (function (error) {
