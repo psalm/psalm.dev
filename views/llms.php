@@ -57,7 +57,8 @@ if ($full) {
     echo $intro, "\n\nThis file holds the full text of the docs pages, except the page of each issue type and the contributor guide: see https://psalm.dev/llms.txt for links to those.\n";
     foreach ($paths as $path) {
         echo "\n\n", str_repeat('-', 80), "\nSource: ", Docs::url($path), "\n\n";
-        echo rtrim(Docs::contents($path)), "\n";
+        // Relative links would resolve against /llms-full.txt
+        echo rtrim(Docs::absoluteLinks(Docs::contents($path), $path)), "\n";
     }
     exit;
 }

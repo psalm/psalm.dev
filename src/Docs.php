@@ -2,9 +2,14 @@
 
 namespace PsalmDotOrg;
 
+use DateTimeImmutable;
+use DateTimeZone;
+
 use function array_filter;
+use function array_pop;
 use function array_values;
 use function basename;
+use function count;
 use function dirname;
 use function explode;
 use function file_get_contents;
@@ -13,21 +18,26 @@ use function filesize;
 use function gmdate;
 use function header;
 use function http_response_code;
+use function implode;
 use function is_dir;
 use function is_file;
 use function is_string;
 use function max;
 use function md5;
 use function preg_match;
+use function preg_match_all;
 use function preg_replace;
+use function preg_replace_callback;
 use function realpath;
 use function rtrim;
 use function scandir;
 use function sort;
+use function str_contains;
 use function str_ends_with;
 use function str_starts_with;
+use function strcspn;
 use function strlen;
-use function strtotime;
+use function strrpos;
 use function substr;
 use function trim;
 use function usort;
@@ -261,7 +271,78 @@ final class Docs
     }
 
     /**
+     * Rewrites relative link and image targets to absolute URLs, for Markdown shown away from
+     * its own URL (llms-full.txt). Absolute URLs, anchors and code are left as they are.
+     *
+     * @param string $path docs-relative path the Markdown comes from
+     */
+    public static function absoluteLinks(string $contents, string $path): string
+    {
+        // The URL path of the directory holding the file, e.g. /docs/running_psalm/
+        $base = '/docs/' . (str_contains($path, '/') ? substr($path, 0, (int) strrpos($path, '/') + 1) : '');
+
+        $lines = explode("\n", $contents);
+        $fence = null;
+        foreach ($lines as $i => $line) {
+            if (preg_match('/^\s*(`{3,}|~{3,})/', $line, $matches)) {
+                if ($fence === null) {
+                    $fence = $matches[1];
+                } elseif ($matches[1][0] === $fence[0] && strlen($matches[1]) >= strlen($fence)) {
+                    $fence = null;
+                }
+                continue;
+            }
+            if ($fence !== null) {
+                continue;
+            }
+
+            // Code spans are matched first and returned unchanged
+            $lines[$i] = preg_replace_callback(
+                '/(`+).+?(?<!`)\1(?!`)|\]\(\s*<?([^\s)>]+)>?((?:\s+(?:"[^"]*"|\'[^\']*\'))?\s*)\)/',
+                static function (array $match) use ($base): string {
+                    if (($match[2] ?? '') === '' || preg_match('~^(?:[A-Za-z][A-Za-z0-9+.-]*:|#|//)~', $match[2])) {
+                        return $match[0];
+                    }
+
+                    return '](' . self::resolveUrl($base, $match[2]) . ($match[3] ?? '') . ')';
+                },
+                $line,
+            ) ?? $line;
+        }
+
+        return implode("\n", $lines);
+    }
+
+    /** Resolves a relative URL against a directory URL path of psalm.dev */
+    private static function resolveUrl(string $base, string $target): string
+    {
+        $suffix = '';
+        $cut = strcspn($target, '?#');
+        if ($cut < strlen($target)) {
+            $suffix = substr($target, $cut);
+            $target = substr($target, 0, $cut);
+        }
+
+        $path = str_starts_with($target, '/') ? $target : $base . $target;
+        $segments = [];
+        foreach (explode('/', $path) as $segment) {
+            if ($segment === '..') {
+                array_pop($segments);
+            } elseif ($segment !== '.' && $segment !== '') {
+                $segments[] = $segment;
+            }
+        }
+
+        $trailing = str_ends_with($path, '/') && $segments !== [] ? '/' : '';
+
+        return 'https://psalm.dev/' . implode('/', $segments) . $trailing . $suffix;
+    }
+
+    /**
      * Sends cache headers, and a 304 response if the client copy is current.
+     *
+     * Responses built from several files get no Last-Modified: removing a page that is older
+     * than the rest changes the response but not the newest date. Their ETag covers the list.
      *
      * @param list<string> $paths docs-relative paths the response is built from
      * @param list<string> $code  PHP files that build the response
@@ -279,18 +360,24 @@ final class Docs
             $modified = max($modified, (int) filemtime($file));
             $tag .= $file . ':' . (int) filemtime($file) . "\n";
         }
+        $dated = count($paths) === 1;
 
-        $etag = '"' . md5($tag) . '"';
+        $etag = md5($tag);
         header('Cache-Control: public, max-age=3600');
-        header('ETag: ' . $etag);
-        header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $modified) . ' GMT');
+        header('ETag: "' . $etag . '"');
+        if ($dated) {
+            header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $modified) . ' GMT');
+        }
 
         $if_none_match = $_SERVER['HTTP_IF_NONE_MATCH'] ?? null;
         $if_modified_since = $_SERVER['HTTP_IF_MODIFIED_SINCE'] ?? null;
         // If-None-Match wins when both are sent (RFC 9110, 13.2.2)
-        $current = is_string($if_none_match)
-            ? self::etagMatches($if_none_match, $etag)
-            : is_string($if_modified_since) && strtotime($if_modified_since) >= $modified;
+        if (is_string($if_none_match)) {
+            $current = self::etagMatches($if_none_match, $etag);
+        } else {
+            $since = $dated && is_string($if_modified_since) ? self::parseHttpDate($if_modified_since) : null;
+            $current = $since !== null && $since >= $modified;
+        }
 
         if ($current) {
             http_response_code(304);
@@ -298,16 +385,48 @@ final class Docs
         }
     }
 
+    /**
+     * Weak comparison (RFC 9110, 13.1.2). mod_deflate appends "-gzip" to the ETag of
+     * compressed responses, so that suffix matches too.
+     */
     private static function etagMatches(string $header, string $etag): bool
     {
-        foreach (explode(',', $header) as $candidate) {
-            $candidate = trim($candidate);
-            if ($candidate === '*' || $candidate === $etag || $candidate === 'W/' . $etag) {
+        if (trim($header) === '*') {
+            return true;
+        }
+
+        preg_match_all('/(?:W\/)?"([^"]*)"/', $header, $matches);
+        foreach ($matches[1] as $candidate) {
+            if ($candidate === $etag || $candidate === $etag . '-gzip') {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * An HTTP date (RFC 9110, 5.6.7): IMF-fixdate, or the obsolete RFC 850 and asctime forms
+     */
+    private static function parseHttpDate(string $value): ?int
+    {
+        $value = trim($value);
+        $formats = [
+            '!D, d M Y H:i:s \G\M\T',
+            '!l, d-M-y H:i:s \G\M\T',
+            '!D M j H:i:s Y',
+        ];
+        foreach ($formats as $format) {
+            // asctime pads single-digit days with a space
+            $input = $format === '!D M j H:i:s Y' ? (preg_replace('/ +/', ' ', $value) ?? $value) : $value;
+            $date = DateTimeImmutable::createFromFormat($format, $input, new DateTimeZone('UTC'));
+            $errors = DateTimeImmutable::getLastErrors();
+            if ($date !== false && ($errors === false || $errors['warning_count'] === 0)) {
+                return $date->getTimestamp();
+            }
+        }
+
+        return null;
     }
 
     private static function isIndex(string $path): bool
