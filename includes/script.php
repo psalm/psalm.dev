@@ -186,7 +186,9 @@ var fetchAnnotations = function (code, callback, options, cm) {
                 psalm_commit_link.href = response.version_commit_url;
                 psalm_commit_link.target = '_blank';
                 psalm_commit_link.textContent = response.version_commit;
-                psalm_version_html += '&nbsp;(' + psalm_commit_link.outerHTML + ')';
+                // "7.x-dev (ca4690d, 2 Nov 2026)"
+                psalm_version_html += '&nbsp;(' + psalm_commit_link.outerHTML
+                    + (response.version_date ? ', ' + response.version_date.replace(/ /g, '&nbsp;') : '') + ')';
             }
 
             const psalm_header = 'Psalm output (using Psalm&nbsp;' + psalm_version_html + '): <br><br>'

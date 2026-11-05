@@ -16,8 +16,6 @@ class OnlineChecker
     public const SUPPORTED_PHP_VERSION_REGEX = '^(5\.[456]|7\.[0-4]|8\.[0-6])$';
     // psalm.dev version shown in the REPL output
     public const SITE_VERSION = '1.0.2';
-    // written by bin/generate_psalm_version.php on composer install/update
-    public const PSALM_VERSION_FILE = __DIR__ . '/../psalm_version.json';
 
     public static function defaultPhpVersion(): string
     {
@@ -180,6 +178,7 @@ class OnlineChecker
                 'version_url' => $psalm_version['version_url'],
                 'version_commit' => $psalm_version['commit'],
                 'version_commit_url' => $psalm_version['commit_url'],
+                'version_date' => $psalm_version['date'],
                 'site_version' => self::SITE_VERSION,
                 'php_version' => PHP_VERSION,
                 'fixed_contents' => $fixed_file_contents,
@@ -203,47 +202,52 @@ class OnlineChecker
     }
 
     /**
-     * Describes the installed vimeo/psalm build as a label plus up to two GitHub links:
-     * - exact tag: "7.0.0" linking to the release, no commit part;
-     * - commits on top of a tag: "7.0.0+42" linking to the compare view, plus the short commit hash linking to the commit;
-     * - unknown tag (psalm_version.json missing or stale): the short commit hash linking to the commit.
+     * Describes the installed vimeo/psalm build from Composer metadata alone (no git, no network):
+     * the release for a tagged install ("7.0.1"), otherwise the branch alias ("7.x-dev"),
+     * plus the commit and its date.
      *
-     * @return array{version: string, version_url: string, commit: ?string, commit_url: ?string}
+     * @return array{version: string, version_url: string, commit: string, commit_url: string, date: ?string}
      */
     private static function getPsalmVersion(): array
     {
         $commit = (string) \Composer\InstalledVersions::getReference('vimeo/psalm');
-        $short_commit = substr($commit, 0, 7);
-        $commit_url = 'https://github.com/vimeo/psalm/commit/' . $commit;
-        $data = @file_get_contents(self::PSALM_VERSION_FILE);
-        $data = $data !== false ? json_decode($data, true) : null;
+        $pretty_version = (string) \Composer\InstalledVersions::getPrettyVersion('vimeo/psalm');
+        $package = self::getInstalledPackage('vimeo/psalm');
 
-        if (!is_array($data)
-            || ($data['commit'] ?? null) !== $commit
-            || !is_string($data['tag'] ?? null)
-            || !is_int($data['commits_ahead'] ?? null)
-        ) {
-            return ['version' => $short_commit, 'version_url' => $commit_url, 'commit' => null, 'commit_url' => null];
+        if (strpos($pretty_version, 'dev-') === 0) {
+            // dev-master is a branch: show its alias ("7.x-dev") and link to the branch
+            $version = $package['extra']['branch-alias'][$pretty_version] ?? $pretty_version;
+            $version_url = 'https://github.com/vimeo/psalm/tree/' . rawurlencode(substr($pretty_version, 4));
+        } else {
+            $version = $pretty_version;
+            $version_url = 'https://github.com/vimeo/psalm/releases/tag/' . rawurlencode($pretty_version);
         }
 
-        $tag = $data['tag'];
-        $commits_ahead = $data['commits_ahead'];
-
-        if ($commits_ahead === 0) {
-            return [
-                'version' => $tag,
-                'version_url' => 'https://github.com/vimeo/psalm/releases/tag/' . rawurlencode($tag),
-                'commit' => null,
-                'commit_url' => null,
-            ];
-        }
+        $time = isset($package['time']) ? strtotime((string) $package['time']) : false;
 
         return [
-            'version' => $tag . '+' . $commits_ahead,
-            'version_url' => 'https://github.com/vimeo/psalm/compare/' . rawurlencode($tag) . '...' . $commit,
-            'commit' => $short_commit,
-            'commit_url' => $commit_url,
+            'version' => $version,
+            'version_url' => $version_url,
+            'commit' => substr($commit, 0, 7),
+            'commit_url' => 'https://github.com/vimeo/psalm/commit/' . $commit,
+            'date' => $time !== false ? date('j M Y', $time) : null,
         ];
+    }
+
+    /**
+     * Composer's runtime API has no branch aliases or commit dates, so read them from installed.json.
+     */
+    private static function getInstalledPackage(string $name): array
+    {
+        $installed = json_decode((string) @file_get_contents(__DIR__ . '/../vendor/composer/installed.json'), true);
+
+        foreach ($installed['packages'] ?? [] as $package) {
+            if (($package['name'] ?? null) === $name) {
+                return $package;
+            }
+        }
+
+        return [];
     }
 
     private static function getPsalmConfig(array $settings, bool $fix_file, string $file_contents): \Psalm\Config
