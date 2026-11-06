@@ -8,14 +8,14 @@ use Psalm\Internal\Analyzer\FileAnalyzer;
 use Psalm\Internal\Analyzer\ProjectAnalyzer;
 use Psalm\Internal\Provider\FakeFileProvider;
 
-class OnlineChecker
+final class OnlineChecker
 {
     // offered in the settings panel; the last one is the default
-    public const PHP_VERSIONS = ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5', '8.6'];
+    public const array PHP_VERSIONS = ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5', '8.6'];
     // every version Psalm can analyse (ProjectAnalyzer::PHP_SUPPORTED_VERSIONS_REGEX), still accepted via ?php= for old links
-    public const SUPPORTED_PHP_VERSION_REGEX = '^(5\.[456]|7\.[0-4]|8\.[0-6])$';
+    public const string SUPPORTED_PHP_VERSION_REGEX = '^(5\.[456]|7\.[0-4]|8\.[0-6])$';
     // psalm.dev version shown in the REPL output
-    public const SITE_VERSION = '1.0.2';
+    public const string SITE_VERSION = '1.0.2';
 
     public static function defaultPhpVersion(): string
     {
@@ -173,7 +173,7 @@ class OnlineChecker
             return [
                 'results' => $issue_data,
                 // psalm-github-bot parses this as "<pretty version>@<commit hash>"; keep the format
-                'version' => (string) \PackageVersions\Versions::getVersion('vimeo/psalm'),
+                'version' => \PackageVersions\Versions::getVersion('vimeo/psalm'),
                 'version_label' => $psalm_version['version'],
                 'version_url' => $psalm_version['version_url'],
                 'version_commit' => $psalm_version['commit'],

@@ -6,11 +6,19 @@
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
     cacheDirectory="../psalm_cache"
+    errorBaseline="psalm-baseline.xml"
 >
     <projectFiles>
         <directory name="src" />
+        <directory name="views" />
+        <directory name="includes" />
         <ignoreFiles>
             <directory name="vendor" />
+            <!-- Disabled maintenance endpoint (see the file header); analysed only when temporarily re-enabled -->
+            <file name="views/migrate.php" />
+            <!-- Presentational partials included into a page scope; not independently analysable -->
+            <file name="includes/meta.php" />
+            <file name="includes/not_found.php" />
         </ignoreFiles>
     </projectFiles>
 
