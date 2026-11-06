@@ -5,6 +5,8 @@ Header set Access-Control-Allow-Origin "*"
     AddType application/x-font-woff         woff
     AddType application/x-font-woff2        woff2
     AddType image/svg+xml                   svg svgz 
+    AddType text/markdown                   md
+    AddCharset utf-8                        .md
     AddEncoding gzip                        svgz
 </Ifmodule>
 
@@ -31,6 +33,7 @@ Header set Access-Control-Allow-Origin "*"
   AddOutputFilterByType DEFLATE text/css
   AddOutputFilterByType DEFLATE text/html
   AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE text/markdown
   AddOutputFilterByType DEFLATE text/plain
   AddOutputFilterByType DEFLATE text/xml
 </IfModule>
@@ -53,6 +56,9 @@ Header set Access-Control-Allow-Origin "*"
   # The web fonts in /extra/ have not changed in years
   <FilesMatch "\.(woff2?)$">
     Header set Cache-Control "public, max-age=31536000"
+  </FilesMatch>
+  <FilesMatch "\.md$">
+    Header set Cache-Control "public, max-age=3600"
   </FilesMatch>
   <FilesMatch "\.(png|jpe?g|svg|ico)$">
     Header set Cache-Control "public, max-age=86400"
@@ -97,6 +103,10 @@ RewriteRule ^support/?$ /views/support.php [L,NC]
 RewriteRule ^plugins/?$ /views/plugins.php [L,NC]
 RewriteRule ^$ /views/index.php [L,NC]
 RewriteRule ^schema/config$ /vendor/vimeo/psalm/config.xsd [L,NC]
+# Docs pages as Markdown (/docs/<path>.md), served from vendor/vimeo/psalm/docs, the mkdocs source
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^docs/((?:[A-Za-z0-9_-]+/)*[A-Za-z0-9_-]+\.md)$ /vendor/vimeo/psalm/docs/$1 [L]
+RewriteRule ^llms\.txt$ /views/llms.php [L]
 RewriteRule ^[0-9]{3}\)?$ /views/issue_redirect.php [L,NC]
 # Issue type shortcuts: /InvalidArgument -> its docs page, only when that page exists (#29)
 RewriteCond %{DOCUMENT_ROOT}/docs/running_psalm/issues/$1/index.html -f
@@ -105,7 +115,7 @@ RewriteRule ^([A-Z][A-Za-z]+)/?$ https://psalm.dev/docs/running_psalm/issues/$1/
 
 RewriteRule ^composer\.*$ - [F,L]
 RewriteRule ^includes/?.*$ - [F,L]
-RewriteCond %{REQUEST_URI} !^/vendor/vimeo/psalm/config\.xsd
+RewriteCond %{REQUEST_URI} !^/vendor/vimeo/psalm/(config\.xsd|docs/(?:[A-Za-z0-9_-]+/)*[A-Za-z0-9_-]+\.md)$
 RewriteRule ^vendor/?.*$ - [F,L]
 RewriteRule ^.git/?.*$ - [F,L]
 RewriteRule ^dbconfig.php.*$ - [F,L]
