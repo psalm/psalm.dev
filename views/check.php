@@ -29,6 +29,8 @@ if (!is_array($settings)) {
 
 const PHP_PARSER_VERSION = '4.0.0';
 
+header('Content-Type: application/json');
+
 // Set user-defined error handler function
 set_exception_handler([\PsalmDotOrg\ExceptionHandler::class, 'json']);
 
@@ -54,7 +56,7 @@ if (!$fix_file) {
 
 if (strlen($file_contents) > 100000) {
     http_response_code(418);
-    echo json_encode(['error' => ['message' => 'Code too long', 'line_from' => 0]]);
+    echo json_encode(['error' => ['message' => 'Code too long', 'line_from' => 0]], JSON_HEX_TAG | JSON_HEX_AMP);
     exit;
 }
 
@@ -62,11 +64,11 @@ $php_version = $_POST['php'] ?? OnlineChecker::defaultPhpVersion();
 
 if (!is_string($php_version) || !preg_match('/' . OnlineChecker::SUPPORTED_PHP_VERSION_REGEX . '/D', $php_version)) {
     http_response_code(422);
-    echo json_encode(['error' => 'PHP version ' . $php_version . ' not supported']);
+    echo json_encode(['error' => 'PHP version ' . $php_version . ' not supported'], JSON_HEX_TAG | JSON_HEX_AMP);
     exit;
 }
 
 $results = PsalmDotOrg\OnlineChecker::getResults($file_contents, $settings, $fix_file, $php_version);
 
 http_response_code(200);
-echo json_encode($results);
+echo json_encode($results, JSON_HEX_TAG | JSON_HEX_AMP);
