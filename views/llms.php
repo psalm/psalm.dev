@@ -1,6 +1,6 @@
 <?php
 
-// /llms.txt and /llms-full.txt (https://llmstxt.org/), built from the docs Markdown (see .htaccess)
+// /llms.txt (https://llmstxt.org/), built from the docs Markdown (see .htaccess)
 
 use PsalmDotOrg\Docs;
 
@@ -8,9 +8,6 @@ http_response_code(500);
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-$full = isset($_GET['full']);
-// The files the response depends on besides the docs, for its ETag
-$code = [__FILE__, dirname(__DIR__) . '/src/Docs.php'];
 $all = Docs::all();
 
 $sections = [
@@ -34,36 +31,8 @@ $intro = <<<'MD'
 
 > Psalm is a static analysis tool for PHP that finds type-related bugs, checks docblock types and generics, detects security vulnerabilities with taint analysis, and can fix and refactor code automatically.
 
-Every documentation page is also available as Markdown: append `.md` to the page path (https://psalm.dev/docs/running_psalm/installation.md for https://psalm.dev/docs/running_psalm/installation/), or `index.md` to the page URL.
+Every documentation page is also available as Markdown: append `.md` to the page path (https://psalm.dev/docs/running_psalm/installation.md for https://psalm.dev/docs/running_psalm/installation/).
 MD;
-
-if ($full) {
-    // Everything an agent needs to use Psalm. The issue pages (one per issue type) and the
-    // contributor docs stay out to keep the file small; llms.txt links to each of them.
-    $paths = array_merge(
-        $home,
-        $sections['Running Psalm'],
-        Docs::under($all, 'running_psalm/issues.md'),
-        $sections['Annotating code'],
-        $sections['Security analysis (taint analysis)'],
-        $sections['Manipulating code'],
-    );
-
-    Docs::sendCacheHeaders($paths, $code);
-
-    http_response_code(200);
-    header('Content-Type: text/plain; charset=utf-8');
-
-    echo $intro, "\n\nThis file holds the full text of the docs pages, except the page of each issue type and the contributor guide: see https://psalm.dev/llms.txt for links to those.\n";
-    foreach ($paths as $path) {
-        echo "\n\n", str_repeat('-', 80), "\nSource: ", Docs::url($path), "\n\n";
-        // Relative links would resolve against /llms-full.txt
-        echo rtrim(Docs::absoluteLinks(Docs::contents($path), $path)), "\n";
-    }
-    exit;
-}
-
-Docs::sendCacheHeaders($all, $code);
 
 /**
  * @param list<string> $paths
@@ -83,10 +52,10 @@ $links = static function (array $paths, bool $notes = true): string {
 
 http_response_code(200);
 header('Content-Type: text/plain; charset=utf-8');
+header('Cache-Control: public, max-age=3600');
 
 echo $intro, "\n\n";
 echo "## Docs\n\n", $links($home), "\n";
-echo "- [Full docs text](https://psalm.dev/llms-full.txt): all of the pages below in one file, except the issue type pages and Contributing\n";
 
 foreach ($sections as $title => $paths) {
     if ($title === 'Contributing') {
