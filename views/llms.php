@@ -31,7 +31,7 @@ $intro = <<<'MD'
 
 > Psalm is a static analysis tool for PHP that finds type-related bugs, checks docblock types and generics, detects security vulnerabilities with taint analysis, and can fix and refactor code automatically.
 
-Every documentation page is also available as Markdown: append `.md` to the page path (https://psalm.dev/docs/running_psalm/installation.md for https://psalm.dev/docs/running_psalm/installation/).
+Every documentation page is also available as Markdown: append `.md` to the page path (https://psalm.dev/docs/running_psalm/installation.md for https://psalm.dev/docs/running_psalm/installation/), or request the page URL with `Accept: text/markdown`.
 MD;
 
 /**
