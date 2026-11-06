@@ -103,17 +103,18 @@ if (isset($_GET['format'])) {
     if ($_GET['format'] === 'results') {
         $php_version = $_GET['php'] ?? $stored_php_version ?? OnlineChecker::defaultPhpVersion();
 
+        header('Content-Type: application/json');
+
         if (!is_string($php_version) || !preg_match($php_version_regex, $php_version)) {
             http_response_code(422);
-            echo json_encode(['error' => ['message' => 'PHP version ' . $php_version . ' not supported']]);
+            echo json_encode(['error' => ['message' => 'PHP version ' . $php_version . ' not supported']], JSON_HEX_TAG | JSON_HEX_AMP);
             exit;
         }
 
         http_response_code(200);
-        header('Content-Type: application/json');
         set_exception_handler([\PsalmDotOrg\ExceptionHandler::class, 'json']);
 
-        echo json_encode(PsalmDotOrg\OnlineChecker::getResults($code, $settings, false, $php_version));
+        echo json_encode(PsalmDotOrg\OnlineChecker::getResults($code, $settings, false, $php_version), JSON_HEX_TAG | JSON_HEX_AMP);
         exit;
     }
 
