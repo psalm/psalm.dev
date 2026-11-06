@@ -129,7 +129,9 @@ RewriteCond %{DOCUMENT_ROOT}/docs/running_psalm/issues/$1/index.html -f
 RewriteRule ^([A-Z][A-Za-z]+)/?$ https://psalm.dev/docs/running_psalm/issues/$1/ [R=301,L]
 
 
-RewriteRule ^composer\.*$ - [F,L]
+# Repository files that are not part of the site. PHP files outside views/ must not run on their own
+RewriteRule ^(composer\.(json|lock)|package(-lock)?\.json|(webpack|postcss)\.config\.js|mkdocs\.yml|psalm\.xml|phinx\.php|blogconfig\.php|dbconfig(\.dist)?\.php|codes\.sql|Dockerfile|docker-compose\.yaml)$ - [F,L,NC]
+RewriteRule ^(src|theme|docker|vendor-bin|node_modules)(/|$) - [F,L,NC]
 RewriteRule ^includes/?.*$ - [F,L]
 RewriteCond %{REQUEST_URI} !^/vendor/vimeo/psalm/(config\.xsd|docs/(?:[A-Za-z0-9_-]+/)*[A-Za-z0-9_-]+\.md)$
 RewriteRule ^vendor/?.*$ - [F,L]
