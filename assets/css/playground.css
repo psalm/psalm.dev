@@ -598,7 +598,8 @@ button.pg_loc:hover {
 
 .pg_steps {
     margin: 4px 0 0;
-    padding: 0 0 0 3.5ch;
+    /* the number, its dot and a gap; --pg-step-digits is set per list */
+    padding: 0 0 0 calc((var(--pg-step-digits, 1) + 3) * 1ch);
     border-left: 2px solid var(--pg-ink);
     list-style: decimal;
 }

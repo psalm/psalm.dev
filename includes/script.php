@@ -625,7 +625,9 @@ var renderReference = function(reference) {
 var renderReferences = function(title, references, className) {
     return '<div class="pg_refs ' + className + '">'
         + '<div class="pg_refs_title">' + title + '</div>'
-        + '<ol class="pg_steps">' + references.map(renderReference).join('') + '</ol>'
+        // the step numbers sit outside the text: make room for "10." and up so they don't cross the border
+        + '<ol class="pg_steps" style="--pg-step-digits: ' + String(references.length).length + '">'
+        + references.map(renderReference).join('') + '</ol>'
         + '</div>';
 };
 
