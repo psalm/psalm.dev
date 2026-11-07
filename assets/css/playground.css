@@ -737,13 +737,6 @@ li.pg_step > .pg_step_label {
     font-weight: 700;
 }
 
-.pg_drawer_php {
-    margin-left: 12px;
-    margin-right: auto;
-    color: var(--pg-muted);
-    font-weight: 400;
-}
-
 .pg_drawer_head button {
     align-self: stretch;
     margin: 0;

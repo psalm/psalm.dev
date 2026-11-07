@@ -134,13 +134,6 @@ var renderPhpVersionLabels = function() {
 
     document.getElementById('php_version_label').textContent = text;
     document.getElementById('php_version').title = title;
-
-    var drawerVersion = document.getElementById('pg_drawer_php');
-
-    if (drawerVersion) {
-        drawerVersion.textContent = text;
-        drawerVersion.title = title;
-    }
 };
 
 var isSettingChanged = function(key) {
@@ -216,11 +209,6 @@ var buildSettingsPanel = function() {
     var head = document.createElement('div');
     head.className = 'pg_drawer_head';
     head.appendChild(document.createTextNode('Settings'));
-
-    var headVersion = document.createElement('span');
-    headVersion.className = 'pg_drawer_php';
-    headVersion.id = 'pg_drawer_php';
-    head.appendChild(headVersion);
 
     var reset = document.createElement('button');
     reset.type = 'button';
