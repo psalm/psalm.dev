@@ -93,6 +93,41 @@ var setPhpVersion = function(version) {
     editor.performLint();
 };
 
+var defaultErrorLevel = <?= json_encode(\PsalmDotOrg\OnlineChecker::DEFAULT_ERROR_LEVEL) ?>;
+// a saved snippet opens with the level it was saved with; ?level= overrides it
+var baseErrorLevel = (typeof snippetErrorLevel !== 'undefined' && snippetErrorLevel) || defaultErrorLevel;
+var errorLevel = (function () {
+    var fromUrl = new URLSearchParams(window.location.search).get('level');
+    return fromUrl && /^[1-8]$/.test(fromUrl) ? Number(fromUrl) : baseErrorLevel;
+})();
+
+var isErrorLevelChanged = function() {
+    return errorLevel !== defaultErrorLevel;
+};
+
+/** Updates the level and keeps it in the URL (like ?php=), without re-running the analysis. */
+var applyErrorLevel = function(level) {
+    errorLevel = level;
+
+    const params = new URLSearchParams(window.location.search);
+
+    if (level === baseErrorLevel) {
+        params.delete('level');
+    } else {
+        params.set('level', String(level));
+    }
+
+    const query = params.toString();
+    window.history.replaceState(null, '', window.location.pathname + (query ? '?' + query : '') + window.location.hash);
+    loadedPage = window.location.pathname + window.location.search;
+};
+
+var setErrorLevel = function(level) {
+    applyErrorLevel(level);
+    updateSettingsSummary();
+    editor.performLint();
+};
+
 var renderPhpVersionLabels = function() {
     var text = 'PHP ' + phpVersion;
     var title = 'Analyse code as PHP ' + phpVersion + (phpVersion === defaultPhpVersion ? ', the default' : '');
@@ -117,11 +152,18 @@ var isSettingChanged = function(key) {
  * without rebuilding the drawer, so keyboard focus stays where it is.
  */
 var updateSettingsSummary = function() {
-    var changed = Object.keys(settingsText).filter(isSettingChanged);
+    var changedCount = Object.keys(settingsText).filter(isSettingChanged).length + (isErrorLevelChanged() ? 1 : 0);
 
-    document.getElementById('settings').textContent = changed.length
-        ? 'Settings \u00B7 ' + changed.length + ' changed'
+    document.getElementById('settings').textContent = changedCount
+        ? 'Settings \u00B7 ' + changedCount + ' changed'
         : 'Settings';
+
+    var levelSelect = document.getElementById('error_level');
+
+    if (levelSelect) {
+        levelSelect.value = String(errorLevel);
+        levelSelect.closest('.pg_check').classList.toggle('changed', isErrorLevelChanged());
+    }
 
     Object.keys(settingsText).forEach(function (key) {
         var input = document.getElementById(key);
@@ -151,6 +193,7 @@ var resetSettings = function() {
         settings[key] = defaultSettings[key];
     });
 
+    applyErrorLevel(defaultErrorLevel);
     updateSettingsSummary();
     editor.performLint();
 };
@@ -186,6 +229,7 @@ var buildSettingsPanel = function() {
     reset.addEventListener('click', resetSettings);
     head.appendChild(reset);
     panel.appendChild(head);
+    panel.appendChild(buildErrorLevelGroup());
 
     groups.forEach(function (group) {
         var fieldset = document.createElement('fieldset');
@@ -235,6 +279,60 @@ var buildSettingsPanel = function() {
 
         panel.appendChild(fieldset);
     });
+};
+
+var errorLevelHints = {1: 'strictest', 8: 'most lenient'};
+
+var buildErrorLevelGroup = function() {
+    var fieldset = document.createElement('fieldset');
+    fieldset.className = 'pg_group';
+
+    var legend = document.createElement('legend');
+    legend.textContent = 'Reporting';
+    fieldset.appendChild(legend);
+
+    var label = document.createElement('label');
+    label.className = 'pg_check pg_select';
+    label.htmlFor = 'error_level';
+
+    var text = document.createElement('span');
+    text.textContent = 'Error level';
+
+    var select = document.createElement('select');
+    select.id = 'error_level';
+    select.title = 'Issues below this level are reported as info instead of errors';
+
+    for (var level = 1; level <= 8; level++) {
+        var option = document.createElement('option');
+        var hints = [errorLevelHints[level], level === defaultErrorLevel ? 'default' : null].filter(Boolean);
+        option.value = String(level);
+        option.textContent = level + (hints.length ? ' (' + hints.join(', ') + ')' : '');
+        option.selected = level === errorLevel;
+        select.appendChild(option);
+    }
+
+    select.addEventListener('change', function () {
+        setErrorLevel(Number(select.value));
+    });
+
+    label.appendChild(text);
+    label.appendChild(select);
+
+    var row = document.createElement('div');
+    row.className = 'pg_check_row';
+    row.appendChild(label);
+
+    var docs = document.createElement('a');
+    docs.className = 'pg_doc_link';
+    docs.href = errorLevelsDocs;
+    docs.target = '_blank';
+    docs.rel = 'noopener';
+    docs.textContent = 'docs';
+    docs.setAttribute('aria-label', 'Docs for error levels');
+    row.appendChild(docs);
+
+    fieldset.appendChild(row);
+    return fieldset;
 };
 
 var renderPhpVersions = function() {
@@ -343,7 +441,7 @@ var shareSnippet = async function() {
                 'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
                 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
             },
-            body: serializeJSON({code: editor.getValue(), settings: JSON.stringify(settings), php: phpVersion})
+            body: serializeJSON({code: editor.getValue(), settings: JSON.stringify(settings), php: phpVersion, level: errorLevel})
         });
         url = await response.text();
     } catch (error) {
@@ -379,8 +477,9 @@ var shareSnippet = async function() {
             loadedPage = window.location.pathname + window.location.search;
         }
 
-        // the snippet now carries the chosen version, so the picker no longer needs ?php=
+        // the snippet now carries the chosen version and level, so the URL no longer needs ?php= or ?level=
         basePhpVersion = phpVersion;
+        baseErrorLevel = errorLevel;
     } catch (error) {
         // an unexpected URL shape: the link is still shown below
     }
@@ -853,7 +952,8 @@ var fetchAnnotations = function (code, callback, options, cm) {
     var submitData = {
         code: code,
         settings: JSON.stringify(settings),
-        php: phpVersion
+        php: phpVersion,
+        level: errorLevel
     };
 
     fetch('/check', {
@@ -969,6 +1069,7 @@ var fetchFixedContents = function (code, cm) {
             code: code,
             settings: JSON.stringify({...settings, ...{unused_methods: true}}),
             php: phpVersion,
+            level: errorLevel,
             fix: true,
         })
     })

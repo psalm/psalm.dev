@@ -816,6 +816,24 @@ li.pg_step > .pg_step_label {
     padding: 0 2px;
 }
 
+/* a setting with a value instead of on/off: label left, select right */
+.pg_select {
+    align-items: center;
+    cursor: default;
+}
+
+.pg_select span {
+    white-space: nowrap;
+}
+
+.pg_select select {
+    flex: 0 1 auto;
+    min-width: 0;
+    margin-left: auto;
+    font: inherit;
+    color: inherit;
+}
+
 /* docs link beside each setting: small, quiet, still a visible link */
 .pg_check_row {
     clear: left;

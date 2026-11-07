@@ -71,6 +71,9 @@ if (!is_string($stored_php_version) || !preg_match($php_version_regex, $stored_p
     $stored_php_version = null;
 }
 
+// NULL for snippets saved before the level was stored: they ran at the default level
+$stored_error_level = OnlineChecker::parseErrorLevel($result['error_level'] ?? null);
+
 const PHP_PARSER_VERSION = '4.0.0';
 
 if (isset($_GET['format'])) {
@@ -91,6 +94,7 @@ if (isset($_GET['format'])) {
                 'code' => $code,
                 'settings' => $settings,
                 'php_version' => $stored_php_version,
+                'error_level' => $stored_error_level,
             ],
             JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
         );
@@ -111,10 +115,23 @@ if (isset($_GET['format'])) {
             exit;
         }
 
+        $error_level = OnlineChecker::parseErrorLevel(
+            $_GET['level'] ?? $stored_error_level ?? OnlineChecker::DEFAULT_ERROR_LEVEL
+        );
+
+        if ($error_level === null) {
+            http_response_code(422);
+            echo json_encode(['error' => ['message' => 'Error level must be 1 to 8']], JSON_HEX_TAG | JSON_HEX_AMP);
+            exit;
+        }
+
         http_response_code(200);
         set_exception_handler([\PsalmDotOrg\ExceptionHandler::class, 'json']);
 
-        echo json_encode(PsalmDotOrg\OnlineChecker::getResults($code, $settings, false, $php_version), JSON_HEX_TAG | JSON_HEX_AMP);
+        echo json_encode(
+            PsalmDotOrg\OnlineChecker::getResults($code, $settings, false, $php_version, $error_level),
+            JSON_HEX_TAG | JSON_HEX_AMP
+        );
         exit;
     }
 
@@ -135,7 +152,7 @@ $canonical_url = false;
 <meta name="robots" content="noindex, follow" />
 <script src="/assets/js/codemirror.min.js?2"></script>
 <?php require('../includes/meta.php'); ?>
-<link rel="stylesheet" href="/assets/css/playground.css?7">
+<link rel="stylesheet" href="/assets/css/playground.css?8">
 </head>
 <body class="front snippet_page">
 <a class="pg_skip" href="#playground" onclick="return focusEditor();">Skip to editor</a>
@@ -152,6 +169,7 @@ var settings = {
 <?php endforeach ?>
 };
 var snippetPhpVersion = <?= json_encode($stored_php_version, JSON_HEX_TAG) ?>;
+var snippetErrorLevel = <?= json_encode($stored_error_level, JSON_HEX_TAG) ?>;
 </script>
 <?php require('../includes/script.php'); ?>
 </body>

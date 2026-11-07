@@ -53,8 +53,22 @@ if (!is_string($php_version) || !preg_match('/' . OnlineChecker::SUPPORTED_PHP_V
     exit();
 }
 
-// the version is part of the hash so the same code saved for different PHP versions gets separate links
-$hash = substr(hash_hmac('sha256', $code . json_encode($settings) . $php_version, 'not much of a secret'), 0, 10);
+$error_level = OnlineChecker::parseErrorLevel($_POST['level'] ?? OnlineChecker::DEFAULT_ERROR_LEVEL);
+
+if ($error_level === null) {
+    http_response_code(412);
+    echo 'Error level must be 1 to 8';
+    exit();
+}
+
+// the version and level are part of the hash so the same code saved with different ones gets separate links;
+// the default level is left out, so snippets saved before the level existed keep their links
+$hash = substr(hash_hmac(
+    'sha256',
+    $code . json_encode($settings) . $php_version
+        . ($error_level === OnlineChecker::DEFAULT_ERROR_LEVEL ? '' : 'level' . $error_level),
+    'not much of a secret'
+), 0, 10);
 
 /**
  * @var array{dsn:string, user:string, password:string}
@@ -85,7 +99,7 @@ try {
         exit();
     }
 
-    $data = ['hash' => $hash, 'code' => $code, 'ip' => $_SERVER['REMOTE_ADDR'], 'php_version' => $php_version];
+    $data = ['hash' => $hash, 'code' => $code, 'ip' => $_SERVER['REMOTE_ADDR'], 'php_version' => $php_version, 'error_level' => $error_level];
 
     $settings_fields = Settings::names();
 

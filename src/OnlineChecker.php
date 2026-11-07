@@ -14,6 +14,9 @@ final class OnlineChecker
     public const array PHP_VERSIONS = ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5', '8.6'];
     // every version Psalm can analyse (ProjectAnalyzer::PHP_SUPPORTED_VERSIONS_REGEX), still accepted via ?php= for old links
     public const string SUPPORTED_PHP_VERSION_REGEX = '^(5\.[456]|7\.[0-4]|8\.[0-6])$';
+    // Psalm's errorLevel (1 strictest, 8 most lenient); the playground always ran at 2, Psalm's default without errorLevel
+    public const int DEFAULT_ERROR_LEVEL = 2;
+    public const string ERROR_LEVEL_REGEX = '^[1-8]$';
     // psalm.dev version shown in the REPL output
     public const string SITE_VERSION = '1.0.2';
 
@@ -22,13 +25,31 @@ final class OnlineChecker
         return self::PHP_VERSIONS[array_key_last(self::PHP_VERSIONS)];
     }
 
+    /**
+     * The errorLevel from a request or a stored snippet: an int 1-8, or a digit string from a form or a database row.
+     * Returns null for anything else, so callers can reject it or fall back to the default.
+     */
+    public static function parseErrorLevel(mixed $level): ?int
+    {
+        if (is_int($level)) {
+            $level = (string) $level;
+        }
+
+        if (!is_string($level) || !preg_match('/' . self::ERROR_LEVEL_REGEX . '/D', $level)) {
+            return null;
+        }
+
+        return (int) $level;
+    }
+
     public static function getResults(
         string $file_contents,
         array $settings,
         bool $fix_file,
-        string $php_version
+        string $php_version,
+        int $error_level = self::DEFAULT_ERROR_LEVEL
     ): array {
-        $config = self::getPsalmConfig($settings, $fix_file, $file_contents);
+        $config = self::getPsalmConfig($settings, $fix_file, $file_contents, $error_level);
 
         $psalm_version = self::getPsalmVersion();
         $file_provider = new FakeFileProvider();
@@ -181,6 +202,7 @@ final class OnlineChecker
                 'version_date' => $psalm_version['date'],
                 'site_version' => self::SITE_VERSION,
                 'php_version' => PHP_VERSION,
+                'error_level' => $error_level,
                 'fixed_contents' => $fixed_file_contents,
                 'hash' => md5($file_contents),
                 'type_map' => $transformed_type_map,
@@ -250,12 +272,21 @@ final class OnlineChecker
         return [];
     }
 
-    private static function getPsalmConfig(array $settings, bool $fix_file, string $file_contents): \Psalm\Config
-    {
+    private static function getPsalmConfig(
+        array $settings,
+        bool $fix_file,
+        string $file_contents,
+        int $error_level
+    ): \Psalm\Config {
+        if ($error_level < 1 || $error_level > 8) {
+            throw new \InvalidArgumentException('Invalid error level ' . $error_level);
+        }
+
+        // set in the XML, not on $config afterwards: loadFromXML derives other defaults from the level
         $config = Config::loadFromXML(
             (string)getcwd(),
             '<?xml version="1.0"?>
-            <psalm cacheDirectory="cache">
+            <psalm cacheDirectory="cache" errorLevel="' . $error_level . '">
                 <projectFiles>
                     <directory name="../src" />
                 </projectFiles>

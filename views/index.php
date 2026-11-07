@@ -35,7 +35,7 @@ $canonical_url = $playground_page ? 'https://psalm.dev/playground' : 'https://ps
 </script>
 <?php endif ?>
 <script src="/assets/js/codemirror.min.js?2"></script>
-<link rel="stylesheet" href="/assets/css/playground.css?7">
+<link rel="stylesheet" href="/assets/css/playground.css?8">
 </head>
 <body class="<?= $playground_page ? 'front playground_page' : 'front pg_expandable pg_compact' ?>">
 <a class="pg_skip" href="#playground" onclick="return focusEditor();">Skip to editor</a>

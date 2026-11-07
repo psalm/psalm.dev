@@ -68,7 +68,15 @@ if (!is_string($php_version) || !preg_match('/' . OnlineChecker::SUPPORTED_PHP_V
     exit;
 }
 
-$results = PsalmDotOrg\OnlineChecker::getResults($file_contents, $settings, $fix_file, $php_version);
+$error_level = OnlineChecker::parseErrorLevel($_POST['level'] ?? OnlineChecker::DEFAULT_ERROR_LEVEL);
+
+if ($error_level === null) {
+    http_response_code(422);
+    echo json_encode(['error' => 'Error level must be 1 to 8'], JSON_HEX_TAG | JSON_HEX_AMP);
+    exit;
+}
+
+$results = PsalmDotOrg\OnlineChecker::getResults($file_contents, $settings, $fix_file, $php_version, $error_level);
 
 http_response_code(200);
 echo json_encode($results, JSON_HEX_TAG | JSON_HEX_AMP);
