@@ -827,6 +827,11 @@ li.pg_step > .pg_step_label {
     color: inherit;
 }
 
+/* the bar's inset outline would cross the text of this small native select: draw it outside */
+.playground .pg_select select:focus-visible {
+    outline-offset: 2px;
+}
+
 /* docs link beside each setting: small, quiet, still a visible link */
 .pg_check_row {
     clear: left;
