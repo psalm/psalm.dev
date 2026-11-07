@@ -357,3 +357,5 @@ Most projects will notice:
 Thanks to everyone who contributed to Psalm 7, and to everyone who tested the betas and release candidates and reported issues!
 
 **Full Changelog**: [6.20.3...7.0.0](https://github.com/vimeo/psalm/compare/6.20.3...7.0.0)
+
+<div class="discuss"><a href="https://news.ycombinator.com/item?id=50406107">Comment on Hacker News</a></div>
