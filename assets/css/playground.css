@@ -715,7 +715,7 @@ li.pg_step > .pg_step_label {
 
 .playground #settings_panel {
     display: block;
-    flex: 0 0 320px;
+    flex: 0 0 380px;
     overflow: auto;
     padding: 0;
     border: 0;
