@@ -17,13 +17,13 @@ $meta_description = 'Paid support contracts for Psalm: integration into existing
 ?>
 <html lang="en">
 <head>
-<title>Support Psalm</title>
+<title>Paid support - Psalm</title>
 <?php require('../includes/meta.php'); ?>
 </head>
 <body>
 <?php require('../includes/nav.php'); ?>
 <div class="post">
-<h1><?= Muglug\Blog\AltHeadingParser::preventOrphans('Support Psalm!') ?></h1>
+<h1><?= Muglug\Blog\AltHeadingParser::preventOrphans('Paid support for Psalm') ?></h1>
 <?= $html ?>
 </div>
 <?php require('../includes/footer.php'); ?>
