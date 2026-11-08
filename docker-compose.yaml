@@ -20,7 +20,7 @@ services:
 
   db:
     container_name: psalm-sql
-    image: mysql/mysql-server:5.6
+    image: mysql/mysql-server:8.0
     volumes:
       - type: "bind"
         source: "${PWD}/codes.sql"
