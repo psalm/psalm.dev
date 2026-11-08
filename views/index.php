@@ -8,6 +8,15 @@ require_once dirname(__DIR__) . '/src/HomepageExample.php';
 // /play (?page=play from .htaccess): nav plus the playground filling the viewport, nothing else
 $playground_page = ($_GET['page'] ?? null) === 'play';
 $canonical_url = $playground_page ? 'https://psalm.dev/play' : 'https://psalm.dev/';
+$og = $playground_page ? [
+    'title' => 'Psalm Playground: PHP static analysis in your browser',
+    'description' => 'Paste PHP, see type errors and bugs as you type, and share a link to the result.',
+    'image' => '/assets/og/play.png',
+    'image_alt' => 'Psalm Playground: a PHP function with an InvalidArgument error underlined in red',
+] : [
+    'title' => 'Psalm: give PHP the love it deserves',
+    'description' => 'Psalm is a free & open-source static analysis tool that helps you identify problems in your PHP code, so you can sleep a little better.',
+];
 // homepage news: up to three articles from the last two weeks, listed under the playground widget
 $fresh_articles = $playground_page ? [] : PsalmDotOrg\FreshArticle::recent(dirname(__DIR__) . '/assets/articles');
 ?>

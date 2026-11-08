@@ -61,6 +61,17 @@ $description = trim(preg_replace('/\s+/u', ' ', html_entity_decode($article->des
 $meta_description = $description;
 $timestamp = strtotime($article->date);
 $published = $timestamp === false ? null : date('c', $timestamp);
+$og = [
+    'type' => 'article',
+    'title' => $article->title,
+    'description' => $description,
+    'url' => $canonical_url ?: $url,
+    'image' => '/article_thumbnail.png',
+    'image_width' => 490,
+    'image_height' => 459,
+    'image_alt' => 'Psalm',
+    'twitter_card' => 'summary',
+];
 
 ?>
 <html lang="<?= $lang ?>">
@@ -74,18 +85,9 @@ $published = $timestamp === false ? null : date('c', $timestamp);
 <?php endforeach ?>
 <link rel="alternate" hreflang="x-default" href="<?= $e($alternates['en'] ?? $url) ?>" />
 <?php endif ?>
-<meta property="og:type" content="article" />
-<meta property="og:title" content="<?= $e($article->title) ?>" />
-<meta property="og:description" content="<?= $e($description) ?>" />
-<meta property="og:url" content="<?= $e($canonical_url ?: $url) ?>" />
 <?php if ($published): ?>
 <meta property="article:published_time" content="<?= $published ?>" />
 <?php endif ?>
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:site" content="@psalmphp" />
-<meta name="twitter:title" content="<?= $e($article->title) ?>" />
-<meta name="twitter:description" content="<?= $e($description) ?>" />
-<meta name="twitter:image" content="https://psalm.dev/article_thumbnail.png" />
 <script type="application/ld+json">
 <?= json_encode(array_filter([
     '@context' => 'https://schema.org',
