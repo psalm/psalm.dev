@@ -4,6 +4,8 @@ namespace PsalmDotOrg;
 
 use Composer\InstalledVersions;
 
+use function array_filter;
+use function array_keys;
 use function file_get_contents;
 use function file_put_contents;
 use function filemtime;
@@ -16,6 +18,7 @@ use function json_encode;
 use function ksort;
 use function mkdir;
 use function rename;
+use function sort;
 use function sys_get_temp_dir;
 
 /**
@@ -48,6 +51,15 @@ PHP;
     public static function results(array $settings, bool $fix_file, string $php_version, int $error_level): array
     {
         ksort($settings);
+
+        // only the playground's own shape (every known setting, as a boolean) is cached, so clients cannot grow
+        // the cache with made-up keys: entries are bounded by settings x PHP versions x levels x fix
+        $names = Settings::names();
+        sort($names);
+
+        if (array_keys($settings) !== $names || array_filter($settings, 'is_bool') !== $settings) {
+            return OnlineChecker::getResults(self::CODE, $settings, $fix_file, $php_version, $error_level);
+        }
 
         $key = hash('sha256', json_encode([
             $settings,
