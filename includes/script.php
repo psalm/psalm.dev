@@ -12,6 +12,12 @@ var setCodeExpanded = function(expanded) {
     var hadFocus = document.activeElement && /^(expander|shrinker)$/.test(document.activeElement.id);
 
     body.classList.toggle('pg_compact', !expanded);
+
+    // the shrunk widget has no Settings button
+    if (!expanded && !document.getElementById('settings_panel').hasAttribute('hidden')) {
+        toggleSettings();
+    }
+
     editor.refresh();
 
     if (hadFocus) {
@@ -73,22 +79,24 @@ if (!phpVersion || !new RegExp(<?= json_encode(\PsalmDotOrg\OnlineChecker::SUPPO
     phpVersion = basePhpVersion;
 }
 
-var setPhpVersion = function(version) {
-    phpVersion = version;
-
-    // keep the choice in the URL, so reloading preserves it
+/** Keeps a choice in the URL (?php=, ?level=) so reloading preserves it; the base value needs no param. */
+var setQueryParam = function(name, value, baseValue) {
     const params = new URLSearchParams(window.location.search);
 
-    if (version === basePhpVersion) {
-        params.delete('php');
+    if (value === baseValue) {
+        params.delete(name);
     } else {
-        params.set('php', version);
+        params.set(name, String(value));
     }
 
     const query = params.toString();
     window.history.replaceState(null, '', window.location.pathname + (query ? '?' + query : '') + window.location.hash);
     loadedPage = window.location.pathname + window.location.search;
+};
 
+var setPhpVersion = function(version) {
+    phpVersion = version;
+    setQueryParam('php', version, basePhpVersion);
     renderPhpVersionLabels();
     editor.performLint();
 };
@@ -96,9 +104,11 @@ var setPhpVersion = function(version) {
 var defaultErrorLevel = <?= json_encode(\PsalmDotOrg\OnlineChecker::DEFAULT_ERROR_LEVEL) ?>;
 // a saved snippet opens with the level it was saved with; ?level= overrides it
 var baseErrorLevel = (typeof snippetErrorLevel !== 'undefined' && snippetErrorLevel) || defaultErrorLevel;
+var maxErrorLevel = <?= json_encode(\PsalmDotOrg\OnlineChecker::MAX_ERROR_LEVEL) ?>;
 var errorLevel = (function () {
-    var fromUrl = new URLSearchParams(window.location.search).get('level');
-    return fromUrl && /^[1-8]$/.test(fromUrl) ? Number(fromUrl) : baseErrorLevel;
+    // same range OnlineChecker::parseErrorLevel() accepts
+    var fromUrl = Number(new URLSearchParams(window.location.search).get('level'));
+    return Number.isInteger(fromUrl) && fromUrl >= 1 && fromUrl <= maxErrorLevel ? fromUrl : baseErrorLevel;
 })();
 
 var isErrorLevelChanged = function() {
@@ -108,18 +118,7 @@ var isErrorLevelChanged = function() {
 /** Updates the level and keeps it in the URL (like ?php=), without re-running the analysis. */
 var applyErrorLevel = function(level) {
     errorLevel = level;
-
-    const params = new URLSearchParams(window.location.search);
-
-    if (level === baseErrorLevel) {
-        params.delete('level');
-    } else {
-        params.set('level', String(level));
-    }
-
-    const query = params.toString();
-    window.history.replaceState(null, '', window.location.pathname + (query ? '?' + query : '') + window.location.hash);
-    loadedPage = window.location.pathname + window.location.search;
+    setQueryParam('level', level, baseErrorLevel);
 };
 
 var setErrorLevel = function(level) {
@@ -130,7 +129,7 @@ var setErrorLevel = function(level) {
 
 var renderPhpVersionLabels = function() {
     var text = 'PHP ' + phpVersion;
-    var title = 'Analyse code as PHP ' + phpVersion + (phpVersion === defaultPhpVersion ? ', the default' : '');
+    var title = 'Analyze code as PHP ' + phpVersion + (phpVersion === defaultPhpVersion ? ', the default' : '');
 
     document.getElementById('php_version_label').textContent = text;
     document.getElementById('php_version').title = title;
@@ -220,12 +219,7 @@ var buildSettingsPanel = function() {
     panel.appendChild(buildErrorLevelGroup());
 
     groups.forEach(function (group) {
-        var fieldset = document.createElement('fieldset');
-        fieldset.className = 'pg_group';
-
-        var legend = document.createElement('legend');
-        legend.textContent = group[0];
-        fieldset.appendChild(legend);
+        var fieldset = settingsGroup(group[0]);
 
         group[1].forEach(function (key) {
             var label = document.createElement('label');
@@ -252,14 +246,7 @@ var buildSettingsPanel = function() {
             row.appendChild(label);
 
             if (settingsDocs[key]) {
-                var docs = document.createElement('a');
-                docs.className = 'pg_doc_link';
-                docs.href = settingsDocs[key];
-                docs.target = '_blank';
-                docs.rel = 'noopener';
-                docs.textContent = 'docs';
-                docs.setAttribute('aria-label', 'Configuration docs for: ' + text.textContent);
-                row.appendChild(docs);
+                row.appendChild(docsLink(settingsDocs[key], 'Configuration docs for: ' + text.textContent));
             }
 
             fieldset.appendChild(row);
@@ -269,15 +256,33 @@ var buildSettingsPanel = function() {
     });
 };
 
-var errorLevelHints = {1: 'strictest', 8: 'most lenient'};
+/** A "docs" link for a settings row; it sits next to the label, so clicking it never toggles the control. */
+var docsLink = function(href, ariaLabel) {
+    var docs = document.createElement('a');
+    docs.className = 'pg_doc_link';
+    docs.href = href;
+    docs.target = '_blank';
+    docs.rel = 'noopener';
+    docs.textContent = 'docs';
+    docs.setAttribute('aria-label', ariaLabel);
+    return docs;
+};
 
-var buildErrorLevelGroup = function() {
+var settingsGroup = function(title) {
     var fieldset = document.createElement('fieldset');
     fieldset.className = 'pg_group';
 
     var legend = document.createElement('legend');
-    legend.textContent = 'Reporting';
+    legend.textContent = title;
     fieldset.appendChild(legend);
+    return fieldset;
+};
+
+var errorLevelHints = {1: 'strictest'};
+errorLevelHints[maxErrorLevel] = 'most lenient';
+
+var buildErrorLevelGroup = function() {
+    var fieldset = settingsGroup('Reporting');
 
     var label = document.createElement('label');
     label.className = 'pg_check pg_select';
@@ -290,7 +295,7 @@ var buildErrorLevelGroup = function() {
     select.id = 'error_level';
     select.title = 'Issues below this level are reported as info instead of errors';
 
-    for (var level = 1; level <= 8; level++) {
+    for (var level = 1; level <= maxErrorLevel; level++) {
         var option = document.createElement('option');
         var hints = [errorLevelHints[level], level === defaultErrorLevel ? 'default' : null].filter(Boolean);
         option.value = String(level);
@@ -310,14 +315,7 @@ var buildErrorLevelGroup = function() {
     row.className = 'pg_check_row';
     row.appendChild(label);
 
-    var docs = document.createElement('a');
-    docs.className = 'pg_doc_link';
-    docs.href = errorLevelsDocs;
-    docs.target = '_blank';
-    docs.rel = 'noopener';
-    docs.textContent = 'docs';
-    docs.setAttribute('aria-label', 'Docs for error levels');
-    row.appendChild(docs);
+    row.appendChild(docsLink(errorLevelsDocs, 'Docs for error levels'));
 
     fieldset.appendChild(row);
     return fieldset;
@@ -377,18 +375,24 @@ var showStatusMessage = function(kind, text, link, timeout) {
 var sharing = false;
 var shareLabelTimer = null;
 
+/** Shows a state on every Share button (the toolbar one and, on the homepage, the one under the shrunk widget). */
 var setShareLabel = function(text, state) {
-    var button = document.getElementById('getlink');
-    var label = button.querySelector('.pg_share_label');
-
     clearTimeout(shareLabelTimer);
-    label.textContent = text;
-    button.dataset.state = state;
 
-    if (state !== 'busy') {
-        shareLabelTimer = setTimeout(function () {
-            label.textContent = 'Share';
+    document.querySelectorAll('[data-share]').forEach(function (button) {
+        button.querySelector('.pg_share_label').textContent = text;
+
+        if (state) {
+            button.dataset.state = state;
+        } else {
             delete button.dataset.state;
+        }
+    });
+
+    // results go back to plain "Share" after a moment; "Saving…" stays until the result replaces it
+    if (state && state !== 'busy') {
+        shareLabelTimer = setTimeout(function () {
+            setShareLabel('Share', null);
         }, 2000);
     }
 };
@@ -498,8 +502,8 @@ var serializeJSON = function(data) {
     }).join('&');
 }
 
+// id of the latest /check request; responses to older ones are dropped
 var latestFetch = 0;
-var fetchKey = 0;
 
 // issues from the latest successful run, in Psalm's order; read by the issue navigation
 var lastIssues = [];
@@ -537,7 +541,6 @@ var setRunState = function(state, label) {
 };
 
 var setRunning = function(running) {
-    document.getElementById('pg_running').hidden = !running;
     document.querySelector('.playground .pg_output').classList.toggle('pg_is_running', running);
 };
 
@@ -664,7 +667,7 @@ var describeErrorLevel = function(level) {
     };
 };
 
-var renderIssue = function(issue, index) {
+var renderIssue = function(issue, index, fixable) {
     var level = describeErrorLevel(issue.error_level);
     var isError = issue.severity === 'error';
     var html = '<div class="pg_issue ' + (isError ? 'pg_issue_error' : 'pg_issue_info') + '" data-issue="' + index + '">'
@@ -673,6 +676,7 @@ var renderIssue = function(issue, index) {
         + '<a href="' + escapeHtml(issue.link) + '" target="_blank" rel="noopener" title="Open the ' + escapeHtml(issue.type) + ' docs">' + escapeHtml(issue.type) + '</a>'
         + (level ? '<a class="pg_level" href="' + errorLevelsDocs + '#' + level.anchor + '" target="_blank" rel="noopener" title="'
             + escapeHtml(level.title) + '">' + escapeHtml(level.label) + '</a>' : '')
+        + (fixable ? '<span class="pg_fixable_badge" title="The Fix button in the toolbar rewrites the code to fix issues like this one">auto-fixable</span>' : '')
         + '<button type="button" class="pg_loc" data-issue="' + index + '" title="Jump to this issue">'
         + escapeHtml(issue.line_from) + ':' + escapeHtml(issue.column_from) + '</button>'
         + '</div>'
@@ -777,7 +781,7 @@ var renderTypes = function(typeMap, code, cm) {
     var html = '<div class="pg_type_list">' + shown.map(function (range, index) {
         var pos = lastTypes[index].from;
 
-        return '<div class="pg_type_row">'
+        return '<div class="pg_type_row" data-type="' + index + '">'
             + '<span class="pg_type_loc"><button type="button" class="pg_loc" data-type="' + index + '" title="Select this expression">'
             + (pos.line + 1) + ':' + (pos.ch + 1) + '</button></span>'
             + '<code class="pg_type_code">' + escapeHtml(codeSnippet(code, range.from, range.to)) + '</code>'
@@ -808,6 +812,14 @@ var selectRange = function(from, to) {
 };
 
 var outputTabStorageKey = 'psalm.playground.tab';
+
+var savedOutputTab = function() {
+    try {
+        return localStorage.getItem(outputTabStorageKey) === 'types' ? 'types' : 'issues';
+    } catch (e) {
+        return 'issues';
+    }
+};
 
 var selectOutputTab = function(name, persist) {
     document.querySelectorAll('#pg_tabs [role="tab"]').forEach(function (tab) {
@@ -904,25 +916,64 @@ var jumpToAdjacentIssue = function(direction) {
     jumpToIssue(target);
 };
 
-var setFixableCount = function(response, cm) {
-    var fixButton = document.getElementById('fixer');
-    var error_count = 0;
+// Psalm's "Fixing code" docs; each supported issue type has a section there (#invalidreturntype)
+var fixingDocs = '/docs/manipulating_code/fixing/';
 
-    if ('fixable_errors' in response && response.fixable_errors) {
-        for (var type in response.fixable_errors) {
-            error_count += response.fixable_errors[type];
-        }
-    }
+var fixingDocsLink = function(type) {
+    return fixingDocs + '#' + String(type).toLowerCase();
+};
 
-    fixButton.hidden = error_count === 0;
+var plural = function(count, word) {
+    return count + ' ' + word + (count === 1 ? '' : 's');
+};
 
-    if (error_count) {
+// fixable issue counts per type from the latest run (Psalm counts them per type, not per issue)
+var lastFixableTypes = {};
+
+var fixableTotal = function() {
+    return Object.values(lastFixableTypes).reduce(function (sum, count) { return sum + count; }, 0);
+};
+
+// "Fix N issues" shows while the latest run found fixable issues and no fix is being previewed or compared
+var updateFixButton = function() {
+    var button = document.getElementById('fixer');
+    var total = fixableTotal();
+
+    button.hidden = total === 0 || fixComparison !== null || pendingFix !== null;
+    button.textContent = 'Fix ' + plural(total, 'issue');
+};
+
+var renderFixableSummary = function() {
+    var total = fixableTotal();
+
+    updateFixButton();
+
+    if (total) {
         outputElement().insertAdjacentHTML(
             'beforeend',
-            '<div class="pg_fixable">Psalm detected ' + error_count
-                + ' <a href="/docs/manipulating_code/fixing/" target="_blank">fixable issue(s)</a></div>'
+            '<div class="pg_fixable">Psalm detected <a href="' + fixingDocs + '" target="_blank" rel="noopener">'
+                + plural(total, 'fixable issue') + '</a></div>'
         );
     }
+};
+
+/** POSTs the code to /check with the current settings, PHP version and level; extra fields override them. */
+var postCheck = function(code, extra) {
+    return fetch('/check', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+        },
+        body: serializeJSON(Object.assign({
+            code: code,
+            settings: JSON.stringify(settings),
+            php: phpVersion,
+            level: errorLevel
+        }, extra))
+    }).then(function (response) {
+        return response.json();
+    });
 };
 
 var fetchAnnotations = function (code, callback, options, cm) {
@@ -934,31 +985,14 @@ var fetchAnnotations = function (code, callback, options, cm) {
         return;
     }
 
-    latestFetch++;
-    fetchKey = latestFetch;
+    var fetchKey = ++latestFetch;
 
-    setRunState('busy', 'analysing…');
+    setRunState('busy', 'analyzing…');
 
-    var submitData = {
-        code: code,
-        settings: JSON.stringify(settings),
-        php: phpVersion,
-        level: errorLevel
-    };
-
-    fetch('/check', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
-            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
-        },
-        body: serializeJSON(submitData)
-    })
+    postCheck(code, {})
     .then(function (response) {
-        return response.json();
-    })
-    .then(function (response) {
-        if (latestFetch != fetchKey) {
+        // a newer run (or a fix) started meanwhile
+        if (fetchKey !== latestFetch) {
             return;
         }
 
@@ -976,19 +1010,24 @@ var fetchAnnotations = function (code, callback, options, cm) {
             });
 
             currentIssue = null;
+            lastFixableTypes = response.fixable_errors || {};
             setIssueCount(response.results.length);
             setRunState('done', '');
 
             if (response.results.length === 0) {
                 outputElement().innerHTML = /^\s*(<\?php)?\s*$/i.test(code)
-                    ? '<div class="pg_empty">Write some PHP to analyse</div>'
+                    ? '<div class="pg_empty">Write some PHP to analyze</div>'
                     : '<div class="pg_empty">No issues!</div>';
             } else {
-                outputElement().innerHTML = response.results.map(renderIssue).join('');
+                // per-type counts only, so every issue of a fixable type gets the badge
+                outputElement().innerHTML = response.results.map(function (issue, index) {
+                    return renderIssue(issue, index, lastFixableTypes[issue.type] > 0);
+                }).join('');
             }
 
-            setFixableCount(response, cm);
+            renderFixableSummary();
             renderTypes(response.type_map, code, cm);
+            setNavigation(response);
 
             callback(
                 response.results.map(function (issue) {
@@ -1006,7 +1045,9 @@ var fetchAnnotations = function (code, callback, options, cm) {
             currentIssue = null;
             setIssueCount(null);
             clearTypes('No types: the analysis did not finish');
-            document.getElementById('fixer').hidden = true;
+            setNavigation(null);
+            lastFixableTypes = {};
+            updateFixButton();
 
             // check.php answers a few failures (bad PHP version) with a bare string
             if (typeof response.error === 'string') {
@@ -1037,47 +1078,353 @@ var fetchAnnotations = function (code, callback, options, cm) {
         }
     })
     .catch (function (error) {
-        if (latestFetch == fetchKey) {
+        if (fetchKey === latestFetch) {
             setRunState('error', 'request failed');
         }
         console.log('Request failed', error);
     });
 };
 
-var fetchFixedContents = function (code, cm) {
-    latestFetch++;
-    fetchKey = latestFetch;
-    setRunState('busy', 'fixing…');
+/**
+ * After an applied fix: the code before and after it, so the toolbar can switch between them.
+ * Any edit of either version ends the comparison.
+ */
+var fixComparison = null;
 
-    fetch('/check', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
-            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
-        },
-        body: serializeJSON({
-            code: code,
-            settings: JSON.stringify({...settings, ...{unused_methods: true}}),
-            php: phpVersion,
-            level: errorLevel,
-            fix: true,
-        })
-    })
-    .then(function (response) {
-        return response.json();
-    })
-    .then(function (response) {
-        if (latestFetch != fetchKey) {
+var renderFixComparison = function() {
+    var button = document.getElementById('fix_compare');
+    button.hidden = fixComparison === null;
+
+    if (fixComparison !== null) {
+        button.textContent = fixComparison.showingFixed ? 'Show original' : 'Show fixed';
+    }
+
+    updateFixButton();
+};
+
+/**
+ * Line diff of two snippets: [{op: ' ' | '-' | '+', text, oldLine, newLine}].
+ * Equal leading and trailing lines are matched directly; only the middle goes through a longest common
+ * subsequence, which for a fix is a few lines. Past ~4M cells the middle falls back to "removed, then added".
+ */
+var diffLines = function(before, after) {
+    var a = before.split('\n');
+    var b = after.split('\n');
+    var head = 0;
+
+    while (head < a.length && head < b.length && a[head] === b[head]) {
+        head++;
+    }
+
+    var tail = 0;
+
+    while (tail < a.length - head && tail < b.length - head && a[a.length - 1 - tail] === b[b.length - 1 - tail]) {
+        tail++;
+    }
+
+    var n = a.length - tail;
+    var m = b.length - tail;
+    var rows = [];
+    var same = function (x, y) { rows.push({op: ' ', text: a[x], oldLine: x + 1, newLine: y + 1}); };
+    var del = function (x) { rows.push({op: '-', text: a[x], oldLine: x + 1, newLine: null}); };
+    var add = function (y) { rows.push({op: '+', text: b[y], oldLine: null, newLine: y + 1}); };
+
+    for (var k = 0; k < head; k++) {
+        same(k, k);
+    }
+
+    if ((n - head) * (m - head) > 4000000) {
+        for (var d = head; d < n; d++) { del(d); }
+        for (var e = head; e < m; e++) { add(e); }
+    } else {
+        // lcs[i - head][j - head]: common lines of a[i..n) and b[j..m); only the middle is allocated
+        var lcs = [];
+        var at = function (i, j) { return lcs[i - head][j - head]; };
+
+        for (var i = n; i >= head; i--) {
+            var row = lcs[i - head] = new Uint32Array(m - head + 1);
+
+            for (var j = m - 1; i < n && j >= head; j--) {
+                row[j - head] = a[i] === b[j] ? at(i + 1, j + 1) + 1 : Math.max(at(i + 1, j), row[j + 1 - head]);
+            }
+        }
+
+        var x = head;
+        var y = head;
+
+        while (x < n || y < m) {
+            if (x < n && y < m && a[x] === b[y]) {
+                same(x++, y++);
+            } else if (x < n && (y === m || at(x + 1, y) >= at(x, y + 1))) {
+                // removals before additions, as in unified diffs
+                del(x++);
+            } else {
+                add(y++);
+            }
+        }
+    }
+
+    for (var t = 0; t < tail; t++) {
+        same(n + t, m + t);
+    }
+
+    return rows;
+};
+
+// unchanged lines kept around each change; longer unchanged runs fold into one "N unchanged lines" row
+var diffContext = 3;
+
+/**
+ * PHP syntax tokens per line ([[text, style], ...] for each line), highlighted as one document
+ * so comments and strings that span lines keep their colours.
+ */
+var highlightLines = function(code) {
+    var lines = [[]];
+
+    CodeMirror.runMode(code, 'application/x-httpd-php', function (text, style) {
+        if (text === '\n') {
+            lines.push([]);
+        } else {
+            lines[lines.length - 1].push([text, style || '']);
+        }
+    });
+
+    return lines;
+};
+
+/** The part of each line that differs from its counterpart: [start, end) after the common prefix and suffix. */
+var changedRange = function(line, counterpart) {
+    var start = 0;
+    var max = Math.min(line.length, counterpart.length);
+
+    while (start < max && line[start] === counterpart[start]) {
+        start++;
+    }
+
+    var end = 0;
+
+    while (end < max - start && line[line.length - 1 - end] === counterpart[counterpart.length - 1 - end]) {
+        end++;
+    }
+
+    // nothing in common: the whole line is the change, already shown by the row colour
+    return start === 0 && end === 0 ? null : [start, line.length - end];
+};
+
+/** Syntax-highlighted HTML for one line, with the changed range (if any) wrapped in a darker mark. */
+var renderDiffCode = function(tokens, range) {
+    var html = '';
+    var offset = 0;
+
+    tokens.forEach(function (token) {
+        var text = token[0];
+        var classes = token[1] ? token[1].split(' ').map(function (style) { return 'cm-' + style; }).join(' ') : '';
+        var tokenEnd = offset + text.length;
+        // split the token at the range edges so the mark can wrap exactly the changed characters
+        var cuts = [offset, tokenEnd];
+
+        if (range) {
+            [range[0], range[1]].forEach(function (cut) {
+                if (cut > offset && cut < tokenEnd) {
+                    cuts.push(cut);
+                }
+            });
+        }
+
+        cuts.sort(function (a, b) { return a - b; });
+
+        for (var i = 0; i < cuts.length - 1; i++) {
+            var piece = escapeHtml(text.slice(cuts[i] - offset, cuts[i + 1] - offset));
+            var marked = range && cuts[i] >= range[0] && cuts[i + 1] <= range[1] && range[1] > range[0];
+            var span = classes ? '<span class="' + classes + '">' + piece + '</span>' : piece;
+            html += marked ? '<mark class="pg_diff_word">' + span + '</mark>' : span;
+        }
+
+        offset = tokenEnd;
+    });
+
+    return html === '' ? '&nbsp;' : html;
+};
+
+
+var renderDiff = function(rows, original, fixed) {
+    var oldTokens = highlightLines(original);
+    var newTokens = highlightLines(fixed);
+    var keep = rows.map(function () { return false; });
+    var ranges = rows.map(function () { return null; });
+
+    rows.forEach(function (row, index) {
+        if (row.op !== ' ') {
+            for (var k = Math.max(0, index - diffContext); k <= Math.min(rows.length - 1, index + diffContext); k++) {
+                keep[k] = true;
+            }
+        }
+    });
+
+    // pair each run of removed lines with the run of added lines after it, line by line, for word-level marks
+    for (var i = 0; i < rows.length; i++) {
+        if (rows[i].op !== '-') {
+            continue;
+        }
+
+        var delStart = i;
+
+        while (i < rows.length && rows[i].op === '-') {
+            i++;
+        }
+
+        var addStart = i;
+
+        while (i < rows.length && rows[i].op === '+') {
+            i++;
+        }
+
+        for (var p = 0; p < Math.min(addStart - delStart, i - addStart); p++) {
+            var del = rows[delStart + p];
+            var add = rows[addStart + p];
+            ranges[delStart + p] = changedRange(del.text, add.text);
+            ranges[addStart + p] = changedRange(add.text, del.text);
+        }
+
+        i--;
+    }
+
+    var html = '';
+    var skipped = 0;
+
+    var flushSkipped = function() {
+        if (skipped) {
+            html += '<div class="pg_diff_row pg_diff_skip"><span class="pg_diff_num"></span><span class="pg_diff_num"></span>'
+                + '<span class="pg_diff_op"></span><span class="pg_diff_code">'
+                + skipped + (skipped === 1 ? ' unchanged line' : ' unchanged lines') + '</span></div>';
+            skipped = 0;
+        }
+    };
+
+    rows.forEach(function (row, index) {
+        if (!keep[index]) {
+            skipped++;
             return;
         }
 
-        document.getElementById('fixer').hidden = true;
+        flushSkipped();
+        var kind = row.op === '+' ? 'pg_diff_add' : (row.op === '-' ? 'pg_diff_del' : 'pg_diff_same');
+        var tokens = row.op === '+' ? newTokens[row.newLine - 1] : oldTokens[row.oldLine - 1];
+        html += '<div class="pg_diff_row ' + kind + '">'
+            + '<span class="pg_diff_num">' + (row.oldLine || '') + '</span>'
+            + '<span class="pg_diff_num">' + (row.newLine || '') + '</span>'
+            + '<span class="pg_diff_op" aria-hidden="true">' + (row.op === ' ' ? '' : (row.op === '-' ? '−' : '+')) + '</span>'
+            + '<code class="pg_diff_code">' + renderDiffCode(tokens || [[row.text, '']], ranges[index]) + '</code></div>';
+    });
 
-        if ('fixed_contents' in response && response.fixed_contents) {
-            // setValue triggers a fresh lint run, which updates the run state
-            cm.setValue(response.fixed_contents);
+    flushSkipped();
+    return html;
+};
+
+/**
+ * "Fix N issues" first shows Psalm's fix as a diff in a modal dialog; the editor changes only on Apply.
+ */
+var pendingFix = null;
+
+var hideFixPreview = function() {
+    var preview = document.getElementById('pg_fix_preview');
+
+    pendingFix = null;
+
+    if (preview.open) {
+        preview.close();
+    }
+
+    preview.innerHTML = '';
+};
+
+var showFixPreview = function(original, fixed) {
+    var rows = diffLines(original, fixed);
+    var added = rows.filter(function (row) { return row.op === '+'; }).length;
+    var removed = rows.filter(function (row) { return row.op === '-'; }).length;
+    var preview = document.getElementById('pg_fix_preview');
+
+    pendingFix = {original: original, fixed: fixed};
+    preview.innerHTML = '<div class="pg_bar pg_fix_preview_head">'
+        + '<h2 id="pg_fix_preview_title">Psalm\'s fix</h2>'
+        + '<span class="pg_diff_stat"><span class="pg_diff_stat_add">+' + added + '</span> <span class="pg_diff_stat_del">\u2212' + removed + '</span></span>'
+        + '<span class="pg_spacer"></span>'
+        + '<a class="pg_fix_docs" href="' + fixingDocs + '" target="_blank" rel="noopener">How fixing works</a>'
+        + '</div>'
+        + renderFixedTypes()
+        + '<div class="pg_diff cm-s-elegant" aria-label="Changes Psalm would make">' + renderDiff(rows, original, fixed) + '</div>'
+        + '<div class="pg_bar pg_fix_preview_foot">'
+        + '<button type="button" class="pg_fix_cancel">Cancel</button>'
+        + '<button type="button" class="pg_primary pg_fix_apply">Apply fix</button>'
+        + '</div>';
+    preview.showModal();
+    preview.querySelector('.pg_fix_apply').focus();
+};
+
+/** "Fixes: InvalidReturnType ×1, ..." with each type linked to its section in the fixing docs. */
+var renderFixedTypes = function() {
+    var types = Object.keys(lastFixableTypes).filter(function (type) { return lastFixableTypes[type] > 0; });
+
+    if (!types.length) {
+        return '';
+    }
+
+    return '<div class="pg_fix_types">Fixes: ' + types.map(function (type) {
+        var count = lastFixableTypes[type];
+
+        return '<a href="' + escapeHtml(fixingDocsLink(type)) + '" target="_blank" rel="noopener" title="How Psalm fixes ' + escapeHtml(type) + '">'
+            + escapeHtml(type) + '</a>' + (count > 1 ? ' \u00d7' + count : '');
+    }).join(', ') + '</div>';
+};
+
+var applyPendingFix = function() {
+    if (pendingFix === null) {
+        return;
+    }
+
+    var fix = pendingFix;
+    hideFixPreview();
+    fixComparison = {original: fix.original, fixed: fix.fixed, showingFixed: true};
+    // setValue triggers a fresh lint run, which updates the run state
+    editor.setValue(fix.fixed);
+    renderFixComparison();
+    editor.focus();
+};
+
+var cancelPendingFix = function() {
+    if (pendingFix === null) {
+        return;
+    }
+
+    hideFixPreview();
+    setRunState('done', '');
+    // the code did not change, so the issues (and the Fix button) from the last run still apply
+    updateFixButton();
+    editor.focus();
+};
+
+var fetchFixedContents = function (code) {
+    var fetchKey = ++latestFetch;
+    setRunState('busy', 'fixing…');
+
+    postCheck(code, {settings: JSON.stringify({...settings, unused_methods: true}), fix: true})
+    .then(function (response) {
+        if (fetchKey !== latestFetch) {
+            return;
         }
-        else if ('error' in response) {
+
+        if ('fixed_contents' in response && response.fixed_contents && response.fixed_contents !== code) {
+            setRunState('done', 'fix ready');
+            showFixPreview(code, response.fixed_contents);
+            updateFixButton();
+            return;
+        }
+
+        // nothing Psalm could apply after all: drop the offer until the next run
+        lastFixableTypes = {};
+        updateFixButton();
+
+        if ('error' in response) {
             setRunState('error', 'fix failed');
             renderPlainOutput(typeof response.error === 'string' ? response.error : response.error.message);
         } else {
@@ -1093,6 +1440,8 @@ var fetchFixedContents = function (code, cm) {
 var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     lineNumbers: true,
     matchBrackets: true,
+    // typed ( [ { and quotes get their closing pair, so the code keeps parsing and signature help works while typing a call
+    autoCloseBrackets: true,
     lineSeparator: "\n",
     mode: 'application/x-httpd-php',
     inputStyle: 'contenteditable',
@@ -1105,8 +1454,334 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     }
 });
 
+/*
+ * Ctrl+click (Cmd+click on macOS) and signature help, from /check's references, arguments and signatures.
+ * Their offsets belong to the code that was analyzed, so any edit drops them until the next result.
+ */
+var navigation = null;
+var linkMark = null;
+var signatureWidget = null;
+var pointer = null;
+var linkModifierDown = false;
+var isMac = /mac|iphone|ipad/i.test((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform);
+
+var isLinkModifier = function(event) {
+    return isMac ? event.metaKey : event.ctrlKey;
+};
+
+/** The innermost entry covering index; arguments also count the position right after them. */
+var innermostAt = function(entries, index, includeEnd) {
+    var best = null;
+
+    entries.forEach(function (entry) {
+        if (entry.from <= index && (includeEnd ? index <= entry.to : index < entry.to)
+            && (!best || entry.to - entry.from < best.to - best.from)
+        ) {
+            best = entry;
+        }
+    });
+
+    return best;
+};
+
+var setNavigation = function(response) {
+    navigation = response && response.references ? {
+        references: response.references,
+        arguments: response.arguments || [],
+        signatures: response.signatures || {}
+    } : null;
+
+    updateLinkMark();
+    updateSignatureHint();
+};
+
+var referenceAt = function(left, top) {
+    if (!navigation) {
+        return null;
+    }
+
+    var pos = editor.coordsChar({left: left, top: top}, 'window');
+    var coords = editor.charCoords(pos, 'window');
+
+    // coordsChar snaps to the nearest character: past the end of a line is not on a symbol
+    if (left > coords.right + 2 || top < coords.top || top > coords.bottom) {
+        return null;
+    }
+
+    return innermostAt(navigation.references, editor.indexFromPos(pos), false);
+};
+
+// the reference under linkMark; while the pointer stays on it, mousemove leaves the mark alone
+var linkedReference = null;
+
+var updateLinkMark = function() {
+    var reference = linkModifierDown && pointer ? referenceAt(pointer.left, pointer.top) : null;
+
+    if (reference === linkedReference) {
+        return;
+    }
+
+    if (linkMark) {
+        linkMark.clear();
+        linkMark = null;
+    }
+
+    linkedReference = reference;
+
+    if (!reference) {
+        return;
+    }
+
+    linkMark = editor.markText(editor.posFromIndex(reference.from), editor.posFromIndex(reference.to), {
+        className: 'pg_ref_link',
+        attributes: {title: reference.target ? 'Go to definition' : 'Open in the PHP manual'}
+    });
+};
+
+var followReference = function(reference) {
+    if (reference.target) {
+        selectRange(editor.posFromIndex(reference.target.from), editor.posFromIndex(reference.target.to));
+    } else if (reference.docs) {
+        window.open(reference.docs, '_blank', 'noopener');
+    }
+};
+
+var hideSignatureHint = function() {
+    if (signatureWidget) {
+        signatureWidget.remove();
+        signatureWidget = null;
+    }
+};
+
+var updateSignatureHint = function() {
+    hideSignatureHint();
+
+    if (!navigation || !editor.hasFocus() || editor.somethingSelected()) {
+        return;
+    }
+
+    var cursor = editor.getCursor();
+    var argument = innermostAt(navigation.arguments, editor.indexFromPos(cursor), true);
+    var signature = argument && navigation.signatures[argument.function];
+
+    if (!signature) {
+        return;
+    }
+
+    var params = signature.params;
+    var param = params[argument.index] || null;
+
+    // extra arguments of a variadic function belong to its last parameter
+    if (!param && params.length && signature.label.slice(params[params.length - 1][0]).indexOf('...') !== -1) {
+        param = params[params.length - 1];
+    }
+
+    var widget = document.createElement('div');
+    widget.className = 'pg_signature';
+    widget.setAttribute('role', 'tooltip');
+
+    var add = function(text, className) {
+        var span = document.createElement('span');
+        span.textContent = text;
+
+        if (className) {
+            span.className = className;
+        }
+
+        widget.appendChild(span);
+    };
+
+    if (param) {
+        add(signature.label.slice(0, param[0]));
+        add(signature.label.slice(param[0], param[1]), 'pg_signature_param');
+        add(signature.label.slice(param[1]));
+    } else {
+        add(signature.label);
+    }
+
+    widget.title = signature.label;
+    signatureWidget = widget;
+    editor.addWidget(cursor, widget, false, 'above');
+};
+
+editor.on('mousedown', function (cm, event) {
+    if (event.button !== 0 || !isLinkModifier(event)) {
+        return;
+    }
+
+    var reference = referenceAt(event.clientX, event.clientY);
+
+    if (reference) {
+        // keep CodeMirror from adding a second cursor
+        event.preventDefault();
+        followReference(reference);
+    }
+});
+
+editor.getWrapperElement().addEventListener('mousemove', function (event) {
+    pointer = {left: event.clientX, top: event.clientY};
+    linkModifierDown = isLinkModifier(event);
+
+    // without the modifier there is no link to draw, so skip the layout reads in referenceAt
+    if (linkModifierDown || linkMark) {
+        updateLinkMark();
+    }
+});
+
+editor.getWrapperElement().addEventListener('mouseleave', function () {
+    pointer = null;
+    updateLinkMark();
+});
+
+['keydown', 'keyup'].forEach(function (type) {
+    document.addEventListener(type, function (event) {
+        var down = isLinkModifier(event);
+
+        if (down !== linkModifierDown) {
+            linkModifierDown = down;
+            updateLinkMark();
+        }
+    });
+});
+
+editor.on('changes', function () {
+    // results (and a fix) still in flight describe the old code; the lint run for the new code replaces them
+    latestFetch++;
+    navigation = null;
+    updateLinkMark();
+    hideSignatureHint();
+    // the issue list is about to be redrawn for the new code
+    clearHoverMark();
+});
+
+editor.on('cursorActivity', updateSignatureHint);
+editor.on('blur', hideSignatureHint);
+
 document.getElementById('fixer').addEventListener('click', function () {
-    fetchFixedContents(editor.getValue(), editor);
+    fetchFixedContents(editor.getValue());
+});
+
+document.getElementById('fix_compare').addEventListener('click', function () {
+    if (fixComparison === null) {
+        return;
+    }
+
+    fixComparison.showingFixed = !fixComparison.showingFixed;
+    editor.setValue(fixComparison.showingFixed ? fixComparison.fixed : fixComparison.original);
+    renderFixComparison();
+});
+
+// only the fix itself and the toggle use setValue; any other change is an edit, which ends the comparison
+editor.on('change', function (cm, change) {
+    if (change.origin !== 'setValue' && fixComparison !== null) {
+        fixComparison = null;
+        renderFixComparison();
+    }
+});
+
+(function () {
+    var preview = document.getElementById('pg_fix_preview');
+
+    preview.addEventListener('click', function (event) {
+        if (event.target.closest('.pg_fix_apply')) {
+            applyPendingFix();
+        } else if (event.target.closest('.pg_fix_cancel') || event.target === preview) {
+            // the dialog element itself is the backdrop, outside its content
+            cancelPendingFix();
+        }
+    });
+
+    // Esc closes a modal dialog natively; treat it as Cancel
+    preview.addEventListener('cancel', function (event) {
+        event.preventDefault();
+        cancelPendingFix();
+    });
+})();
+
+/**
+ * Hovering an issue (or one of its taint steps) or a Types row highlights its code;
+ * the location button still moves the cursor there.
+ */
+var hoverMark = null;
+var hoverSource = null;
+
+var clearHoverMark = function() {
+    if (hoverMark) {
+        hoverMark.clear();
+        hoverMark = null;
+    }
+
+    hoverSource = null;
+};
+
+var hoverRange = function(target) {
+    var step = target.closest('button.pg_step_jump');
+
+    if (step) {
+        return {
+            source: step,
+            from: editor.posFromIndex(Number(step.dataset.from)),
+            to: editor.posFromIndex(Number(step.dataset.to))
+        };
+    }
+
+    var row = target.closest('.pg_type_row');
+    var type = row && lastTypes[Number(row.dataset.type)];
+
+    if (type) {
+        return {source: row, from: type.from, to: type.to};
+    }
+
+    var card = target.closest('.pg_issue');
+    var issue = card && lastIssues[Number(card.dataset.issue)];
+
+    return issue ? {source: card, from: issue.from, to: issue.to} : null;
+};
+
+var showHoverMark = function(target) {
+    var range = hoverRange(target);
+
+    if (!range) {
+        clearHoverMark();
+        return;
+    }
+
+    if (range.source === hoverSource) {
+        return;
+    }
+
+    clearHoverMark();
+    hoverSource = range.source;
+
+    // zero-width ranges (some issues point at a position) still get a visible mark
+    var to = CodeMirror.cmpPos(range.from, range.to) === 0
+        ? CodeMirror.Pos(range.to.line, range.to.ch + 1)
+        : range.to;
+
+    hoverMark = editor.markText(range.from, to, {className: 'pg_hover_mark'});
+    // no-op when the range is already visible, so the editor only moves for off-screen issues
+    editor.scrollIntoView({from: range.from, to: to}, 40);
+};
+
+['psalm_output', 'pg_types'].forEach(function (id) {
+    var output = document.getElementById(id);
+
+    output.addEventListener('mouseover', function (event) {
+        showHoverMark(event.target);
+    });
+
+    output.addEventListener('mouseleave', clearHoverMark);
+
+    // keyboard users get the same highlight while a location or step button has focus
+    output.addEventListener('focusin', function (event) {
+        showHoverMark(event.target);
+    });
+
+    output.addEventListener('focusout', function (event) {
+        if (!output.contains(event.relatedTarget)) {
+            clearHoverMark();
+        }
+    });
 });
 
 document.getElementById('psalm_output').addEventListener('click', function (event) {
@@ -1160,17 +1835,7 @@ document.getElementById('pg_tabs').addEventListener('keydown', function (event) 
     next.focus();
 });
 
-(function () {
-    var saved = null;
-
-    try {
-        saved = localStorage.getItem(outputTabStorageKey);
-    } catch (e) {
-        saved = null;
-    }
-
-    selectOutputTab(saved === 'types' ? 'types' : 'issues', false);
-})();
+selectOutputTab(savedOutputTab(), false);
 
 redrawSettings();
 
@@ -1334,7 +1999,6 @@ var lineLink = (function () {
     };
 })();
 
-var isMac = /mac|iphone|ipad/i.test((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform);
 
 document.getElementById('getlink').title = 'Share: save the snippet and copy its link (' + (isMac ? '\u2318S' : 'Ctrl+S') + ')';
 

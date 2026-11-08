@@ -7,16 +7,20 @@ use Psalm\IssueBuffer;
 use Psalm\Internal\Analyzer\FileAnalyzer;
 use Psalm\Internal\Analyzer\ProjectAnalyzer;
 use Psalm\Internal\Provider\FakeFileProvider;
+use Psalm\Internal\LanguageServer\Reference;
+use LanguageServerProtocol\Position;
+use LanguageServerProtocol\Range;
 
 final class OnlineChecker
 {
     // offered in the settings panel; the last one is the default
     public const array PHP_VERSIONS = ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5', '8.6'];
-    // every version Psalm can analyse (ProjectAnalyzer::PHP_SUPPORTED_VERSIONS_REGEX), still accepted via ?php= for old links
+    // every version Psalm can analyze (ProjectAnalyzer::PHP_SUPPORTED_VERSIONS_REGEX), still accepted via ?php= for old links
     public const string SUPPORTED_PHP_VERSION_REGEX = '^(5\.[456]|7\.[0-4]|8\.[0-6])$';
     // Psalm's errorLevel (1 strictest, 8 most lenient); the playground always ran at 2, Psalm's default without errorLevel
     public const int DEFAULT_ERROR_LEVEL = 2;
-    public const string ERROR_LEVEL_REGEX = '^[1-8]$';
+    // Psalm's errorLevel runs from 1 (strictest) to MAX_ERROR_LEVEL
+    public const int MAX_ERROR_LEVEL = 8;
     // psalm.dev version shown in the REPL output
     public const string SITE_VERSION = '1.0.2';
 
@@ -31,15 +35,13 @@ final class OnlineChecker
      */
     public static function parseErrorLevel(mixed $level): ?int
     {
-        if (is_int($level)) {
-            $level = (string) $level;
-        }
-
-        if (!is_string($level) || !preg_match('/' . self::ERROR_LEVEL_REGEX . '/D', $level)) {
+        if (!is_int($level) && !is_string($level)) {
             return null;
         }
 
-        return (int) $level;
+        $parsed = filter_var($level, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => self::MAX_ERROR_LEVEL]]);
+
+        return $parsed === false ? null : $parsed;
     }
 
     public static function getResults(
@@ -184,6 +186,12 @@ final class OnlineChecker
 
             $issue_data = reset($issues) ?: [];
 
+            // Ctrl/Cmd+click and signature help data; a fix request only reads fixed_contents
+            $file_maps = $codebase->analyzer->getFileMaps()[$file_path] ?? [[], [], []];
+            $navigation = $fix_file
+                ? ['references' => [], 'arguments' => [], 'signatures' => []]
+                : self::getNavigation($codebase, $file_path, $file_maps[0], $file_maps[2]);
+
             $fixed_file_contents = null;
 
             if ($fix_file) {
@@ -206,6 +214,9 @@ final class OnlineChecker
                 'fixed_contents' => $fixed_file_contents,
                 'hash' => md5($file_contents),
                 'type_map' => $transformed_type_map,
+                'references' => $navigation['references'],
+                'arguments' => $navigation['arguments'],
+                'signatures' => $navigation['signatures'],
                 'fixable_errors' => IssueBuffer::getFixableIssues()
             ];
         } catch (\PhpParser\Error $e) {
@@ -267,6 +278,189 @@ final class OnlineChecker
             if (($package['name'] ?? null) === $name) {
                 return $package;
             }
+        }
+
+        return [];
+    }
+
+    /**
+     * Ctrl+click targets and call signatures for the editor, from Psalm's reference and argument maps: the data its
+     * language server uses for go to definition and signature help. Only references that lead somewhere are kept.
+     * Never fails the analysis: anything unexpected just leaves the editor without these extras.
+     *
+     * @param array<int, array{0: int, 1: string}> $reference_map start => [end, symbol]
+     * @param array<int, array{0: int, 1: string, 2: int}> $argument_map start => [end, function, 0-based argument]
+     * @return array{
+     *     references: list<array{from: int, to: int, symbol: string, target?: array{from: int, to: int}, docs?: string}>,
+     *     arguments: list<array{from: int, to: int, function: string, index: int}>,
+     *     signatures: array<string, array{label: string, params: list<array{0: int, 1: int}>}>
+     * }
+     */
+    private static function getNavigation(
+        \Psalm\Codebase $codebase,
+        string $file_path,
+        array $reference_map,
+        array $argument_map
+    ): array {
+        $references = [];
+        $arguments = [];
+        $signatures = [];
+
+        try {
+            $links = [];
+            ksort($reference_map);
+
+            foreach ($reference_map as $from => [$to, $symbol]) {
+                $links[$symbol] ??= self::getSymbolLink($codebase, $file_path, $symbol);
+
+                if ($links[$symbol]) {
+                    $references[] = ['from' => $from, 'to' => $to, 'symbol' => $symbol] + $links[$symbol];
+                }
+            }
+
+            ksort($argument_map);
+
+            foreach ($argument_map as $from => [$to, $function, $index]) {
+                if (!array_key_exists($function, $signatures)) {
+                    $signatures[$function] = self::getSignature($codebase, $file_path, $function);
+                }
+
+                if ($signatures[$function]) {
+                    $arguments[] = ['from' => $from, 'to' => $to, 'function' => $function, 'index' => $index];
+                }
+            }
+        } catch (\Throwable $e) {
+            error_log('OnlineChecker navigation: ' . $e->getMessage());
+
+            return ['references' => [], 'arguments' => [], 'signatures' => []];
+        }
+
+        return ['references' => $references, 'arguments' => $arguments, 'signatures' => array_filter($signatures)];
+    }
+
+    /**
+     * "str_repeat(string $string, int $times): string", with each parameter's [start, end) offsets in the label.
+     * Like Codebase::getSignatureInformation(), but with the class, the return type and readable types: Psalm's
+     * stubs turn many built-in parameters into templates (TGeneratedFromParam0), shown here as what they extend.
+     *
+     * @return array{label: string, params: list<array{0: int, 1: int}>}|null
+     */
+    private static function getSignature(\Psalm\Codebase $codebase, string $file_path, string $function): ?array
+    {
+        try {
+            if (str_contains($function, '::')) {
+                /** @psalm-suppress ArgumentTypeCoercion */
+                $method_id = new \Psalm\Internal\MethodIdentifier(...explode('::', $function));
+                $declaring_method_id = $codebase->methods->getDeclaringMethodId($method_id);
+
+                if ($declaring_method_id === null) {
+                    return null;
+                }
+
+                $storage = $codebase->methods->getStorage($declaring_method_id);
+                $name = ($storage->defining_fqcln ?? '') . '::' . $storage->cased_name;
+            } else {
+                $function_id = strtolower($function);
+
+                if ($function_id === '') {
+                    return null;
+                }
+
+                $storage = $codebase->functions->getStorage(null, $function_id, $file_path, $file_path);
+                $name = (string) $storage->cased_name;
+            }
+        } catch (\Throwable) {
+            return null;
+        }
+
+        $readable = static fn(?\Psalm\Type\Union $type): string => $type === null
+            ? 'mixed'
+            : \Psalm\Internal\Type\TypeCombiner::combine(self::readableAtomics($type), $codebase)->getId();
+
+        $label = $name . '(';
+        $params = [];
+
+        foreach ($storage->params as $i => $param) {
+            $text = $readable($param->type ?? $param->signature_type)
+                . ' ' . ($param->by_ref ? '&' : '') . ($param->is_variadic ? '...' : '') . '$' . $param->name;
+            $params[] = [strlen($label), strlen($label) + strlen($text)];
+            $label .= $text . ($i < count($storage->params) - 1 ? ', ' : '');
+        }
+
+        $label .= ')' . ($storage->return_type ? ': ' . $readable($storage->return_type) : '');
+
+        return ['label' => $label, 'params' => $params];
+    }
+
+    /**
+     * A type as a signature shows it: templates as what they extend, conditional types as either branch.
+     *
+     * @return non-empty-list<\Psalm\Type\Atomic>
+     */
+    private static function readableAtomics(\Psalm\Type\Union $type): array
+    {
+        $atomics = [];
+
+        foreach ($type->getAtomicTypes() as $atomic) {
+            if ($atomic instanceof \Psalm\Type\Atomic\TTemplateParam) {
+                $atomics = [...$atomics, ...self::readableAtomics($atomic->as)];
+            } elseif ($atomic instanceof \Psalm\Type\Atomic\TConditional) {
+                $atomics = [
+                    ...$atomics,
+                    ...self::readableAtomics($atomic->if_type),
+                    ...self::readableAtomics($atomic->else_type),
+                ];
+            } else {
+                $atomics[] = $atomic;
+            }
+        }
+
+        return $atomics;
+    }
+
+    /**
+     * Where Ctrl+click on a symbol goes: its declaration when it is in the snippet, else the PHP manual for
+     * built-in functions, classes and their methods.
+     *
+     * @return array{target?: array{from: int, to: int}, docs?: string}
+     */
+    private static function getSymbolLink(\Psalm\Codebase $codebase, string $file_path, string $symbol): array
+    {
+        try {
+            $location = $codebase->getSymbolLocationByReference(
+                new Reference($file_path, $symbol, new Range(new Position(0, 0), new Position(0, 0)))
+            );
+        } catch (\Throwable) {
+            $location = null;
+        }
+
+        if ($location && $location->file_path === $file_path) {
+            [$from, $to] = $location->getSelectionBounds();
+
+            return ['target' => ['from' => $from, 'to' => $to]];
+        }
+
+        // only what PHP itself defines: class_exists() without autoload never loads a snippet class name
+        if (preg_match('/^\\\\?([A-Za-z_][A-Za-z0-9_]*)\\(\\)$/', $symbol, $match)) {
+            if (function_exists($match[1]) && (new \ReflectionFunction($match[1]))->isInternal()) {
+                return ['docs' => 'https://www.php.net/' . strtolower($match[1])];
+            }
+
+            return [];
+        }
+
+        if (preg_match('/^\\\\?([A-Za-z_][A-Za-z0-9_]*)(?:::([A-Za-z_][A-Za-z0-9_]*)\\(\\))?$/', $symbol, $match)) {
+            $class = $match[1];
+
+            if (!(class_exists($class, false) || interface_exists($class, false) || enum_exists($class, false))
+                || !(new \ReflectionClass($class))->isInternal()
+            ) {
+                return [];
+            }
+
+            return ['docs' => 'https://www.php.net/' . strtolower(
+                isset($match[2]) ? $class . '.' . $match[2] : 'class.' . $class
+            )];
         }
 
         return [];
