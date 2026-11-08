@@ -1,7 +1,6 @@
 /*
  * Playground layout: top bar, editor | splitter | output (| settings drawer), status bar.
- * Hand-written on purpose and loaded after site.css (which is built by an old webpack chain);
- * it overrides the legacy .cm_container / .code_expanded rules instead of editing site.css.
+ * Hand-written on purpose and loaded after site.css (which is built by an old webpack chain).
  */
 
 :root {
@@ -529,11 +528,6 @@ body.pg_resizing {
     font-size: 13px;
     line-height: 1.55;
     white-space: normal;
-}
-
-.playground #psalm_output[hidden],
-.playground #pg_types[hidden] {
-    display: none;
 }
 
 .pg_empty,
