@@ -5,6 +5,8 @@ on:
     branches: [master]
   pull_request:
 
+permissions: {}
+
 jobs:
   psalm:
     runs-on: ubuntu-latest
@@ -12,13 +14,15 @@ jobs:
       contents: read
       security-events: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       # Official Psalm 7 image. It runs `composer install --no-scripts` itself (so the
       # post-install phinx migrate, which needs a database, does not run), discovers
       # psalm.xml, and honours its errorBaseline. Taint analysis produces the SARIF report.
       - name: Psalm
-        uses: docker://ghcr.io/psalm/psalm-github-actions:7.0.0
+        uses: docker://ghcr.io/psalm/psalm-github-actions:7.0.4
         with:
           security_analysis: true
           report_file: results.sarif
@@ -26,6 +30,6 @@ jobs:
       - name: Upload results to the Security tab
         if: always()
         continue-on-error: true
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
         with:
           sarif_file: results.sarif
