@@ -10,7 +10,7 @@
     "build:js": "terser assets/js/codemirror.js --compress --mangle --output assets/js/codemirror.min.js"
   },
   "devDependencies": {
-    "css-loader": "^3.0.0",
+    "css-loader": "^7.1.5",
     "extract-loader": "^3.1.0",
     "file-loader": "^6.2.0",
     "sass": "^1.58.3",
