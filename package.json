@@ -14,7 +14,7 @@
     "extract-loader": "^3.1.0",
     "file-loader": "^6.2.0",
     "sass": "^1.58.3",
-    "postcss-loader": "^3.0.0",
+    "postcss-loader": "^8.2.1",
     "sass-loader": "^10.0.0",
     "terser": "^5.36.0",
     "webpack": "^5.75.0",
