@@ -65,7 +65,7 @@ if ($error_level === null) {
 // the default level is left out, so snippets saved before the level existed keep their links
 $hash = substr(hash_hmac(
     'sha256',
-    $code . json_encode($settings) . $php_version
+    $code . json_encode($settings, JSON_THROW_ON_ERROR) . $php_version
         . ($error_level === OnlineChecker::DEFAULT_ERROR_LEVEL ? '' : 'level' . $error_level),
     'not much of a secret'
 ), 0, 10);
@@ -99,7 +99,7 @@ try {
         exit();
     }
 
-    $data = ['hash' => $hash, 'code' => $code, 'ip' => $_SERVER['REMOTE_ADDR'], 'php_version' => $php_version, 'error_level' => $error_level];
+    $data = ['hash' => $hash, 'code' => $code, 'ip' => $_SERVER['REMOTE_ADDR'] ?? '', 'php_version' => $php_version, 'error_level' => $error_level];
 
     $settings_fields = Settings::names();
 

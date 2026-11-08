@@ -9,17 +9,17 @@ http_response_code(500);
 require_once('../vendor/autoload.php');
 // not included in autoload
 
-if (!isset($_POST['code'])) {
+if (!isset($_POST['code']) || !is_string($_POST['code'])) {
     http_response_code(400);
     exit;
 }
 
-if (!isset($_POST['settings'])) {
+if (!isset($_POST['settings']) || !is_string($_POST['settings'])) {
     http_response_code(400);
     exit;
 }
 
-$fix_file = $_POST['fix'] ?? false;
+$fix_file = filter_var($_POST['fix'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
 $settings = json_decode($_POST['settings'], true);
 if (!is_array($settings)) {

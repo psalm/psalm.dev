@@ -358,7 +358,7 @@ final class OnlineChecker
                 }
 
                 $storage = $codebase->methods->getStorage($declaring_method_id);
-                $name = ($storage->defining_fqcln ?? '') . '::' . $storage->cased_name;
+                $name = ($storage->defining_fqcln ?? $method_id->fq_class_name) . '::' . ($storage->cased_name ?? $method_id->method_name);
             } else {
                 $function_id = strtolower($function);
 

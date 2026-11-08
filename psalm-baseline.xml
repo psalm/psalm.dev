@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="dev-master@acecdbfccef8b9ec3aad32e2e680ec8de0823bd3">
-  <file src="includes/playground.php">
-    <RiskyTruthyFalsyComparison>
-      <code><![CDATA[empty($playground_saved_on)]]></code>
-    </RiskyTruthyFalsyComparison>
-    <UnnecessaryVarAnnotation>
-      <code><![CDATA[string]]></code>
-    </UnnecessaryVarAnnotation>
-  </file>
   <file src="src/ExceptionHandler.php">
     <TaintedTextWithQuotes>
       <code><![CDATA[echo json_encode(
@@ -46,15 +38,11 @@
     </UnusedMethod>
   </file>
   <file src="views/add_code.php">
-    <PossiblyFalseOperand>
-      <code><![CDATA[json_encode($settings)]]></code>
-    </PossiblyFalseOperand>
     <PossiblyInvalidArgument>
       <code><![CDATA[$_POST['code']]]></code>
       <code><![CDATA[$_POST['settings']]]></code>
     </PossiblyInvalidArgument>
     <PossiblyUndefinedArrayOffset>
-      <code><![CDATA[$_SERVER['REMOTE_ADDR']]]></code>
       <code><![CDATA[$_SERVER['SERVER_NAME']]]></code>
       <code><![CDATA[$_SERVER['SERVER_PORT']]]></code>
     </PossiblyUndefinedArrayOffset>
@@ -180,19 +168,9 @@
     </UnusedVariable>
   </file>
   <file src="views/check.php">
-    <PossiblyInvalidArgument>
-      <code><![CDATA[$_POST['settings']]]></code>
-      <code><![CDATA[$file_contents]]></code>
-      <code><![CDATA[$file_contents]]></code>
-      <code><![CDATA[$file_contents]]></code>
-      <code><![CDATA[$fix_file]]></code>
-    </PossiblyInvalidArgument>
     <PossiblyInvalidOperand>
       <code><![CDATA[$php_version]]></code>
     </PossiblyInvalidOperand>
-    <RiskyTruthyFalsyComparison>
-      <code><![CDATA[!$fix_file]]></code>
-    </RiskyTruthyFalsyComparison>
     <TaintedTextWithQuotes>
       <code><![CDATA[echo json_encode(['error' => 'PHP version ' . $php_version . ' not supported'], JSON_HEX_TAG | JSON_HEX_AMP);]]></code>
     </TaintedTextWithQuotes>
@@ -209,8 +187,6 @@
   <file src="views/index.php">
     <UnusedVariable>
       <code><![CDATA[$canonical_url]]></code>
-      <code><![CDATA[$playground_code]]></code>
-      <code><![CDATA[$playground_expandable]]></code>
     </UnusedVariable>
   </file>
   <file src="views/issue_redirect.php">
@@ -250,8 +226,6 @@
       <code><![CDATA[$canonical_url]]></code>
       <code><![CDATA[$not_found_message]]></code>
       <code><![CDATA[$not_found_message]]></code>
-      <code><![CDATA[$playground_code]]></code>
-      <code><![CDATA[$playground_saved_on]]></code>
     </UnusedVariable>
   </file>
   <file src="views/support.php">

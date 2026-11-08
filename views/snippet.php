@@ -55,7 +55,7 @@ if (!$result) {
     require dirname(__DIR__) . '/includes/not_found.php';
 }
 
-$code = $result['code'];
+$code = (string) $result['code'];
 $created_on = (new DateTime())->setTimestamp($result['created_on']);
 $created_on->setTimezone(new DateTimeZone("UTC"));
 
@@ -159,9 +159,8 @@ $canonical_url = false;
 <a class="pg_skip" href="#playground" onclick="return focusEditor();">Skip to editor</a>
 <?php require('../includes/nav.php'); ?>
 <?php
-$playground_code = htmlentities($code);
-$playground_saved_on = 'Saved ' . $created_on->format('M j Y H:i') . ' UTC';
-require('../includes/playground.php');
+require_once '../includes/playground.php';
+render_playground(htmlentities($code), 'Saved ' . $created_on->format('M j Y H:i') . ' UTC');
 ?>
 <script>
 var settings = {

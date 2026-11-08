@@ -60,7 +60,6 @@ $fresh_articles = $playground_page ? [] : PsalmDotOrg\FreshArticle::recent(dirna
     </div>
 <?php endif ?>
 <?php
-$playground_expandable = !$playground_page;
 $playground_code = '&lt;?php
 
 /**
@@ -76,7 +75,8 @@ takesAnInt($data[0]);
 $condition = rand(0, 5);
 if ($condition) {
 } elseif ($condition) {}';
-require('../includes/playground.php');
+require_once '../includes/playground.php';
+render_playground($playground_code, null, !$playground_page);
 ?>
 <?php if ($fresh_articles !== []) : ?>
     <section class="home_news" aria-labelledby="home_news_title">
