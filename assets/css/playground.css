@@ -83,8 +83,9 @@
 
     /* shrunk next to the intro: just the editor (issues show as squiggles and tooltips), no toolbar,
        and below it Expand and Share hanging from its bottom edge, as on the old psalm.dev; the rest waits behind Expand */
+    /* the share result too: the Share button's label reports it, and the long URL would overflow the narrow widget */
     .pg_compact [data-pg-full],
-    .pg_compact .pg_message:empty {
+    .pg_compact .pg_message {
         display: none;
     }
 
@@ -116,10 +117,6 @@
         border-top: 0;
         background: var(--pg-panel);
         font-size: 14px;
-    }
-
-    .pg_compact .pg_statusbar .pg_message {
-        border: 0;
     }
 
     /* expanded: the playground takes the page */
