@@ -65,6 +65,7 @@ PHP;
         $cached = @file_get_contents($file);
 
         if ($cached !== false) {
+            /** @var array|scalar|null $results json_decode() with associative arrays */
             $results = json_decode($cached, true);
 
             if (is_array($results)) {
