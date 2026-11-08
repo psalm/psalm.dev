@@ -2,10 +2,13 @@
 
 use PsalmDotOrg\Settings;
 require_once dirname(__DIR__) . '/src/Settings.php';
+require_once dirname(__DIR__) . '/src/FreshArticle.php';
 
-// views/playground.php sets this: nav plus the playground filling the viewport, nothing else
+// views/play.php sets this: nav plus the playground filling the viewport, nothing else
 $playground_page = !empty($playground_page);
-$canonical_url = $playground_page ? 'https://psalm.dev/playground' : 'https://psalm.dev/';
+$canonical_url = $playground_page ? 'https://psalm.dev/play' : 'https://psalm.dev/';
+// homepage news: up to three articles from the last two weeks, listed under the playground widget
+$fresh_articles = $playground_page ? [] : PsalmDotOrg\FreshArticle::recent(dirname(__DIR__) . '/assets/articles');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,8 +37,8 @@ $canonical_url = $playground_page ? 'https://psalm.dev/playground' : 'https://ps
 }
 </script>
 <?php endif ?>
-<script src="/assets/js/codemirror.min.js?2"></script>
-<link rel="stylesheet" href="/assets/css/playground.css?13">
+<script src="<?= asset_url('/assets/js/codemirror.min.js') ?>"></script>
+<link rel="stylesheet" href="<?= asset_url('/assets/css/playground.css') ?>">
 </head>
 <body class="<?= $playground_page ? 'front playground_page' : 'front pg_expandable pg_compact' ?>">
 <a class="pg_skip" href="#playground" onclick="return focusEditor();">Skip to editor</a>
@@ -46,6 +49,8 @@ $canonical_url = $playground_page ? 'https://psalm.dev/playground' : 'https://ps
         <h1>Give PHP the <span class="CodeMirror-lint-mark-error">love</span> it&nbsp;deserves</h1>
 
         <p>It’s easy to make great things in PHP, but bugs can creep in just as easily. Psalm is a free &amp; open-source static analysis tool that helps you identify problems in your code, so you can sleep a little better.</p>
+
+        <p class="intro_cta"><a class="button_primary" href="/docs/running_psalm/installation/">Get started</a></p>
 
         <p>Psalm helps people maintain a wide variety of codebases – large and small, ancient and modern. On its strictest setting it can help you <a href="articles/php-or-type-safety-pick-any-two">prevent almost all type-related runtime errors</a>, and enables you to take advantage of <a href="articles/immutability-and-beyond">safe coding patterns</a> popular in other languages.</p>
 
@@ -73,6 +78,16 @@ if ($condition) {
 } elseif ($condition) {}';
 require('../includes/playground.php');
 ?>
+<?php if ($fresh_articles !== []) : ?>
+    <section class="home_news" aria-labelledby="home_news_title">
+        <h2 id="home_news_title">From the blog</h2>
+        <ul>
+<?php foreach ($fresh_articles as $article) : ?>
+            <li><a href="/articles/<?= htmlspecialchars($article->slug, ENT_QUOTES) ?>"><?= htmlspecialchars($article->title, ENT_QUOTES) ?></a> <time datetime="<?= $article->date->format('Y-m-d') ?>"><?= $article->date->format('F j, Y') ?></time></li>
+<?php endforeach ?>
+        </ul>
+    </section>
+<?php endif ?>
 </div>
 <script>
 var settings = <?php echo json_encode(Settings::defaultValues()) ?>;

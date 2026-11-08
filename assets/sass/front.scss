@@ -1,3 +1,10 @@
+// homepage palette and type, shared by the intro, the call to action and the news list
+$font-sans: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
+$link-red: #a75251;
+$error-red: #c42020;
+$heading-grey: #7a7070; // about 4.2:1 on the page grey
+$rule-grey: #d8d4d4;
+
 body.front {
     background-color: #f1f0f0;
 }
@@ -25,13 +32,19 @@ body.front {
         line-height: 1.3em;
         margin-top: 20px;
         margin-bottom: 0.83em;
-        color: #8e8585;
+        color: $heading-grey;
     }
 
     p {
         margin: 1.5em 0;
         font-size: 17px;
         line-height: 1.75em;
+
+        // underlines clear of the Tiempos descenders
+        a {
+            text-underline-offset: 0.15em;
+            text-decoration-thickness: 1px;
+        }
     }
 }
 
@@ -317,3 +330,75 @@ div.cm_container {
     }
 }
 
+
+// homepage call to action under the first intro paragraph
+.intro .intro_cta a.button_primary {
+    display: inline-block;
+    line-height: 1.2; // not the paragraph's 1.75em: about 42px tall, closer to the 36px widget buttons
+    padding: 10px 20px;
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    font-family: $font-sans;
+    font-weight: 500;
+    font-size: 18px;
+
+    &:hover,
+    &:focus-visible {
+        background: $link-red;
+    }
+}
+
+// homepage news: up to three articles from the last two weeks, under the playground widget.
+// Styled like the blog index (title, then a quiet date), set off by the page's 2px black rule
+.home_news {
+    padding: 0 20px 40px;
+
+    h2 {
+        margin: 0;
+        padding-top: 12px;
+        border-top: 2px solid #000;
+        color: $heading-grey;
+        font-family: $font-sans;
+        font-weight: 600;
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    li {
+        padding: 12px 0;
+
+        + li {
+            border-top: 1px solid $rule-grey;
+        }
+    }
+
+    a {
+        color: #000;
+        font-family: $font-sans;
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 1.3;
+        text-decoration: underline 2px $error-red;
+        text-underline-offset: 4px;
+
+        &:hover,
+        &:focus-visible {
+            color: $link-red;
+        }
+    }
+
+    time {
+        display: block;
+        margin-top: 4px;
+        color: $heading-grey;
+        font-size: 14px;
+    }
+}
