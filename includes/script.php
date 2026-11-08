@@ -423,6 +423,9 @@ var getLink = async function() {
 };
 
 var shareSnippet = async function() {
+    // the selectors stay usable while saving, so remember what this snippet was saved with
+    const savedPhpVersion = phpVersion;
+    const savedErrorLevel = errorLevel;
     let response;
     let url;
 
@@ -433,7 +436,7 @@ var shareSnippet = async function() {
                 'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
                 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
             },
-            body: serializeJSON({code: editor.getValue(), settings: JSON.stringify(settings), php: phpVersion, level: errorLevel})
+            body: serializeJSON({code: editor.getValue(), settings: JSON.stringify(settings), php: savedPhpVersion, level: savedErrorLevel})
         });
         url = await response.text();
     } catch (error) {
@@ -469,9 +472,12 @@ var shareSnippet = async function() {
             loadedPage = window.location.pathname + window.location.search;
         }
 
-        // the snippet now carries the chosen version and level, so the URL no longer needs ?php= or ?level=
-        basePhpVersion = phpVersion;
-        baseErrorLevel = errorLevel;
+        // the snippet now carries the saved version and level, so the URL only needs ?php= or ?level= for
+        // choices made while it was saving
+        basePhpVersion = savedPhpVersion;
+        baseErrorLevel = savedErrorLevel;
+        setQueryParam('php', phpVersion, basePhpVersion);
+        setQueryParam('level', errorLevel, baseErrorLevel);
     } catch (error) {
         // an unexpected URL shape: the link is still shown below
     }
@@ -957,6 +963,56 @@ var renderFixableSummary = function() {
     }
 };
 
+/**
+ * Psalm reports byte offsets into the UTF-8 code, CodeMirror and JS strings count UTF-16 code units: rewrites the
+ * offsets of a /check response in place, so a non-ASCII character does not shift every later marker and link.
+ */
+var toCharOffsets = function(response, code) {
+    if (!/[^\x00-\x7f]/.test(code)) {
+        return response;
+    }
+
+    // charAt[byte offset] = UTF-16 offset of the character starting there
+    var charAt = [];
+
+    for (var i = 0; i < code.length; i++) {
+        var point = code.codePointAt(i);
+        var bytes = point < 0x80 ? 1 : point < 0x800 ? 2 : point < 0x10000 ? 3 : 4;
+
+        for (var b = 0; b < bytes; b++) {
+            charAt.push(i);
+        }
+
+        if (point >= 0x10000) {
+            i++;
+        }
+    }
+
+    charAt.push(code.length);
+
+    var convert = function(range) {
+        ['from', 'to', 'snippet_from', 'snippet_to'].forEach(function (key) {
+            if (range && typeof range[key] === 'number' && range[key] < charAt.length) {
+                range[key] = charAt[range[key]];
+            }
+        });
+    };
+
+    (response.results || []).forEach(function (issue) {
+        convert(issue);
+        (issue.other_references || []).concat(issue.taint_trace || []).forEach(convert);
+    });
+    (response.type_map || []).forEach(convert);
+    (response.references || []).forEach(function (reference) {
+        convert(reference);
+        convert(reference.target);
+    });
+    (response.arguments || []).forEach(convert);
+    convert(response.error);
+
+    return response;
+};
+
 /** POSTs the code to /check with the current settings, PHP version and level; extra fields override them. */
 var postCheck = function(code, extra) {
     return fetch('/check', {
@@ -973,6 +1029,8 @@ var postCheck = function(code, extra) {
         }, extra))
     }).then(function (response) {
         return response.json();
+    }).then(function (response) {
+        return toCharOffsets(response, code);
     });
 };
 
@@ -1432,7 +1490,10 @@ var fetchFixedContents = function (code) {
         }
     })
     .catch (function (error) {
-        setRunState('error', 'request failed');
+        if (fetchKey === latestFetch) {
+            setRunState('error', 'request failed');
+        }
+
         console.log('Request failed', error);
     });
 };
@@ -1458,7 +1519,7 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
  * Ctrl+click (Cmd+click on macOS) and signature help, from /check's references, arguments and signatures.
  * Their offsets belong to the code that was analyzed, so any edit drops them until the next result.
  */
-var navigation = null;
+var codeNavigation = null; // not "navigation": that would shadow window.navigation (the Navigation API)
 var linkMark = null;
 var signatureWidget = null;
 var pointer = null;
@@ -1485,7 +1546,7 @@ var innermostAt = function(entries, index, includeEnd) {
 };
 
 var setNavigation = function(response) {
-    navigation = response && response.references ? {
+    codeNavigation = response && response.references ? {
         references: response.references,
         arguments: response.arguments || [],
         signatures: response.signatures || {}
@@ -1496,7 +1557,7 @@ var setNavigation = function(response) {
 };
 
 var referenceAt = function(left, top) {
-    if (!navigation) {
+    if (!codeNavigation) {
         return null;
     }
 
@@ -1508,7 +1569,7 @@ var referenceAt = function(left, top) {
         return null;
     }
 
-    return innermostAt(navigation.references, editor.indexFromPos(pos), false);
+    return innermostAt(codeNavigation.references, editor.indexFromPos(pos), false);
 };
 
 // the reference under linkMark; while the pointer stays on it, mousemove leaves the mark alone
@@ -1556,13 +1617,13 @@ var hideSignatureHint = function() {
 var updateSignatureHint = function() {
     hideSignatureHint();
 
-    if (!navigation || !editor.hasFocus() || editor.somethingSelected()) {
+    if (!codeNavigation || !editor.hasFocus() || editor.somethingSelected()) {
         return;
     }
 
     var cursor = editor.getCursor();
-    var argument = innermostAt(navigation.arguments, editor.indexFromPos(cursor), true);
-    var signature = argument && navigation.signatures[argument.function];
+    var argument = innermostAt(codeNavigation.arguments, editor.indexFromPos(cursor), true);
+    var signature = argument && codeNavigation.signatures[argument.function];
 
     if (!signature) {
         return;
@@ -1647,7 +1708,7 @@ editor.getWrapperElement().addEventListener('mouseleave', function () {
 editor.on('changes', function () {
     // results (and a fix) still in flight describe the old code; the lint run for the new code replaces them
     latestFetch++;
-    navigation = null;
+    codeNavigation = null;
     updateLinkMark();
     hideSignatureHint();
     // the issue list is about to be redrawn for the new code
