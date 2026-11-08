@@ -3,6 +3,7 @@
 use PsalmDotOrg\Settings;
 require_once dirname(__DIR__) . '/src/Settings.php';
 require_once dirname(__DIR__) . '/src/FreshArticle.php';
+require_once dirname(__DIR__) . '/src/HomepageExample.php';
 
 // /play (?page=play from .htaccess): nav plus the playground filling the viewport, nothing else
 $playground_page = ($_GET['page'] ?? null) === 'play';
@@ -60,23 +61,8 @@ $fresh_articles = $playground_page ? [] : PsalmDotOrg\FreshArticle::recent(dirna
     </div>
 <?php endif ?>
 <?php
-$playground_code = '&lt;?php
-
-/**
- * @return array&lt;string&gt;
- */
-function takesAnInt(int $i) {
-    return [$i, "hello"];
-}
-
-$data = ["some text", 5];
-takesAnInt($data[0]);
-
-$condition = rand(0, 5);
-if ($condition) {
-} elseif ($condition) {}';
 require_once '../includes/playground.php';
-render_playground($playground_code, null, !$playground_page);
+render_playground(htmlspecialchars(PsalmDotOrg\HomepageExample::CODE), null, !$playground_page);
 ?>
 <?php if ($fresh_articles !== []) : ?>
     <section class="home_news" aria-labelledby="home_news_title">

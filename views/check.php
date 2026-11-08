@@ -1,5 +1,6 @@
 <?php
 
+use PsalmDotOrg\HomepageExample;
 use PsalmDotOrg\OnlineChecker;
 
 error_reporting(E_ALL);
@@ -58,7 +59,10 @@ if ($error_level === null) {
     exit;
 }
 
-$results = PsalmDotOrg\OnlineChecker::getResults($file_contents, $settings, $fix_file, $php_version, $error_level);
+// every homepage view analyzes the example, so its results come from a cache
+$results = $file_contents === HomepageExample::CODE
+    ? HomepageExample::results($settings, $fix_file, $php_version, $error_level)
+    : OnlineChecker::getResults($file_contents, $settings, $fix_file, $php_version, $error_level);
 
 http_response_code(200);
 echo json_encode($results, JSON_HEX_TAG | JSON_HEX_AMP);
