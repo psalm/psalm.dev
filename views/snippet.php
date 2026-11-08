@@ -150,9 +150,10 @@ $canonical_url = false;
 <head>
 <title>Psalm snippet <?= $hash ?></title>
 <meta name="robots" content="noindex, follow" />
-<script src="/assets/js/codemirror.min.js?2"></script>
+<?php require_once __DIR__ . '/../includes/asset.php'; ?>
+<script src="<?= asset_url('/assets/js/codemirror.min.js') ?>"></script>
 <?php require('../includes/meta.php'); ?>
-<link rel="stylesheet" href="/assets/css/playground.css?13">
+<link rel="stylesheet" href="<?= asset_url('/assets/css/playground.css') ?>">
 </head>
 <body class="front snippet_page">
 <a class="pg_skip" href="#playground" onclick="return focusEditor();">Skip to editor</a>

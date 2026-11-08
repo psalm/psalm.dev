@@ -67,7 +67,7 @@ $published = $timestamp === false ? null : date('c', $timestamp);
 <head>
 <title><?= $e($article->title) ?></title>
 <?php require('../includes/meta.php'); ?>
-<script src="/assets/js/codemirror.min.js?2"></script>
+<script src="<?= asset_url('/assets/js/codemirror.min.js') ?>"></script>
 <?php if (count($alternates) > 1): ?>
 <?php foreach ($alternates as $language => $alternate_url): ?>
 <link rel="alternate" hreflang="<?= $language ?>" href="<?= $e($alternate_url) ?>" />
