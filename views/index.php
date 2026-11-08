@@ -4,8 +4,8 @@ use PsalmDotOrg\Settings;
 require_once dirname(__DIR__) . '/src/Settings.php';
 require_once dirname(__DIR__) . '/src/FreshArticle.php';
 
-// views/play.php sets this: nav plus the playground filling the viewport, nothing else
-$playground_page = !empty($playground_page);
+// /play (?page=play from .htaccess): nav plus the playground filling the viewport, nothing else
+$playground_page = ($_GET['page'] ?? null) === 'play';
 $canonical_url = $playground_page ? 'https://psalm.dev/play' : 'https://psalm.dev/';
 // homepage news: up to three articles from the last two weeks, listed under the playground widget
 $fresh_articles = $playground_page ? [] : PsalmDotOrg\FreshArticle::recent(dirname(__DIR__) . '/assets/articles');

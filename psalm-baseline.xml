@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="dev-master@acecdbfccef8b9ec3aad32e2e680ec8de0823bd3">
+  <file src="includes/playground.php">
+    <RiskyTruthyFalsyComparison>
+      <code><![CDATA[empty($playground_saved_on)]]></code>
+    </RiskyTruthyFalsyComparison>
+    <UnnecessaryVarAnnotation>
+      <code><![CDATA[string]]></code>
+    </UnnecessaryVarAnnotation>
+  </file>
   <file src="src/ExceptionHandler.php">
     <TaintedTextWithQuotes>
       <code><![CDATA[echo json_encode(
@@ -201,6 +209,8 @@
   <file src="views/index.php">
     <UnusedVariable>
       <code><![CDATA[$canonical_url]]></code>
+      <code><![CDATA[$playground_code]]></code>
+      <code><![CDATA[$playground_expandable]]></code>
     </UnusedVariable>
   </file>
   <file src="views/issue_redirect.php">
@@ -240,6 +250,8 @@
       <code><![CDATA[$canonical_url]]></code>
       <code><![CDATA[$not_found_message]]></code>
       <code><![CDATA[$not_found_message]]></code>
+      <code><![CDATA[$playground_code]]></code>
+      <code><![CDATA[$playground_saved_on]]></code>
     </UnusedVariable>
   </file>
   <file src="views/support.php">
