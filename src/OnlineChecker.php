@@ -291,7 +291,7 @@ final class OnlineChecker
      * @param array<int, array{0: int, 1: string}> $reference_map start => [end, symbol]
      * @param array<int, array{0: int, 1: string, 2: int}> $argument_map start => [end, function, 0-based argument]
      * @return array{
-     *     references: list<array{from: int, to: int, symbol: string, target?: array{from: int, to: int}, docs?: string}>,
+     *     references: list<array{from: int, to: int, target?: array{from: int, to: int}, docs?: string}>,
      *     arguments: list<array{from: int, to: int, function: string, index: int}>,
      *     signatures: array<string, array{label: string, params: list<array{0: int, 1: int}>}>
      * }
@@ -314,7 +314,7 @@ final class OnlineChecker
                 $links[$symbol] ??= self::getSymbolLink($codebase, $file_path, $symbol);
 
                 if ($links[$symbol]) {
-                    $references[] = ['from' => $from, 'to' => $to, 'symbol' => $symbol] + $links[$symbol];
+                    $references[] = ['from' => $from, 'to' => $to] + $links[$symbol];
                 }
             }
 
@@ -359,6 +359,8 @@ final class OnlineChecker
 
                 $storage = $codebase->methods->getStorage($declaring_method_id);
                 $name = ($storage->defining_fqcln ?? $method_id->fq_class_name) . '::' . ($storage->cased_name ?? $method_id->method_name);
+                $params = $storage->params;
+                $return_type = $storage->return_type;
             } else {
                 $function_id = strtolower($function);
 
@@ -366,8 +368,23 @@ final class OnlineChecker
                     return null;
                 }
 
-                $storage = $codebase->functions->getStorage(null, $function_id, $file_path, $file_path);
-                $name = (string) $storage->cased_name;
+                try {
+                    $storage = $codebase->functions->getStorage(null, $function_id, $file_path, $file_path);
+                    $name = (string) $storage->cased_name;
+                    $params = $storage->params;
+                    $return_type = $storage->return_type;
+                } catch (\UnexpectedValueException $e) {
+                    // built-ins only in Psalm's callmap (e.g. ctype_digit) get no storage
+                    $callable = \Psalm\Internal\Codebase\InternalCallMapHandler::getCallablesFromCallMap($function_id)[0] ?? null;
+
+                    if ($callable === null) {
+                        return null;
+                    }
+
+                    $name = $function;
+                    $params = $callable->params ?? [];
+                    $return_type = $callable->return_type;
+                }
             }
         } catch (\Throwable) {
             return null;
@@ -378,18 +395,18 @@ final class OnlineChecker
             : \Psalm\Internal\Type\TypeCombiner::combine(self::readableAtomics($type), $codebase)->getId();
 
         $label = $name . '(';
-        $params = [];
+        $label_params = [];
 
-        foreach ($storage->params as $i => $param) {
+        foreach ($params as $i => $param) {
             $text = $readable($param->type ?? $param->signature_type)
                 . ' ' . ($param->by_ref ? '&' : '') . ($param->is_variadic ? '...' : '') . '$' . $param->name;
-            $params[] = [strlen($label), strlen($label) + strlen($text)];
-            $label .= $text . ($i < count($storage->params) - 1 ? ', ' : '');
+            $label_params[] = [strlen($label), strlen($label) + strlen($text)];
+            $label .= $text . ($i < count($params) - 1 ? ', ' : '');
         }
 
-        $label .= ')' . ($storage->return_type ? ': ' . $readable($storage->return_type) : '');
+        $label .= ')' . ($return_type ? ': ' . $readable($return_type) : '');
 
-        return ['label' => $label, 'params' => $params];
+        return ['label' => $label, 'params' => $label_params];
     }
 
     /**
