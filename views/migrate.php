@@ -7,9 +7,6 @@
  * It can only apply migrations that are already committed, and applied ones are skipped, so repeated calls are harmless.
  */
 
-// Disabled between migrations. To apply a new one: delete the next line and uncomment the ^migrate$ rule in .htaccess.
-http_response_code(404); exit;
-
 ini_set('display_errors', '0');
 error_reporting(E_ALL);
 header('Content-Type: text/plain; charset=utf-8');
