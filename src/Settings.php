@@ -6,22 +6,24 @@ use function array_keys;
 use function array_map;
 use function array_filter;
 use function intval;
+use function strtolower;
 
 final class Settings 
 {
+    /** name => [default, description, the psalm.xml option it maps to (configuration docs anchor)] */
     private const AVAILABLE_SETTINGS = [
-        'unused_variables' => [true, 'Detect unused variables and parameters'],
-        'disable_var_parsing' => [false, 'Disable parsing of <code>@var</code> in variable assignments (still enabled for properties) for better type accuracy'],
-        'unused_methods' => [false, 'Detect unused classes and methods'],
-        'memoize_properties' => [true, 'Memoize property assignments'],
-        'memoize_method_calls' => [false, 'Memoize simple method calls'],
-        'check_throws' => [false, 'Check for <code>@throws</code> docblock'],
-        'strict_internal_functions' => [false, 'Report <code>false</code> and <code>null</code> returned by built-in functions'],
-        'restrict_return_types' => [false, 'Force return types to be as tight as possible'],
-        'use_phpdoc_without_magic_call' => [false, 'Use PHPDoc methods and properties without magic call.'],
-        'ensure_override_attribute' => [false, 'Ensure methods marked as override are actually overriding something'],
-        'ensure_array_offsets_exist' => [true, 'Require array offsets to be known to exist (<code>ensureArrayStringOffsetsExist</code>, <code>ensureArrayIntOffsetsExist</code>)'],
-        'find_unused_psalm_suppress' => [false, 'Report unused <code>@psalm-suppress</code> annotations'],
+        'unused_variables' => [true, 'Detect unused variables and parameters', 'findUnusedVariablesAndParams'],
+        'disable_var_parsing' => [false, 'Disable parsing of <code>@var</code> in variable assignments (still enabled for properties) for better type accuracy', 'disableVarParsing'],
+        'unused_methods' => [false, 'Detect unused classes and methods', 'findUnusedCode'],
+        'memoize_properties' => [true, 'Memoize property assignments', 'rememberPropertyAssignmentsAfterCall'],
+        'memoize_method_calls' => [false, 'Memoize simple method calls', 'memoizeMethodCallResults'],
+        'check_throws' => [false, 'Check for <code>@throws</code> docblock', 'checkForThrowsDocblock'],
+        'strict_internal_functions' => [false, 'Report <code>false</code> and <code>null</code> returned by built-in functions', 'ignoreInternalFunctionFalseReturn'],
+        'restrict_return_types' => [false, 'Force return types to be as tight as possible', 'restrictReturnTypes'],
+        'use_phpdoc_without_magic_call' => [false, 'Use PHPDoc methods and properties without magic call.', 'usePhpDocMethodsWithoutMagicCall'],
+        'ensure_override_attribute' => [false, 'Ensure methods marked as override are actually overriding something', 'ensureOverrideAttribute'],
+        'ensure_array_offsets_exist' => [true, 'Require array offsets to be known to exist (<code>ensureArrayStringOffsetsExist</code>, <code>ensureArrayIntOffsetsExist</code>)', 'ensureArrayStringOffsetsExist'],
+        'find_unused_psalm_suppress' => [false, 'Report unused <code>@psalm-suppress</code> annotations', 'findUnusedPsalmSuppress'],
     ];
 
     /** @return list<string> */
@@ -51,6 +53,19 @@ final class Settings
         }
 
         return $settings;
+    }
+
+    /**
+     * Links to the configuration docs, keyed by setting name.
+     *
+     * @return array<string, string>
+     */
+    public static function docsLinks(): array
+    {
+        return array_map(
+            fn($row) => '/docs/running_psalm/configuration/#' . strtolower($row[2]),
+            self::AVAILABLE_SETTINGS
+        );
     }
 
     /** @return array<string, string> */

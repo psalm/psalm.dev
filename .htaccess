@@ -40,8 +40,9 @@ Header set Access-Control-Allow-Origin "*"
 
 # Without explicit headers browsers guess a cache lifetime from the file age
 # and can keep stale copies for weeks. Stylesheets and scripts are linked with
-# a ?N or ?v=N version that is bumped on every change, so a versioned URL never
-# changes and is cached for good; unversioned requests get a short lifetime.
+# a ?v=<file mtime> version (includes/asset.php, or ?v=N in mkdocs.yml), so a
+# versioned URL never changes and is cached for good; unversioned requests get
+# a short lifetime.
 # mkdocs-material's hashed assets never change either.
 <IfModule mod_headers.c>
   <FilesMatch "\.(css|js)$">
@@ -100,6 +101,8 @@ RewriteRule ^r/([a-z0-9]+)$ /views/snippet.php?r=$1 [L,NC]
 RewriteRule ^check$ /views/check.php [L,NC]
 RewriteRule ^sitemap\.xml$ /views/sitemap.php [L,NC]
 RewriteRule ^add_code$ /views/add_code.php [L,NC]
+RewriteRule ^play/?$ /views/index.php?page=play [L,NC,QSA]
+RewriteRule ^(playground|r|demo|try|sandbox)/?$ /play [R=301,L,NC,QSA]
 # RewriteRule ^migrate$ /views/migrate.php [L,NC,QSA]
 RewriteRule ^quickstart/?$ https://psalm.dev/docs/running_psalm/installation/ [R=301,L]
 RewriteRule ^contribute/?$ /views/contribute.php [L,NC]

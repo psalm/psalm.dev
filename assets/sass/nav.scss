@@ -48,10 +48,10 @@ nav {
 
         li {
             display: inline-block;
-            margin-left: 20px;
+            margin-left: 6px;
 
-            &.doc_link {
-                margin-right: -2px;
+            &.github_link a svg {
+                margin-right: 0;
             }
 
             a {
@@ -101,13 +101,6 @@ nav {
 
         ul li {
             margin: 0;
-
-            &.get_started {
-                display: none;
-            }
-            &.plugins_link {
-                display: none;
-            }
         }
     }
 }

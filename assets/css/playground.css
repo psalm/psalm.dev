@@ -1,0 +1,1255 @@
+/*
+ * Playground layout: top bar, editor | splitter | output (| settings drawer), status bar.
+ * Hand-written on purpose and loaded after site.css (which is built by an old webpack chain).
+ */
+
+:root {
+    --pg-bg: #f1f0f0;
+    --pg-panel: #fff;
+    --pg-ink: #000;
+    --pg-muted: #666;
+    --pg-faint: #999;
+    --pg-hover: #eee;
+    --pg-ink-hover: #333; /* filled (black) buttons on hover */
+    --pg-divider: #ddd; /* 1px lines between list rows */
+    --pg-error: #c42020;
+    --pg-ok: #2a7a2a;
+    --pg-rule: 2px solid var(--pg-ink);
+    --pg-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono",
+        "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+    --pg-bar-height: 36px;
+    /* #L5-L12 line links; translucent, so selection and lint squiggles still show through */
+    --pg-line-hl: rgba(255, 212, 0, 0.18);
+    --pg-line-hl-gutter: rgba(255, 212, 0, 0.45);
+}
+
+.playground [hidden] {
+    display: none !important;
+}
+
+/* ---- homepage: playground next to the intro (body.pg_compact) until Expand; stacked below 1000px ---- */
+
+.container.front {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    padding-top: 24px;
+}
+
+.container.front .intro {
+    float: none;
+    max-width: 984px;
+    margin: 0 auto;
+    padding: 0 20px 30px;
+}
+
+@media (min-width: 1000px) {
+    .pg_compact .container.front {
+        display: grid;
+        /* as on the old psalm.dev: a 1024px page, the widget 492px wide on the right (472px plus its 20px gutter) */
+        grid-template-columns: minmax(0, 1fr) minmax(0, 492px);
+        column-gap: 20px;
+        align-items: start;
+        max-width: 1024px;
+        margin: 0 auto;
+    }
+
+    .pg_compact .container.front .intro {
+        grid-row: 1 / span 2;
+        max-width: none;
+        margin: 0;
+        padding: 0 0 30px 20px;
+    }
+
+    /* recent articles fill the right column under the widget */
+    .pg_compact .container.front .home_news {
+        grid-column: 2;
+        grid-row: 2;
+        padding: 0 20px 30px 0; /* left edge on the widget's, right edge on the widget's 20px gutter */
+    }
+
+    /* the headline's cap height starts at the editor's top rule (the line box adds ~8px above the caps) */
+    .pg_compact .container.front .intro h1 {
+        margin-top: -8px;
+    }
+
+    .pg_compact .container.front .intro p {
+        margin: 1.25em 0 0;
+    }
+
+    .pg_compact .playground {
+        padding-left: 0;
+    }
+
+    /* shrunk next to the intro: just the editor (issues show as squiggles and tooltips), no toolbar,
+       and below it Expand and Share hanging from its bottom edge, as on the old psalm.dev; the rest waits behind Expand */
+    .pg_compact [data-pg-full],
+    .pg_compact .pg_message:empty {
+        display: none;
+    }
+
+    .pg_compact .pg_panes {
+        flex-direction: column; /* the editor spans the widget's width */
+        height: auto;
+        border-top: var(--pg-rule); /* the hidden toolbar drew the widget's top edge */
+    }
+
+    .pg_compact .pg_editor {
+        flex: 0 0 auto;
+        height: 380px; /* 15 lines × 22px + CodeMirror padding and its 15px scrollbar gap (374px), with a little slack: no scroll for the default snippet */
+    }
+
+    .pg_compact .pg_statusbar {
+        min-height: 0;
+        border: 0;
+        background: transparent;
+    }
+
+    .pg_compact .pg_statusbar .pg_size_toggle,
+    .pg_compact .pg_statusbar .pg_bottom_share {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: var(--pg-bar-height);
+        padding: 0 14px;
+        border: var(--pg-rule);
+        border-top: 0;
+        background: var(--pg-panel);
+        font-size: 14px;
+    }
+
+    .pg_compact .pg_statusbar .pg_message {
+        border: 0;
+    }
+
+    /* expanded: the playground takes the page */
+    .pg_expandable:not(.pg_compact) .container.front .intro,
+    .pg_expandable:not(.pg_compact) .container.front .home_news {
+        display: none;
+    }
+
+    .pg_expandable:not(.pg_compact) .container.front {
+        padding-top: 16px;
+    }
+}
+
+/* Share under the shrunk homepage widget only (see the compact rules); the toolbar has its own */
+.pg_bottom_share {
+    display: none;
+}
+
+.pg_bar button.pg_bottom_share[data-state="error"] {
+    color: var(--pg-error);
+}
+
+/* Expand/Shrink: homepage only, wide screens only; first in the bottom bar, as on the old psalm.dev */
+.pg_bar button.pg_size_toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-left: 0;
+    border-right: var(--pg-rule);
+}
+
+.pg_compact #shrinker,
+.pg_expandable:not(.pg_compact) #expander {
+    display: none;
+}
+
+/* homepage below 1000px: no Expand/Shrink; intro, then the recent articles, then the playground (which runs long when stacked) */
+@media (max-width: 999px) {
+    .pg_bar button.pg_size_toggle {
+        display: none;
+    }
+
+    .pg_expandable .container.front {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pg_expandable .container.front .home_news {
+        order: 1;
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 984px;
+        margin: 0 auto;
+    }
+
+    .pg_expandable .container.front .playground {
+        order: 2;
+    }
+}
+
+/* ---- /play: nav plus the playground, which fills the rest of the viewport ---- */
+
+.playground_page {
+    min-height: 100vh;
+}
+
+.playground_page .container.front {
+    display: flex;
+    flex-direction: column;
+    padding-top: 12px;
+}
+
+@media (min-width: 1000px) {
+    .playground_page .playground {
+        flex: 1 1 0;
+        padding-bottom: 12px;
+    }
+
+    /* basis 0: an open settings drawer scrolls instead of stretching the page */
+    .playground_page .pg_panes {
+        flex: 1 1 0;
+        height: auto;
+        min-height: 420px;
+    }
+}
+
+/* ---- snippet pages: compact nav, as before ---- */
+
+.snippet_page nav ul {
+    display: none;
+}
+
+.snippet_page nav h1 a {
+    padding: 10px 0;
+    font-size: 30px;
+}
+
+.snippet_page .playground {
+    padding-top: 16px;
+}
+
+/* ---- playground frame ---- */
+
+.playground {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0 20px 32px;
+    font-family: var(--pg-mono);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--pg-ink);
+}
+
+.playground *,
+.playground *::before,
+.playground *::after {
+    box-sizing: border-box;
+}
+
+/* bars: one 2px frame, children share borders */
+.pg_bar {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    min-height: var(--pg-bar-height);
+    background: var(--pg-panel);
+    border: var(--pg-rule);
+}
+
+.pg_spacer {
+    flex: 1 1 auto;
+}
+
+.pg_bar button {
+    appearance: none;
+    margin: 0;
+    padding: 0 14px;
+    min-height: calc(var(--pg-bar-height) - 4px);
+    border: 0;
+    border-left: var(--pg-rule);
+    border-radius: 0;
+    background: var(--pg-panel);
+    color: var(--pg-ink);
+    font: inherit;
+    line-height: 1;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.pg_bar button:hover {
+    background: var(--pg-hover);
+}
+
+.pg_bar button:active,
+.pg_bar button.active,
+.pg_bar button[aria-expanded="true"],
+.pg_bar button[aria-pressed="true"] {
+    background: var(--pg-ink);
+    color: var(--pg-panel);
+}
+
+.playground button:focus-visible,
+.playground select:focus-visible,
+.pg_splitter:focus-visible {
+    outline: 2px dashed currentColor;
+    outline-offset: -5px;
+}
+
+.pg_toolgroup {
+    display: flex;
+    align-items: stretch;
+}
+
+/* actions on the left (Share first), config and view on the right, above the settings drawer */
+.pg_toolgroup_actions > :first-child {
+    border-left: 0;
+}
+
+.pg_toolgroup_config > .pg_field {
+    border-left: var(--pg-rule);
+}
+
+/* compact "PHP 8.6" face; the transparent native select on top opens the full "8.6 (default)" list */
+.pg_field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0 30px 0 12px;
+    background: var(--pg-panel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0h10L5 6z'/%3E%3C/svg%3E") no-repeat right 12px center;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.pg_field:hover {
+    background-color: var(--pg-hover);
+}
+
+.pg_field:has(select:focus-visible) {
+    outline: 2px dashed currentColor;
+    outline-offset: -5px;
+}
+
+.pg_field select {
+    appearance: none;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0 0 0 12px;
+    border: 0;
+    opacity: 0;
+    font: inherit;
+    cursor: pointer;
+}
+
+/* Share is the one primary action */
+.pg_bar button.pg_primary {
+    min-width: calc(12ch + 60px);
+    background: var(--pg-ink);
+    color: var(--pg-panel);
+}
+
+.pg_bar button.pg_primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.pg_bar button.pg_primary svg {
+    flex: none;
+}
+
+.pg_bar button.pg_primary:hover {
+    background: var(--pg-ink-hover);
+}
+
+.pg_bar button.pg_primary[data-state="error"] {
+    background: var(--pg-error);
+}
+
+/* Fix N issues / Show original: a plain cell like Settings, closed on the right; Share stays the only filled button */
+.pg_toolgroup_actions > button:not(:first-child) {
+    border-right: var(--pg-rule);
+}
+
+.pg_topbar #settings[aria-expanded="true"] {
+    background: var(--pg-hover);
+    color: var(--pg-ink);
+    box-shadow: inset 0 -3px 0 var(--pg-ink);
+}
+
+.pg_skip {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 100;
+    padding: 8px 14px;
+    background: var(--pg-ink);
+    color: var(--pg-panel);
+    font-family: var(--pg-mono);
+    font-size: 14px;
+    text-decoration: none;
+    transform: translateY(-200%);
+}
+
+.pg_skip:focus {
+    transform: none;
+    outline: 2px dashed var(--pg-panel);
+    outline-offset: -5px;
+}
+
+/* ---- panes ---- */
+
+.pg_panes {
+    --pg-split: 60;
+    display: flex;
+    height: clamp(420px, calc(100vh - 170px), 1000px);
+    border: var(--pg-rule);
+    border-top: 0;
+    background: var(--pg-panel);
+}
+
+.pg_pane {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+}
+
+.pg_editor {
+    flex: var(--pg-split) 1 0;
+}
+
+.pg_output {
+    flex: calc(100 - var(--pg-split)) 1 0;
+}
+
+.playground .CodeMirror,
+.playground .CodeMirror.CodeMirror-focused {
+    flex: 1 1 auto;
+    height: 100%;
+    width: 100%;
+    max-width: none;
+    border: 0;
+    box-shadow: none;
+}
+
+/* line numbers are links: click selects a line, Shift+click a range (#L5-L12) */
+.playground .CodeMirror-linenumber {
+    cursor: pointer;
+}
+
+.playground .CodeMirror-linenumber:hover {
+    color: var(--pg-muted);
+}
+
+.playground .pg_line_hl_bg {
+    background: var(--pg-line-hl);
+}
+
+.playground .pg_line_hl_gutter {
+    background: var(--pg-line-hl-gutter);
+}
+
+.playground .pg_line_hl .CodeMirror-linenumber {
+    color: var(--pg-ink);
+    font-weight: 600;
+}
+
+.pg_splitter {
+    flex: 0 0 10px;
+    border-left: var(--pg-rule);
+    border-right: var(--pg-rule);
+    background: var(--pg-bg);
+    cursor: col-resize;
+    touch-action: none;
+}
+
+.pg_splitter:hover,
+.pg_splitter.dragging {
+    background: var(--pg-ink);
+}
+
+body.pg_resizing {
+    cursor: col-resize;
+    user-select: none;
+}
+
+/* output tab bar sits inside the output pane: only the bottom rule is needed */
+.pg_tabs {
+    flex: 0 0 auto;
+    border: 0;
+    border-bottom: var(--pg-rule);
+}
+
+.pg_tablist {
+    display: flex;
+    align-items: stretch;
+}
+
+.pg_tabs button:first-child {
+    border-left: 0;
+}
+
+
+.pg_is_running #psalm_output,
+.pg_is_running #pg_types {
+    opacity: 0.45;
+    transition: opacity 0.15s;
+}
+
+.pg_tabs button {
+    border-right: var(--pg-rule);
+}
+
+.pg_count:empty {
+    display: none;
+}
+
+.pg_count::before {
+    content: "(";
+}
+
+.pg_count::after {
+    content: ")";
+}
+
+.playground #psalm_output,
+.playground #pg_types {
+    position: relative; /* offsetParent for issue scrolling */
+    display: block;
+    flex: 1 1 auto;
+    height: auto;
+    width: auto;
+    min-height: 0;
+    overflow: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--pg-panel);
+    color: #222;
+    font-family: var(--pg-mono);
+    font-size: 13px;
+    line-height: 1.55;
+    white-space: normal;
+}
+
+.pg_empty,
+.pg_plain {
+    padding: 12px 14px;
+}
+
+.pg_plain {
+    white-space: pre-wrap;
+}
+
+.pg_issue {
+    padding: 10px 14px 10px 10px;
+    border-left: 4px solid transparent;
+    border-bottom: 1px solid var(--pg-divider);
+}
+
+.pg_issue:hover,
+.pg_type_row:hover > * /* the row is display: contents, so its cells carry the background */ {
+    background: var(--pg-hover);
+}
+
+/* code of the issue or taint step under the pointer;
+   background-color only: CodeMirror puts this class on the lint mark's span, whose squiggle is a background image.
+   No border either: syntax tokens split the mark into several spans, each would get its own box */
+.CodeMirror .pg_hover_mark {
+    background-color: rgba(255, 212, 0, 0.6);
+}
+
+.pg_issue.current {
+    border-left-color: var(--pg-ink);
+    background: var(--pg-hover);
+}
+
+.pg_issue_head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 10px;
+    align-items: baseline;
+}
+
+.pg_sev {
+    font-weight: 700;
+}
+
+.pg_issue_error .pg_sev {
+    color: var(--pg-error);
+}
+
+.pg_issue_info .pg_sev {
+    color: var(--pg-muted);
+}
+
+.pg_issue_head a {
+    color: var(--pg-ink);
+}
+
+/* ---- Fix preview: a diff in a modal dialog, applied only on "Apply fix" ---- */
+
+.pg_fix_preview {
+    width: min(900px, calc(100vw - 32px));
+    max-height: calc(100vh - 64px);
+    padding: 0;
+    border: var(--pg-rule);
+    background: var(--pg-panel);
+    color: var(--pg-ink);
+    font-family: var(--pg-mono);
+    font-size: 13px;
+}
+
+.pg_fix_preview[open] {
+    display: flex;
+    flex-direction: column;
+}
+
+.pg_fix_preview::backdrop {
+    background: rgba(0, 0, 0, 0.35);
+}
+
+/* head and foot are toolbars (.pg_bar, Apply is .pg_primary) inside the dialog's own frame */
+.pg_fix_preview .pg_bar {
+    flex: 0 0 auto;
+    border: 0;
+}
+
+.pg_fix_preview .pg_fix_preview_head {
+    align-items: center;
+    gap: 12px;
+    padding: 0 14px;
+    border-bottom: var(--pg-rule);
+}
+
+.pg_fix_preview_head h2 {
+    margin: 0;
+    font: inherit;
+    font-weight: 700;
+}
+
+.pg_fix_preview_head > .pg_fix_docs {
+    color: inherit;
+}
+
+/* actions at the bottom, Apply last (rightmost), as in most confirm dialogs */
+.pg_fix_preview .pg_fix_preview_foot {
+    justify-content: flex-end;
+    border-top: var(--pg-rule);
+}
+
+/* the issue types this fix addresses, each linked to its section in the fixing docs */
+.pg_fix_types {
+    flex: 0 0 auto;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--pg-divider);
+    color: var(--pg-muted);
+}
+
+.pg_fix_types a {
+    color: var(--pg-ink);
+}
+
+.pg_diff_stat_add {
+    margin-right: 6px;
+    color: var(--pg-ok);
+}
+
+.pg_diff_stat_del {
+    color: var(--pg-error);
+}
+
+/* GitHub-style unified diff: tinted rows, darker number gutter, darker marks on the changed words */
+.pg_diff {
+    --pg-diff-add: #e6ffec;
+    --pg-diff-add-num: #ccffd8;
+    --pg-diff-add-word: #abf2bc;
+    --pg-diff-del: #ffebe9;
+    --pg-diff-del-num: #ffd7d5;
+    --pg-diff-del-word: rgba(255, 129, 130, 0.4);
+    --pg-diff-hunk: #ddf4ff;
+    flex: 1 1 auto;
+    overflow: auto;
+    background: var(--pg-panel);
+    font-family: var(--pg-mono);
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.pg_diff_row {
+    display: grid;
+    grid-template-columns: 5ch 5ch 2.5ch 1fr;
+}
+
+.pg_diff_code {
+    padding: 0 12px 0 0;
+    background: none; /* site.css gives every code element a grey background */
+    font: inherit;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.pg_diff_num {
+    padding: 0 8px 0 0;
+    color: var(--pg-faint);
+    text-align: right;
+    user-select: none;
+}
+
+.pg_diff_op {
+    padding-left: 6px;
+    user-select: none;
+}
+
+.pg_diff_add {
+    background: var(--pg-diff-add);
+}
+
+.pg_diff_add .pg_diff_num {
+    background: var(--pg-diff-add-num);
+    color: var(--pg-ink);
+}
+
+.pg_diff_del {
+    background: var(--pg-diff-del);
+}
+
+.pg_diff_del .pg_diff_num {
+    background: var(--pg-diff-del-num);
+    color: var(--pg-ink);
+}
+
+.pg_diff_add .pg_diff_word {
+    background: var(--pg-diff-add-word);
+    color: inherit;
+}
+
+.pg_diff_del .pg_diff_word {
+    background: var(--pg-diff-del-word);
+    color: inherit;
+}
+
+/* folded unchanged lines, like a hunk header */
+.pg_diff_skip {
+    background: var(--pg-diff-hunk);
+    color: var(--pg-muted);
+}
+
+/* issue types that the Fix button (Psalter) can fix: a label only, the fix itself is the toolbar button */
+.pg_issue_head .pg_fixable_badge {
+    padding: 0 6px;
+    border: 1px solid var(--pg-ok);
+    color: var(--pg-ok);
+    font-size: 12px;
+    line-height: 18px;
+}
+
+/* Psalm's errorLevel for the issue type: quiet, still a link to the levels docs */
+.pg_issue_head a.pg_level {
+    margin-left: -4px;
+    color: var(--pg-muted);
+    font-size: 12px;
+    text-decoration-color: var(--pg-faint);
+    text-underline-offset: 2px;
+}
+
+.pg_issue_head a.pg_level::before {
+    content: "\00B7";
+    display: inline-block; /* keeps the dot out of the underline */
+    margin-right: 8px;
+}
+
+.pg_issue_head a.pg_level:hover {
+    color: var(--pg-ink);
+}
+
+button.pg_loc {
+    appearance: none;
+    margin: 0 0 0 auto;
+    padding: 0 4px;
+    border: 1px solid var(--pg-ink);
+    border-radius: 0;
+    background: var(--pg-panel);
+    color: var(--pg-ink);
+    font: inherit;
+    cursor: pointer;
+}
+
+button.pg_loc:hover {
+    background: var(--pg-ink);
+    color: var(--pg-panel);
+}
+
+.pg_issue_msg {
+    margin-top: 2px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.pg_refs {
+    margin: 8px 0 0;
+    color: var(--pg-muted);
+}
+
+.pg_refs_title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.pg_steps {
+    margin: 4px 0 0;
+    /* the number, its dot and a gap; --pg-step-digits is set per list */
+    padding: 0 0 0 calc((var(--pg-step-digits, 1) + 3) * 1ch);
+    border-left: 2px solid var(--pg-ink);
+    list-style: decimal;
+}
+
+.pg_step {
+    padding: 2px 0;
+}
+
+.pg_step::marker {
+    color: var(--pg-ink);
+    font-weight: 700;
+}
+
+.pg_step + .pg_step {
+    border-top: 1px solid var(--pg-divider);
+}
+
+.pg_step_label {
+    color: var(--pg-ink);
+}
+
+button.pg_step_jump {
+    appearance: none;
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 2px 6px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+button.pg_step_jump:hover {
+    background: var(--pg-hover);
+}
+
+li.pg_step > .pg_step_label {
+    display: block;
+    padding: 2px 6px;
+}
+
+.pg_step_head {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+}
+
+.pg_step_loc {
+    margin-left: auto;
+    color: var(--pg-muted);
+}
+
+.pg_ref_snippet {
+    display: block;
+    color: #222;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.pg_ref_snippet mark {
+    background: var(--pg-divider);
+    color: var(--pg-ink);
+}
+
+/* ---- types tab: location | expression | inferred type ---- */
+
+.pg_type_list {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr) minmax(0, 1.4fr);
+}
+
+.pg_type_row {
+    display: contents;
+}
+
+.pg_type_row > * {
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--pg-divider);
+    overflow-wrap: anywhere;
+}
+
+.pg_type_loc {
+    padding-left: 14px;
+    text-align: right;
+}
+
+.pg_type_code {
+    padding: 4px 8px;
+    background: none;
+    font: inherit;
+    color: var(--pg-ink);
+    white-space: pre-wrap;
+}
+
+.pg_type_type {
+    color: var(--pg-muted);
+}
+
+.pg_note {
+    padding: 10px 14px;
+    color: var(--pg-muted);
+}
+
+.pg_fixable {
+    padding: 10px 14px;
+    color: var(--pg-muted);
+}
+
+/* ---- settings drawer: a third column, so the output stays visible ---- */
+
+.playground #settings_panel {
+    display: block;
+    flex: 0 0 380px;
+    overflow: auto;
+    padding: 0;
+    border: 0;
+    border-left: var(--pg-rule);
+    background: var(--pg-panel);
+    color: var(--pg-ink);
+    font-family: var(--pg-mono);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.pg_drawer_head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: calc(var(--pg-bar-height) - 2px);
+    padding: 0 0 0 14px;
+    border-bottom: var(--pg-rule);
+    font-weight: 700;
+}
+
+.pg_drawer_head button {
+    align-self: stretch;
+    margin: 0;
+    padding: 0 12px;
+    border: 0;
+    border-left: var(--pg-rule);
+    border-radius: 0;
+    background: var(--pg-panel);
+    color: var(--pg-ink);
+    font: inherit;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.pg_drawer_head button:hover {
+    background: var(--pg-hover);
+}
+
+.pg_drawer_head button:active {
+    background: var(--pg-ink);
+    color: var(--pg-panel);
+}
+
+.pg_group {
+    margin: 0;
+    padding: 10px 14px 12px;
+    border: 0;
+    border-bottom: var(--pg-rule);
+}
+
+.pg_group:last-child {
+    border-bottom: 0;
+}
+
+.pg_group legend {
+    float: left;
+    width: 100%;
+    margin: 0 0 6px;
+    padding: 0;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 12px;
+}
+
+.pg_check {
+    clear: left;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    padding: 4px 0;
+    color: #222;
+    cursor: pointer;
+}
+
+.pg_check input {
+    flex: 0 0 auto;
+    margin: 2px 0 0;
+    accent-color: var(--pg-ink);
+}
+
+.pg_check.changed span::after {
+    content: " *";
+    font-weight: 700;
+}
+
+.pg_check code {
+    font-family: inherit;
+    background: var(--pg-hover);
+    padding: 0 2px;
+}
+
+/* a setting with a value instead of on/off: label left, select right */
+.pg_select {
+    align-items: center;
+    cursor: default;
+}
+
+.pg_select span {
+    white-space: nowrap;
+}
+
+.pg_select select {
+    flex: 0 1 auto;
+    min-width: 0;
+    margin-left: auto;
+    font: inherit;
+    color: inherit;
+}
+
+/* the bar's inset outline would cross the text of this small native select: draw it outside */
+.playground .pg_select select:focus-visible {
+    outline-offset: 2px;
+}
+
+/* docs link beside each setting: small, quiet, still a visible link */
+.pg_check_row {
+    clear: left;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.pg_check_row .pg_check {
+    flex: 1 1 auto;
+}
+
+.pg_doc_link {
+    flex: none;
+    padding: 4px 0;
+    color: var(--pg-muted);
+    font-size: 12px;
+    text-underline-offset: 2px;
+}
+
+.pg_doc_link:hover {
+    color: var(--pg-ink);
+}
+
+/* ---- Ctrl/Cmd+click links and signature help in the editor ---- */
+
+.playground .CodeMirror .pg_ref_link {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+}
+
+.pg_signature {
+    z-index: 10;
+    max-width: min(80ch, 90%);
+    padding: 2px 6px;
+    border: 1px solid var(--pg-ink);
+    background: var(--pg-panel);
+    color: var(--pg-muted);
+    font-family: var(--pg-mono);
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+}
+
+.pg_signature_param {
+    color: var(--pg-ink);
+    font-weight: 700;
+}
+
+/* ---- status bar ---- */
+
+.pg_statusbar {
+    border-top: 0;
+    min-height: 30px;
+    font-size: 12px;
+    color: var(--pg-muted);
+}
+
+.pg_status_item {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    border-right: var(--pg-rule);
+    white-space: nowrap;
+}
+
+.pg_spacer + .pg_status_item {
+    border-right: 0;
+    border-left: var(--pg-rule);
+}
+
+.pg_status_item:empty {
+    display: none;
+}
+
+.pg_status_item a {
+    color: inherit;
+}
+
+.pg_run_state {
+    min-width: 13ch;
+    color: var(--pg-ink);
+}
+
+.pg_run_state[data-state="busy"] {
+    background: var(--pg-ink);
+    color: var(--pg-panel);
+}
+
+.pg_run_state[data-state="parse_error"],
+.pg_run_state[data-state="error"] {
+    color: var(--pg-error);
+    font-weight: 700;
+}
+
+/* share result: "Link copied <url>", or an error in red */
+.pg_message {
+    gap: 8px;
+    color: var(--pg-ink);
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.pg_message[data-kind="error"] {
+    color: var(--pg-error);
+    font-weight: 700;
+}
+
+.pg_message_link {
+    color: var(--pg-ink);
+    font-weight: 400;
+    background: var(--pg-hover);
+    padding: 0 4px;
+    user-select: all;
+    -webkit-user-select: all;
+}
+
+.pg_keys {
+    gap: 16px;
+}
+
+.pg_keys kbd {
+    font: inherit;
+    color: var(--pg-ink);
+}
+
+/* ---- narrow: stack editor over output, drawer above both ---- */
+
+@media (max-width: 999px) {
+    .pg_panes {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .pg_editor {
+        flex: 0 0 auto;
+        height: 55vh;
+        min-height: 300px;
+    }
+
+    .pg_splitter {
+        display: none;
+    }
+
+    .pg_output {
+        flex: 0 0 auto;
+        min-height: 240px;
+        border-top: var(--pg-rule);
+    }
+
+    .playground #psalm_output,
+    .playground #pg_types {
+        max-height: 70vh;
+    }
+
+    .playground #settings_panel {
+        order: -1;
+        flex: 0 0 auto;
+        max-height: 60vh;
+        border-left: 0;
+        border-bottom: var(--pg-rule);
+    }
+
+    .pg_keys {
+        display: none !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .playground {
+        padding: 0 8px 24px;
+    }
+
+    /* actions on one row, config on the next */
+    .pg_toolgroup {
+        flex: 1 0 100%;
+    }
+
+    .pg_toolgroup_actions {
+        border-bottom: var(--pg-rule);
+    }
+
+    .pg_toolgroup_config > .pg_field {
+        border-left: 0;
+    }
+
+    .pg_topbar .pg_spacer {
+        display: none;
+    }
+
+    .pg_topbar button {
+        flex: 1 1 auto;
+    }
+
+    .pg_toolgroup_actions > button {
+        flex: 1 1 0;
+    }
+
+    .pg_toolgroup_actions > button[hidden] + button {
+        border-left: 0;
+    }
+
+    /* the actions fill the row, so the frame closes the last cell */
+    .pg_toolgroup_actions > button:not(:first-child) {
+        border-right: 0;
+    }
+
+    /* status items wrap onto their own lines instead of leaving half-closed cells */
+    .pg_status_item {
+        border-right: 0;
+        padding: 4px 12px;
+    }
+
+    .pg_statusbar .pg_spacer {
+        display: none;
+    }
+}

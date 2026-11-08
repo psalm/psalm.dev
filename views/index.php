@@ -1,15 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<title>Psalm - a static analysis tool for PHP</title>
-<meta name="description" content="Psalm is a free & open-source static analysis tool that helps you identify problems in your code, so you can sleep a little better" />
 <?php
 
 use PsalmDotOrg\Settings;
 require_once dirname(__DIR__) . '/src/Settings.php';
-$canonical_url = 'https://psalm.dev/';
+require_once dirname(__DIR__) . '/src/FreshArticle.php';
+require_once dirname(__DIR__) . '/src/HomepageExample.php';
 
- require('../includes/meta.php'); ?>
+// /play (?page=play from .htaccess): nav plus the playground filling the viewport, nothing else
+$playground_page = ($_GET['page'] ?? null) === 'play';
+$canonical_url = $playground_page ? 'https://psalm.dev/play' : 'https://psalm.dev/';
+// homepage news: up to three articles from the last two weeks, listed under the playground widget
+$fresh_articles = $playground_page ? [] : PsalmDotOrg\FreshArticle::recent(dirname(__DIR__) . '/assets/articles');
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<?php if ($playground_page) : ?>
+<title>Playground - Psalm</title>
+<meta name="description" content="Try Psalm, a static analysis tool for PHP, in your browser and share the results" />
+<?php else : ?>
+<title>Psalm - a static analysis tool for PHP</title>
+<meta name="description" content="Psalm is a free & open-source static analysis tool that helps you identify problems in your code, so you can sleep a little better" />
+<?php endif ?>
+<?php require('../includes/meta.php'); ?>
+<?php if (!$playground_page) : ?>
 <script type="application/ld+json">
 {
     "@context": "https://schema.org",
@@ -24,15 +37,21 @@ $canonical_url = 'https://psalm.dev/';
     "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}
 }
 </script>
-<script src="/assets/js/codemirror.min.js?2"></script>
+<?php endif ?>
+<script src="<?= asset_url('/assets/js/codemirror.min.js') ?>"></script>
+<link rel="stylesheet" href="<?= asset_url('/assets/css/playground.css') ?>">
 </head>
-<body class="front">
+<body class="<?= $playground_page ? 'front playground_page' : 'front pg_expandable pg_compact' ?>">
+<a class="pg_skip" href="#playground" onclick="return focusEditor();">Skip to editor</a>
 <?php require('../includes/nav.php'); ?>
 <div class="container front" id="page_container">
+<?php if (!$playground_page) : ?>
     <div class="intro">
         <h1>Give PHP the <span class="CodeMirror-lint-mark-error">love</span> it&nbsp;deserves</h1>
 
         <p>It’s easy to make great things in PHP, but bugs can creep in just as easily. Psalm is a free &amp; open-source static analysis tool that helps you identify problems in your code, so you can sleep a little better.</p>
+
+        <p class="intro_cta"><a class="button_primary" href="/docs/running_psalm/installation/">Get started</a></p>
 
         <p>Psalm helps people maintain a wide variety of codebases – large and small, ancient and modern. On its strictest setting it can help you <a href="articles/php-or-type-safety-pick-any-two">prevent almost all type-related runtime errors</a>, and enables you to take advantage of <a href="articles/immutability-and-beyond">safe coding patterns</a> popular in other languages.</p>
 
@@ -40,41 +59,28 @@ $canonical_url = 'https://psalm.dev/';
 
         <p>Help support Psalm’s ongoing development costs by requesting a <a href="/support">paid support contract</a> from Psalm’s maintainer.</p>
     </div>
-    <div class="cm_container">
-        <textarea
-            name="code"
-            id="code"
-            rows="20" style="visibility: hidden; font-family: monospace; font-size: 14px; max-width: 900px; min-width: 320px;"
-        >&lt;<?='?'?>php
-
-/**
- * @return array<string>
- */
-function takesAnInt(int $i) {
-    return [$i, "hello"];
-}
-
-$data = ["some text", 5];
-takesAnInt($data[0]);
-
-$condition = rand(0, 5);
-if ($condition) {
-} elseif ($condition) {}</textarea>
-        <div id="psalm_output"></div>
-        <div id="settings_panel" class="hidden"></div>
-        <div class="button_bar">
-            <button onclick="javascript:expandCode();" id="expander"><svg width="15" height="14" xmlns="http://www.w3.org/2000/svg"><path d="M0 5h1.5v6.4L12.9 0l1.4 1.2L2.8 12.5H9V14H0z" fill-rule="evenodd"/></svg> Expand</button>
-            <button onclick="javascript:shrinkCode();" id="shrinker"><svg width="15" height="14" xmlns="http://www.w3.org/2000/svg"><path d="M15 9h-1.5V2.6L2.1 14 .8 12.8 12.2 1.5H6V0h9z" fill-rule="evenodd"/></svg> Shrink</button>
-
-            <button onclick="javascript:toggleSettings();" id="settings"><svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18"><g fill="none" fill-rule="evenodd"><circle cx="9" cy="9" r="6.4" stroke="#000"/><path fill="#000" fill-rule="nonzero" d="M9 17.5l-1-2 4.1-.6v2l-3.1.6zm6-2.5L13.4 14l1.8-2.9 1.6 1.4L15 15zm2.5-6l-2 .8V9l-.6-2.6 2-.4.6 3zM15 3l-1 2-3-2.1 1.4-1.6L15 3zM9 .6l.8 2H9l-3 .6v-2l3-.6h.1zM3.1 3l2 .6L2.6 7 1.3 5.5l1.8-2.6zM.5 8.8l2.1-.6V9l.6 3H1L.5 9v-.2zm2.3 6l1-1.8L7 15l-1.5 1.7-2.6-1.9z"/><circle cx="9" cy="9" r="3.3" stroke="#000" transform="rotate(18 9 9)"/><path fill="#000" fill-rule="nonzero" d="M7.5 13.6l-.2-1.3 2.4.4-.4 1-1.8-.1zm3.7-.3l-.7-.9 1.5-1.2.6 1-1.4 1zm2.4-2.8h-1.3l.2-.4.1-1.5 1.2.1-.2 1.8zM13.3 7l-.9.8-1.2-1.6 1-.7L13.3 7zm-2.7-2.4v1.2l-.5-.2-1.7-.2.4-1.1 1.7.2zm-3.7.2l1 .7-2 1.4-.4-1 1.4-1.1zM4.5 7.4h1.2l-.2.5-.2 1.7-1.1-.4.2-1.7v-.1zm.2 3.6l.8-.7 1.3 1.6-1 .6L4.6 11z"/></g></svg> Settings</button>
-            <button onclick="javascript:getLink();" id="getlink"><svg width="28" height="15" xmlns="http://www.w3.org/2000/svg"><g fill-rule="evenodd"><path d="M17.3 2.5A5 5 0 0 0 13 0H5a5 5 0 0 0-5 5v1a5 5 0 0 0 5 5h8a5 5 0 0 0 4.8-3.5H16a4 4 0 0 1-3.5 2h-7a4 4 0 1 1 0-8h7c1 0 2 .4 2.6 1h2.2z"/><path d="M10.4 12.5a5 5 0 0 0 4.4 2.5h8a5 5 0 0 0 5-5V9a5 5 0 0 0-5-5h-8A5 5 0 0 0 10 7.5h1.8a4 4 0 0 1 3.5-2h7a4 4 0 1 1 0 8h-7c-1 0-2-.4-2.7-1h-2.2z"/></g></svg> Get link</button>
-        </div>
-    </div>
+<?php endif ?>
+<?php
+require_once '../includes/playground.php';
+render_playground(htmlspecialchars(PsalmDotOrg\HomepageExample::CODE), null, !$playground_page);
+?>
+<?php if ($fresh_articles !== []) : ?>
+    <section class="home_news" aria-labelledby="home_news_title">
+        <h2 id="home_news_title">From the blog</h2>
+        <ul>
+<?php foreach ($fresh_articles as $article) : ?>
+            <li><a href="/articles/<?= htmlspecialchars($article->slug, ENT_QUOTES) ?>"><?= htmlspecialchars($article->title, ENT_QUOTES) ?></a> <time datetime="<?= $article->date->format('Y-m-d') ?>"><?= $article->date->format('F j, Y') ?></time></li>
+<?php endforeach ?>
+        </ul>
+    </section>
+<?php endif ?>
 </div>
 <script>
 var settings = <?php echo json_encode(Settings::defaultValues()) ?>;
 </script>
+<?php if (!$playground_page) : ?>
 <?php require('../includes/footer.php'); ?>
+<?php endif ?>
 <?php require('../includes/script.php'); ?>
 </body>
 </html>

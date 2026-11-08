@@ -12,7 +12,7 @@ $e = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES);
 ?>
 <html lang="en">
 <head>
-<title>Psalm - Blog</title>
+<title>Blog - Psalm</title>
 <?php require('../../includes/meta.php'); ?>
 </head>
 <body>
