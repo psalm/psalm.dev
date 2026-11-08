@@ -41,9 +41,10 @@ try {
 
 $stmt = $pdo->prepare('select *, UNIX_TIMESTAMP(`created_on`) as `created_on` from `codes` where `hash` = :hash');
 $stmt->execute([':hash' => $hash]);
+/** @var array<string, mixed>|false $result FETCH_ASSOC: a row or false */
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if (!$result) {
+if ($result === false) {
     if (($_GET['format'] ?? null) === 'json') {
         http_response_code(404);
         header('Content-Type: application/json');
@@ -53,10 +54,11 @@ if (!$result) {
 
     $not_found_message = 'This code snippet does not exist.';
     require dirname(__DIR__) . '/includes/not_found.php';
+    exit; // not_found.php exits too, but Psalm does not see that through the require
 }
 
 $code = (string) $result['code'];
-$created_on = (new DateTime())->setTimestamp($result['created_on']);
+$created_on = (new DateTime())->setTimestamp((int) $result['created_on']);
 $created_on->setTimezone(new DateTimeZone("UTC"));
 
 $settings_fields = Settings::names();
