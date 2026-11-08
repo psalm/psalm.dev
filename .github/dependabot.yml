@@ -7,6 +7,8 @@ updates:
       - /vendor-bin/phinx
     schedule:
       interval: monthly
+    cooldown:
+      default-days: 7
     groups:
       composer-minor-patch:
         update-types: [minor, patch]
@@ -15,6 +17,8 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    cooldown:
+      default-days: 7
     groups:
       npm-minor-patch:
         update-types: [minor, patch]
@@ -23,6 +27,8 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    cooldown:
+      default-days: 7
     groups:
       github-actions:
         patterns: ["*"]
@@ -31,8 +37,12 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: docker-compose
     directory: /
     schedule:
       interval: monthly
+    cooldown:
+      default-days: 7
