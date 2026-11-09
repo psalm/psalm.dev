@@ -59,10 +59,24 @@ if ($error_level === null) {
     exit;
 }
 
+$analysis_start = microtime(true);
+
 // every homepage view analyzes the example, so its results come from a cache
 $results = $file_contents === HomepageExample::CODE
     ? HomepageExample::results($settings, $fix_file, $php_version, $error_level)
     : OnlineChecker::getResults($file_contents, $settings, $fix_file, $php_version, $error_level);
 
+$analysis_end = microtime(true);
+$body = json_encode($results, JSON_HEX_TAG | JSON_HEX_AMP);
+
+// durations only, in ms: how much of a slow response is PHP startup, Psalm, or neither (network, server queue)
+$request_start = $_SERVER['REQUEST_TIME_FLOAT'] ?? $analysis_start;
+header(sprintf(
+    'Server-Timing: boot;dur=%.1f, analysis;dur=%.1f, total;dur=%.1f',
+    ($analysis_start - $request_start) * 1000.0,
+    ($analysis_end - $analysis_start) * 1000.0,
+    (microtime(true) - $request_start) * 1000.0
+));
+
 http_response_code(200);
-echo json_encode($results, JSON_HEX_TAG | JSON_HEX_AMP);
+echo $body;
