@@ -33,7 +33,6 @@ final class PluginRepository
         'psalm/plugin-mockery' => ['mockery/mockery'],
         'psalm/plugin-symfony' => ['symfony/framework-bundle'],
         'psalm/plugin-laravel' => ['laravel/framework', 'orchestra/testbench'],
-        'psalm/plugin-sabre-event' => ['sabre/event'],
     ];
 
     public static function getCatalog(): PluginCatalog
