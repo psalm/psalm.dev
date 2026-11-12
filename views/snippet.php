@@ -147,6 +147,14 @@ http_response_code(200);
 // Snippets are user-submitted code: crawlable for their links, but kept out of the index
 header('X-Robots-Tag: noindex, follow');
 $canonical_url = false;
+// Same preview for every snippet: it never shows the submitted code
+$og = [
+    'title' => 'Psalm snippet',
+    'description' => 'PHP code analyzed by Psalm, the static analysis tool for PHP. Open it to see the code and the issues Psalm found.',
+    'url' => 'https://psalm.dev/r/' . $hash,
+    'image' => '/assets/og/snippet.png',
+    'image_alt' => 'Psalm code snippet: a PHP function with a PossiblyNullPropertyFetch issue underlined in red',
+];
 ?>
 <html lang="en">
 <head>
