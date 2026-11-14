@@ -387,6 +387,117 @@ $nav-active-bg: #f8eded;
 		display: block;
 	}
 }
+
+// Error level badges under the H1 of issue pages (see theme/partials/issue-level.html).
+// Every text colour has at least 7:1 contrast on its background, and an icon
+// besides the colour tells an error from info.
+
+$level-line: #d3d3d3;
+$level-key-bg: #f1f1f1;
+$level-key-text: #3b3b3b;
+$level-error-bg: #fbe4e2;
+$level-error-text: #8c1d18;
+$level-info-bg: #e2edf9;
+$level-info-text: #174a7e;
+$level-config-bg: #ede7f9;
+$level-config-text: #50278f;
+$level-config-line: #a58fd0;
+
+.md-typeset .psalm-level {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px 6px;
+	// Sits in the bottom margin of the H1, so the page grows only by the badges' height
+	margin: -1.1rem 0 1.15rem;
+	font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
+	font-size: 11.5px;
+	line-height: 1;
+
+	.psalm-level__pill {
+		display: inline-flex;
+		align-items: stretch;
+		height: 21px;
+		overflow: hidden;
+		border: 1px solid $level-line;
+		border-radius: 4px;
+		color: $level-key-text;
+		font-weight: 500;
+		white-space: nowrap;
+		text-decoration: none;
+
+		&:hover {
+			box-shadow: 0 0 0 2px rgba(0, 0, 0, .08);
+		}
+
+		&:focus-visible {
+			outline: 2px solid #1a1a1a;
+			outline-offset: 2px;
+		}
+	}
+
+	.psalm-level__key,
+	.psalm-level__value {
+		display: inline-flex;
+		align-items: center;
+	}
+
+	.psalm-level__key {
+		padding: 0 7px;
+		border-right: 1px solid $level-line;
+		background: $level-key-bg;
+	}
+
+	.psalm-level__value {
+		gap: 4px;
+		padding: 0 7px 0 6px;
+		font-weight: 600;
+
+		code {
+			padding: 0;
+			background: none;
+			box-shadow: none;
+			color: inherit;
+			font-size: .92em;
+		}
+	}
+
+	svg {
+		flex: none;
+		width: 11px;
+		height: 11px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.7;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+
+	.psalm-level__pill--error .psalm-level__value {
+		background: $level-error-bg;
+		color: $level-error-text;
+	}
+
+	.psalm-level__pill--info .psalm-level__value {
+		background: $level-info-bg;
+		color: $level-info-text;
+	}
+
+	// Dashed: the issue is only reported when this setting is on
+	.psalm-level__pill--config {
+		border-style: dashed;
+		border-color: $level-config-line;
+
+		.psalm-level__key {
+			border-right-style: dashed;
+			border-right-color: $level-config-line;
+		}
+
+		.psalm-level__value {
+			background: $level-config-bg;
+			color: $level-config-text;
+		}
+	}
+}
 // The header is the same on every docs page, so it stays put while the content changes
 .md-header {
 	view-transition-name: docs-header;

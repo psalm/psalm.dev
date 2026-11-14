@@ -15,6 +15,21 @@
 {% block libs %}
 {% endblock %}
 
+{# Issue pages show their error level under the H1 (see partials/issue-level.html) #}
+{% block content %}
+{% if page.file.src_path.startswith("running_psalm/issues/") and "</h1>" in page.content %}
+  {% if page.edit_url %}
+    <a href="{{ page.edit_url }}" title="{{ lang.t('edit.link.title') }}" class="md-icon md-content__icon">&#xE3C9;</a>
+  {% endif %}
+  {% set title, body = page.content.split("</h1>", 1) %}
+  {{ title }}</h1>
+  {% include "partials/issue-level.html" %}
+  {{ body }}
+{% else %}
+  {{ super() }}
+{% endif %}
+{% endblock %}
+
 {% block extrahead %}
 {% if page and page.file %}
 <!-- The Markdown source of this page, served by views/docs_markdown.php -->
