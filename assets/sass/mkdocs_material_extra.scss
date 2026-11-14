@@ -403,6 +403,116 @@ $nav-active-bg: #f8eded;
 		display: block;
 	}
 }
+
+// Error level badges under the H1 of issue pages (see theme/partials/issue-level.html).
+// Every text colour has at least 7:1 contrast on its background, and an icon
+// besides the colour tells an error from info.
+.md-typeset .psalm-level {
+	--level-height: 21px;
+	--level-radius: 4px;
+	--level-font-size: 11.5px;
+	--level-icon-size: 11px;
+	--level-line: #d3d3d3;
+	--level-key-bg: #f1f1f1;
+	--level-key-text: #3b3b3b;
+	--level-error-bg: #fbe4e2;
+	--level-error-text: #8c1d18;
+	--level-info-bg: #e2edf9;
+	--level-info-text: #174a7e;
+	--level-config-bg: #ede7f9;
+	--level-config-text: #50278f;
+	--level-config-line: #a58fd0;
+
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px 6px;
+	// Sits in the bottom margin of the H1, so the page grows only by the badges' height
+	margin: -1.1rem 0 1.15rem;
+	font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
+	font-size: var(--level-font-size);
+	line-height: 1;
+
+	// Each kind of pill sets the colours of its value and its border
+	.psalm-level__pill {
+		--pill-bg: var(--level-error-bg);
+		--pill-text: var(--level-error-text);
+		--pill-line: var(--level-line);
+		--pill-line-style: solid;
+
+		display: inline-flex;
+		align-items: stretch;
+		height: var(--level-height);
+		overflow: hidden;
+		border: 1px var(--pill-line-style) var(--pill-line);
+		border-radius: var(--level-radius);
+		color: var(--level-key-text);
+		font-weight: 500;
+		white-space: nowrap;
+		text-decoration: none;
+
+		&:hover {
+			box-shadow: 0 0 0 2px rgba(0, 0, 0, .08);
+		}
+
+		&:focus-visible {
+			outline: 2px solid #1a1a1a;
+			outline-offset: 2px;
+		}
+	}
+
+	.psalm-level__pill--info {
+		--pill-bg: var(--level-info-bg);
+		--pill-text: var(--level-info-text);
+	}
+
+	// Dashed: the issue is only reported when this setting is on
+	.psalm-level__pill--config {
+		--pill-bg: var(--level-config-bg);
+		--pill-text: var(--level-config-text);
+		--pill-line: var(--level-config-line);
+		--pill-line-style: dashed;
+	}
+
+	.psalm-level__key,
+	.psalm-level__value {
+		display: inline-flex;
+		align-items: center;
+	}
+
+	.psalm-level__key {
+		padding: 0 7px;
+		border-right: 1px var(--pill-line-style) var(--pill-line);
+		background: var(--level-key-bg);
+	}
+
+	.psalm-level__value {
+		gap: 4px;
+		padding: 0 7px 0 6px;
+		background: var(--pill-bg);
+		color: var(--pill-text);
+		font-weight: 600;
+
+		code {
+			padding: 0;
+			background: none;
+			box-shadow: none;
+			color: inherit;
+			font-size: .92em;
+		}
+	}
+
+	svg {
+		flex: none;
+		width: var(--level-icon-size);
+		height: var(--level-icon-size);
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.7;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+}
+
 // The header is the same on every docs page, so it stays put while the content changes
 .md-header {
 	view-transition-name: docs-header;
