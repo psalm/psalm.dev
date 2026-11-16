@@ -1001,6 +1001,12 @@ li.pg_step > .pg_step_label {
     font-weight: 700;
 }
 
+/* previews what Reset will undo: hovering or focusing it highlights the non-default settings */
+.pg_drawer:has(.pg_drawer_head button:is(:hover, :focus-visible)) .pg_check.changed {
+    background: var(--pg-line-hl-gutter);
+    box-shadow: 0 0 0 4px var(--pg-line-hl-gutter);
+}
+
 .pg_check code {
     font-family: inherit;
     background: var(--pg-hover);
