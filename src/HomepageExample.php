@@ -43,6 +43,12 @@ takesAnInt($data[0]);
 $condition = rand(0, 5);
 if ($condition) {
 } elseif ($condition) {}
+
+$id = $_GET['id'] ?? '';
+if (is_string($id)) {
+    $pdo = new PDO('sqlite:db');
+    $pdo->exec("DELETE FROM users WHERE id=$id");
+}
 PHP;
 
     /**

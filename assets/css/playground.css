@@ -97,7 +97,7 @@
 
     .pg_compact .pg_editor {
         flex: 0 0 auto;
-        height: 380px; /* 15 lines × 22px + CodeMirror padding and its 15px scrollbar gap (374px), with a little slack: no scroll for the default snippet */
+        height: 512px; /* 21 lines × 22px + CodeMirror padding and its 15px scrollbar gap (506px), with a little slack: no scroll for the default snippet */
     }
 
     .pg_compact .pg_statusbar {
