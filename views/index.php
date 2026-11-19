@@ -55,6 +55,8 @@ $fresh_articles = $playground_page ? [] : PsalmDotOrg\FreshArticle::recent(dirna
 
         <p>Psalm helps people maintain a wide variety of codebases – large and small, ancient and modern. On its strictest setting it can help you <a href="articles/php-or-type-safety-pick-any-two">prevent almost all type-related runtime errors</a>, and enables you to take advantage of <a href="articles/immutability-and-beyond">safe coding patterns</a> popular in other languages.</p>
 
+        <p>Psalm’s <a href="/docs/security_analysis/">security analysis</a> follows user input through your code to find SQL injection, XSS and other vulnerabilities before attackers do.</p>
+
         <p>Psalm <a href="https://psalm.dev/docs/manipulating_code/fixing/">also fixes bugs automatically</a>, allowing you to improve your code without breaking a sweat.</p>
 
         <p>Help support Psalm’s ongoing development costs by requesting a <a href="/support">paid support contract</a> from Psalm’s maintainer.</p>
