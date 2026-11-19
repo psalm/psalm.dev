@@ -86,6 +86,7 @@ RedirectMatch 301 ^/docs/supported_annotations(/|/index\.html)?$ https://psalm.d
 RedirectMatch 301 ^/docs/annotating_code/docblock_type_syntax(/|/index\.html)?$ https://psalm.dev/docs/annotating_code/typing_in_psalm/
 
 RedirectMatch 301 ^/docs/fixing_code(/|/index\.html)?$ https://psalm.dev/docs/manipulating_code/fixing/
+RedirectMatch 301 ^/docs/security_analysis/avoiding_false_(positives|negatives)(/|/index\.html)?$ https://psalm.dev/docs/security_analysis/
 
 Redirect 307 /v2/ https://registry.hub.docker.com/v2/
 
