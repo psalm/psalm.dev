@@ -23,7 +23,7 @@ use function sys_get_temp_dir;
 
 /**
  * The code shown in the homepage playground, and a file cache of its /check results: every homepage view
- * analyzes it, and its result only changes with the settings, PHP version, level, Psalm or this site's checker.
+ * analyzes it, and its result only changes with the code, settings, PHP version, level, Psalm or this site's checker.
  */
 final class HomepageExample
 {
@@ -46,7 +46,7 @@ if ($condition) {
 PHP;
 
     /**
-     * OnlineChecker::getResults() for CODE, cached per settings, PHP version, level, Psalm version and checker version.
+     * OnlineChecker::getResults() for CODE, cached per code, settings, PHP version, level, Psalm version and checker version.
      */
     public static function results(array $settings, bool $fix_file, string $php_version, int $error_level): array
     {
@@ -62,6 +62,7 @@ PHP;
         }
 
         $key = hash('sha256', json_encode([
+            self::CODE,
             $settings,
             $fix_file,
             $php_version,
