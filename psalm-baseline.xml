@@ -89,7 +89,6 @@
       <code><![CDATA[$article]]></code>
       <code><![CDATA[$article]]></code>
       <code><![CDATA[$article]]></code>
-      <code><![CDATA[$article]]></code>
     </PossiblyUndefinedGlobalVariable>
     <RiskyTruthyFalsyComparison>
       <code><![CDATA[$published]]></code>
@@ -129,6 +128,7 @@
     <UnusedVariable>
       <code><![CDATA[$meta_description]]></code>
       <code><![CDATA[$not_found_message]]></code>
+      <code><![CDATA[$og]]></code>
       <code><![CDATA[$title]]></code>
     </UnusedVariable>
   </file>
@@ -187,6 +187,7 @@
   <file src="views/index.php">
     <UnusedVariable>
       <code><![CDATA[$canonical_url]]></code>
+      <code><![CDATA[$og]]></code>
     </UnusedVariable>
   </file>
   <file src="views/issue_redirect.php">
@@ -226,6 +227,7 @@
       <code><![CDATA[$canonical_url]]></code>
       <code><![CDATA[$not_found_message]]></code>
       <code><![CDATA[$not_found_message]]></code>
+      <code><![CDATA[$og]]></code>
     </UnusedVariable>
   </file>
   <file src="views/support.php">
