@@ -127,9 +127,10 @@ $published = $timestamp === false ? null : date('c', $timestamp);
     <hr />
 <?php endif ?>
 <?= $article->html ?>
-<?php $subscribe_variant = 'box'; require('../includes/subscribe.php'); ?>
+<?php require_once('../includes/subscribe.php'); ?>
+<?= NewsletterForm::render('box') ?>
 </div>
-<?php $subscribe_footer = false; require('../includes/footer.php'); ?>
+<?php require('../includes/footer.php'); ?>
 <script>
 const serializeJSON = function(data) {
     return Object.keys(data).map(function (keyName) {

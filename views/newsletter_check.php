@@ -17,6 +17,6 @@ $canonical_url = false;
 <p>Thanks for subscribing! We've sent you an email: open the link in it to confirm your subscription.</p>
 <p>If it doesn't arrive within a few minutes, check your spam folder, or <a href="/newsletter">try again</a>.</p>
 </div>
-<?php $subscribe_footer = false; require('../includes/footer.php'); ?>
+<?php require('../includes/footer.php'); ?>
 </body>
 </html>
