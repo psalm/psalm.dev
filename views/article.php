@@ -66,7 +66,7 @@ $published = $timestamp === false ? null : date('c', $timestamp);
 <html lang="<?= $lang ?>">
 <head>
 <title><?= $e($article->title) ?></title>
-<?php require('../includes/meta.php'); ?>
+<?php require_once __DIR__ . '/../includes/meta.php'; page_meta($meta_description, $canonical_url); ?>
 <script src="<?= asset_url('/assets/js/codemirror.min.js') ?>"></script>
 <?php if (count($alternates) > 1): ?>
 <?php foreach ($alternates as $language => $alternate_url): ?>

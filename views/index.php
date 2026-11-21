@@ -21,7 +21,7 @@ $fresh_articles = $playground_page ? [] : PsalmDotOrg\FreshArticle::recent(dirna
 <title>Psalm - a static analysis tool for PHP</title>
 <meta name="description" content="Psalm is a free & open-source static analysis tool that helps you identify problems in your code, so you can sleep a little better" />
 <?php endif ?>
-<?php require('../includes/meta.php'); ?>
+<?php require_once __DIR__ . '/../includes/meta.php'; page_meta(null, $canonical_url); ?>
 <?php if (!$playground_page) : ?>
 <script type="application/ld+json">
 {

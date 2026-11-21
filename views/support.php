@@ -18,7 +18,7 @@ $meta_description = 'Paid support contracts for Psalm: integration into existing
 <html lang="en">
 <head>
 <title>Paid support - Psalm</title>
-<?php require('../includes/meta.php'); ?>
+<?php require_once __DIR__ . '/../includes/meta.php'; page_meta($meta_description, $canonical_url); ?>
 </head>
 <body>
 <?php require('../includes/nav.php'); ?>

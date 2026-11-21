@@ -127,7 +127,6 @@
 ]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_INVALID_UTF8_SUBSTITUTE | JSON_PRETTY_PRINT) ?>]]></code>
     </TaintedTextWithQuotes>
     <UnusedVariable>
-      <code><![CDATA[$meta_description]]></code>
       <code><![CDATA[$not_found_message]]></code>
       <code><![CDATA[$title]]></code>
     </UnusedVariable>
@@ -162,10 +161,6 @@
     <PossiblyFalseArgument>
       <code><![CDATA[strtotime($article->date)]]></code>
     </PossiblyFalseArgument>
-    <UnusedVariable>
-      <code><![CDATA[$canonical_url]]></code>
-      <code><![CDATA[$meta_description]]></code>
-    </UnusedVariable>
   </file>
   <file src="views/check.php">
     <PossiblyInvalidOperand>
@@ -179,15 +174,6 @@
     <PossiblyFalseArgument>
       <code><![CDATA[$contribution_markdown]]></code>
     </PossiblyFalseArgument>
-    <UnusedVariable>
-      <code><![CDATA[$canonical_url]]></code>
-      <code><![CDATA[$meta_description]]></code>
-    </UnusedVariable>
-  </file>
-  <file src="views/index.php">
-    <UnusedVariable>
-      <code><![CDATA[$canonical_url]]></code>
-    </UnusedVariable>
   </file>
   <file src="views/issue_redirect.php">
     <PossiblyNullArgument>
@@ -196,12 +182,6 @@
     <PossiblyUndefinedArrayOffset>
       <code><![CDATA[$_SERVER['REQUEST_URI']]]></code>
     </PossiblyUndefinedArrayOffset>
-  </file>
-  <file src="views/plugins.php">
-    <UnusedVariable>
-      <code><![CDATA[$canonical_url]]></code>
-      <code><![CDATA[$meta_description]]></code>
-    </UnusedVariable>
   </file>
   <file src="views/sitemap.php">
     <RiskyTruthyFalsyComparison>
@@ -223,7 +203,6 @@
       <code><![CDATA[echo json_encode(['error' => ['message' => 'PHP version ' . $php_version . ' not supported']], JSON_HEX_TAG | JSON_HEX_AMP);]]></code>
     </TaintedTextWithQuotes>
     <UnusedVariable>
-      <code><![CDATA[$canonical_url]]></code>
       <code><![CDATA[$not_found_message]]></code>
       <code><![CDATA[$not_found_message]]></code>
     </UnusedVariable>
@@ -232,9 +211,5 @@
     <PossiblyFalseArgument>
       <code><![CDATA[$contribution_markdown]]></code>
     </PossiblyFalseArgument>
-    <UnusedVariable>
-      <code><![CDATA[$canonical_url]]></code>
-      <code><![CDATA[$meta_description]]></code>
-    </UnusedVariable>
   </file>
 </files>

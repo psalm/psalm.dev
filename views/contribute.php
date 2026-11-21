@@ -18,7 +18,7 @@ $meta_description = 'How to contribute to Psalm, the open-source static analysis
 <html lang="en">
 <head>
 <title>Contribute to Psalm</title>
-<?php require('../includes/meta.php'); ?>
+<?php require_once __DIR__ . '/../includes/meta.php'; page_meta($meta_description, $canonical_url); ?>
 </head>
 <body>
 <?php require('../includes/nav.php'); ?>

@@ -13,7 +13,7 @@ $e = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES);
 <html lang="en">
 <head>
 <title>Blog - Psalm</title>
-<?php require('../../includes/meta.php'); ?>
+<?php require_once __DIR__ . '/../../includes/meta.php'; page_meta($meta_description, $canonical_url); ?>
 </head>
 <body>
 <?php require('../../includes/nav.php'); ?>

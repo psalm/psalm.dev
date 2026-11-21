@@ -8,7 +8,7 @@ $meta_description = 'Subscribe to the Psalm newsletter to get new articles from 
 <html lang="en">
 <head>
 <title>Newsletter - Psalm</title>
-<?php require('../includes/meta.php'); ?>
+<?php require_once __DIR__ . '/../includes/meta.php'; page_meta($meta_description, $canonical_url); ?>
 </head>
 <body>
 <?php require('../includes/nav.php'); ?>

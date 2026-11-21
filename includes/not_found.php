@@ -11,7 +11,7 @@ $canonical_url = false;
 <html>
 <head>
 <title>Page not found - Psalm</title>
-<?php require __DIR__ . '/meta.php'; ?>
+<?php require_once __DIR__ . '/meta.php'; page_meta(null, $canonical_url); ?>
 </head>
 <body>
 <?php require __DIR__ . '/nav.php'; ?>

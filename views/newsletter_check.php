@@ -8,7 +8,7 @@ $canonical_url = false;
 <head>
 <title>Check your email - Psalm</title>
 <meta name="robots" content="noindex">
-<?php require('../includes/meta.php'); ?>
+<?php require_once __DIR__ . '/../includes/meta.php'; page_meta(null, $canonical_url); ?>
 </head>
 <body>
 <?php require('../includes/nav.php'); ?>

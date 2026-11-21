@@ -154,7 +154,7 @@ $canonical_url = false;
 <meta name="robots" content="noindex, follow" />
 <?php require_once __DIR__ . '/../includes/asset.php'; ?>
 <script src="<?= asset_url('/assets/js/codemirror.min.js') ?>"></script>
-<?php require('../includes/meta.php'); ?>
+<?php require_once __DIR__ . '/../includes/meta.php'; page_meta(null, $canonical_url); ?>
 <link rel="stylesheet" href="<?= asset_url('/assets/css/playground.css') ?>">
 </head>
 <body class="front snippet_page">
