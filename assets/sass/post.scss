@@ -17,9 +17,16 @@ code, pre {
 
 div.post {
     margin: 20px auto 80px;
+    // The auto margins would otherwise size it to its content, so a long word could widen the page
+    width: 100%;
     max-width: 680px;
+    overflow-wrap: anywhere;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    li pre {
+        overflow-x: auto;
+    }
 
     h1 {
         padding-left: 20px;
