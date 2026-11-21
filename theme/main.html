@@ -117,20 +117,54 @@
     }
     // The theme makes each word of a query an optional prefix, so in "escape for the sink" the
     // stop words matched every heading starting with "for" or "the", which outranked the section.
-    // Leave stop words out (unless the query has nothing else) and require every other word.
+    // Leave stop words out (unless the query has nothing else), and show the sections that have
+    // all the other words, or else as many of them as a section has ("suppress psalm warnings"
+    // finds "Suppressing", which doesn't say "warnings").
     var query = lunr.Index.prototype.query
     lunr.Index.prototype.query = function (fn) {
-      return query.call(this, function (q) {
-        fn.call(q, q)
-        var words = q.clauses.filter(function (clause) {
-          return lunr.stopWordFilter(clause.term.replace(/\*$/, "")) !== undefined
+      var index = this
+      var isWord = function (clause) {
+        return lunr.stopWordFilter(clause.term.replace(/\*$/, "")) !== undefined
+      }
+      var words = function (q) {
+        return q.clauses.some(isWord) ? q.clauses.filter(isWord) : q.clauses
+      }
+      var probe = new lunr.Query(index.fields)
+      fn.call(probe, probe)
+      var count = words(probe).length
+      // Each subset of the words is a bitmask; past 6 words, just ask for any of them
+      if (count > 6)
+        return query.call(index, function (q) {
+          fn.call(q, q)
+          q.clauses = words(q)
         })
-        if (words.length)
-          q.clauses = words
-        q.clauses.forEach(function (clause) {
-          clause.presence = lunr.Query.presence.REQUIRED
+      var run = function (mask) {
+        return query.call(index, function (q) {
+          fn.call(q, q)
+          q.clauses = words(q).filter(function (clause, i) {
+            clause.presence = lunr.Query.presence.REQUIRED
+            return mask & (1 << i)
+          })
         })
-      })
+      }
+      var size = function (mask) {
+        for (var n = 0; mask; mask >>= 1)
+          n += mask & 1
+        return n
+      }
+      for (var wanted = count; wanted > 0; wanted--) {
+        var best = null
+        for (var mask = 1; mask < 1 << count; mask++) {
+          if (size(mask) !== wanted)
+            continue
+          var results = run(mask)
+          if (results.length && (!best || results[0].score > best[0].score))
+            best = results
+        }
+        if (best)
+          return best
+      }
+      return []
     }
   })(window.lunr)
 
