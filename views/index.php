@@ -7,6 +7,8 @@ require_once dirname(__DIR__) . '/src/HomepageExample.php';
 
 // /play (?page=play from .htaccess): nav plus the playground filling the viewport, nothing else
 $playground_page = ($_GET['page'] ?? null) === 'play';
+// the code of an editor of an article or docs page, posted by its Expand button
+$posted_code = $playground_page && is_string($_POST['code'] ?? null) ? $_POST['code'] : null;
 $canonical_url = $playground_page ? 'https://psalm.dev/play' : 'https://psalm.dev/';
 // homepage news: up to three articles from the last two weeks, listed under the playground widget
 $fresh_articles = $playground_page ? [] : PsalmDotOrg\FreshArticle::recent(dirname(__DIR__) . '/assets/articles');
@@ -64,7 +66,7 @@ $fresh_articles = $playground_page ? [] : PsalmDotOrg\FreshArticle::recent(dirna
 <?php endif ?>
 <?php
 require_once '../includes/playground.php';
-render_playground(htmlspecialchars(PsalmDotOrg\HomepageExample::CODE), null, !$playground_page);
+render_playground(htmlspecialchars($posted_code ?? PsalmDotOrg\HomepageExample::CODE), null, !$playground_page);
 ?>
 <?php if ($fresh_articles !== []) : ?>
     <section class="home_news" aria-labelledby="home_news_title">

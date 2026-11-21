@@ -2,6 +2,7 @@
 
 use PsalmDotOrg\HomepageExample;
 use PsalmDotOrg\OnlineChecker;
+use PsalmDotOrg\Settings;
 
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
@@ -15,18 +16,21 @@ if (!isset($_POST['code']) || !is_string($_POST['code'])) {
     exit;
 }
 
-if (!isset($_POST['settings']) || !is_string($_POST['settings'])) {
+$settings_json = $_POST['settings'] ?? '{}';
+if (!is_string($settings_json)) {
     http_response_code(400);
     exit;
 }
 
 $fix_file = filter_var($_POST['fix'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
-$settings = json_decode($_POST['settings'], true);
+$settings = json_decode($settings_json, true);
 if (!is_array($settings)) {
     http_response_code(400);
     exit;
 }
+// The settings a request leaves out have their default value
+$settings += Settings::defaultValues();
 
 const PHP_PARSER_VERSION = '4.0.0';
 

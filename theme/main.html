@@ -74,6 +74,9 @@
 {% block scripts %}
 {{ super() }}
 <script src="/assets/js/newsletter.js?v=1" defer></script>
+<!-- PHP examples become editors that Psalm checks, as in blog articles -->
+<script src="/assets/js/codemirror.min.js?v=1" defer></script>
+<script src="/assets/js/interactive_code.js?v=1" defer></script>
 <script>
   // The search index splits words on dashes, but the theme only splits queries
   // on spaces, so annotations like "@psalm-taint-specialize" never matched.
