@@ -13,6 +13,10 @@ Has the source for psalm.dev
 - Run `composer update` (requires [Composer](https://getcomposer.org))
 - Run `mkdocs build` with [MkDocs](https://www.mkdocs.org/) 1.1 and mkdocs-material 4.6.3, the versions on the server (they need Python 3.9 or older)
 
+The server builds the HTML docs only when this repository's master branch deploys. The Markdown pages
+(`/docs/....md`) read `vendor/vimeo/psalm/docs` directly, so they can be newer than the HTML: push to master
+to rebuild the HTML after a docs change in vimeo/psalm.
+
 ## To build styles (these files get committed)
 
 - Run `npx webpack` (requires Node)
