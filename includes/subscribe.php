@@ -22,7 +22,7 @@ final class NewsletterForm
         self::$rendered = true;
         $intro = $variant === 'box'
             ? '    <p class="newsletter__title">Get Psalm news by email</p>' . "\n"
-                . '    <p class="newsletter__text">New articles from the Psalm blog, a few emails a year. You can unsubscribe at any time.</p>' . "\n"
+                . '    <p class="newsletter__text">News about Psalm, a few emails a month. You can unsubscribe at any time.</p>' . "\n"
             : '';
         $name = $variant === 'page'
             ? '        <label><span>Name <small>(optional)</small></span><input type="text" name="name" maxlength="200" autocomplete="name" placeholder="Your name"></label>' . "\n"
