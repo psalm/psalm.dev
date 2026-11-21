@@ -126,8 +126,11 @@ $published = $timestamp === false ? null : date('c', $timestamp);
     <div class="notice"><?= $article->notice ?></div>
     <hr />
 <?php endif ?>
-<?= $article->html ?>
 <?php require_once('../includes/subscribe.php'); ?>
+<?php // An article can add a subscription box in its text with <!-- newsletter --> ?>
+<?= str_contains($article->html, '<!-- newsletter -->')
+    ? str_replace('<!-- newsletter -->', NewsletterForm::render('box'), $article->html)
+    : $article->html ?>
 <?= NewsletterForm::render('box') ?>
 </div>
 <?php require('../includes/footer.php'); ?>
