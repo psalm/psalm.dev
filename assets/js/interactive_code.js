@@ -11,9 +11,27 @@
         return;
     }
 
+    // Docs examples are written for Psalm's own defaults, as vimeo/psalm's DocumentationTest checks them:
+    // errorLevel 1, without unused code detection or the playground's stricter checks. A first line like
+    // <?php // findUnusedCode="true" changes them. Blog examples use the playground's defaults.
+    const DOCS = {
+        level: 1,
+        settings: {
+            unused_variables: false,
+            unused_methods: false,
+            ensure_array_offsets_exist: false,
+            check_throws: false,
+        },
+    };
+    const BLOG = {level: null, settings: {}};
+
     // /check fills in the default settings
-    function check(code, settings, fix) {
+    function check(code, options, fix) {
+        const settings = fix ? Object.assign({}, options.settings, {unused_methods: true}) : options.settings;
         const body = new URLSearchParams({code: code, settings: JSON.stringify(settings)});
+        if (options.level) {
+            body.set('level', String(options.level));
+        }
         if (fix) {
             body.set('fix', 'true');
         }
@@ -41,8 +59,8 @@
             return [{
                 message: response.error.message,
                 severity: 'error',
-                from: cm.posFromIndex(response.error.from),
-                to: cm.posFromIndex(response.error.to),
+                from: cm.posFromIndex(response.error.from ?? 0),
+                to: cm.posFromIndex(response.error.to ?? cm.getLine(0).length),
             }];
         }
 
@@ -65,6 +83,7 @@
 
     function makeEditor(block) {
         const text = block.textContent.replace(/\n$/, '');
+        const options = block.parentNode.classList.contains('codehilite') ? DOCS : BLOG;
         const container = document.createElement('div');
         const textarea = document.createElement('textarea');
         textarea.value = text;
@@ -87,7 +106,7 @@
         let latest = 0;
         const run = function (cm, fix) {
             const request = ++latest;
-            return check(cm.getValue(), fix ? {unused_methods: true} : {}, fix).then(function (response) {
+            return check(cm.getValue(), options, fix).then(function (response) {
                 return request === latest ? response : null;
             });
         };
@@ -108,7 +127,7 @@
         }
 
         // Docs blocks are a <pre> in a div.codehilite, which has its own styles
-        const replaced = block.parentNode.classList.contains('codehilite') ? block.parentNode : block;
+        const replaced = options === DOCS ? block.parentNode : block;
         replaced.parentNode.replaceChild(container, replaced);
 
         const cm = CodeMirror.fromTextArea(textarea, {
@@ -120,7 +139,7 @@
             viewportMargin: Infinity,
             lint: {
                 async: true,
-                getAnnotations: function (code, callback, options, cm) {
+                getAnnotations: function (code, callback, lint_options, cm) {
                     whenVisible(function () {
                         run(cm, false).then(function (response) {
                             if (response) {
@@ -138,13 +157,17 @@
         play_button.addEventListener('click', function () {
             const form = document.createElement('form');
             form.method = 'post';
-            form.action = '/play';
+            // ?level= is how the playground keeps its level in the URL
+            form.action = '/play' + (options.level ? '?level=' + options.level : '');
             form.target = '_blank';
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'code';
-            input.value = cm.getValue();
-            form.appendChild(input);
+            const fields = {code: cm.getValue(), settings: JSON.stringify(options.settings)};
+            Object.keys(fields).forEach(function (name) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = name;
+                input.value = fields[name];
+                form.appendChild(input);
+            });
             document.body.appendChild(form);
             form.submit();
             form.remove();

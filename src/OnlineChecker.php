@@ -3,6 +3,8 @@
 namespace PsalmDotOrg;
 
 use Psalm\Config;
+use Psalm\Exception\FileIncludeException;
+use Psalm\Exception\InvalidClasslikeOverrideException;
 use Psalm\IssueBuffer;
 use Psalm\Internal\Analyzer\FileAnalyzer;
 use Psalm\Internal\Analyzer\ProjectAnalyzer;
@@ -23,6 +25,54 @@ final class OnlineChecker
     public const int MAX_ERROR_LEVEL = 8;
     // psalm.dev version shown in the REPL output
     public const string SITE_VERSION = '1.0.2';
+
+    /**
+     * The psalm.xml attributes a snippet can set on its first line, as docs examples do
+     * (<?php // markAllNonInternalCodeAsApi="true" phpVersion="8.1">), and the Config property each one sets.
+     * Only options of the analysis itself: nothing that reads files or loads plugins.
+     */
+    private const SNIPPET_BOOLEAN_ATTRIBUTES = [
+        'allowBoolToLiteralBoolComparison' => 'allow_bool_to_literal_bool_comparison',
+        'allowInternalNamedArgumentsCalls' => 'allow_internal_named_arg_calls',
+        'allowNamedArgumentCalls' => 'allow_named_arg_calls',
+        'allowStringToStandInForClass' => 'allow_string_standin_for_class',
+        'assumeGettersMutationFree' => 'assume_getters_mutation_free',
+        'checkForThrowsDocblock' => 'check_for_throws_docblock',
+        'checkForThrowsInGlobalScope' => 'check_for_throws_in_global_scope',
+        'disableVarParsing' => 'disable_var_parsing',
+        'disallowLiteralKeysOnUnshapedArrays' => 'literal_array_key_check',
+        'docblockPropertyTypesSealProperties' => 'docblock_property_types_seal_properties',
+        'ensureArrayIntOffsetsExist' => 'ensure_array_int_offsets_exist',
+        'ensureArrayStringOffsetsExist' => 'ensure_array_string_offsets_exist',
+        'ensureOverrideAttribute' => 'ensure_override_attribute',
+        'ignoreInternalFunctionFalseReturn' => 'ignore_internal_falsable_issues',
+        'ignoreInternalFunctionNullReturn' => 'ignore_internal_nullable_issues',
+        'markAllNonInternalCodeAsApi' => 'mark_all_non_internal_code_as_api',
+        'memoizeMethodCallResults' => 'memoize_method_calls',
+        'rememberPropertyAssignmentsAfterCall' => 'remember_property_assignments_after_call',
+        'reportMixedIssues' => 'show_mixed_issues',
+        'restrictReturnTypes' => 'restrict_return_types',
+        'sealAllMethods' => 'seal_all_methods',
+        'sealAllProperties' => 'seal_all_properties',
+        'strictBinaryOperands' => 'strict_binary_operands',
+        'strictNullableComparison' => 'strict_nullable_comparison',
+        'strictOptionalCallableParams' => 'strict_optional_callable_params',
+        'suggestPurityAnnotations' => 'suggest_purity_annotations',
+        'useDocblockPropertyTypes' => 'use_docblock_property_types',
+        'useDocblockTypes' => 'use_docblock_types',
+        'usePhpDocMethodsWithoutMagicCall' => 'use_phpdoc_method_without_magic_or_parent',
+        'usePhpDocPropertiesWithoutMagicCall' => 'use_phpdoc_property_without_magic_or_parent',
+    ];
+
+    /** First-line attributes that the playground settings already cover, and the setting each one sets */
+    private const SNIPPET_SETTING_ATTRIBUTES = [
+        'findUnusedCode' => 'unused_methods',
+        'findUnusedVariablesAndParams' => 'unused_variables',
+        'findUnusedPsalmSuppress' => 'find_unused_psalm_suppress',
+    ];
+
+    private const INCLUDE_ERROR = 'The playground doesn\'t analyse included files: run Psalm on your project to check this example';
+    private const STUB_OVERRIDE_ERROR = 'The playground doesn\'t load stub files: run Psalm on your project to check this @psalm-stub-override example';
 
     public static function defaultPhpVersion(): string
     {
@@ -51,7 +101,21 @@ final class OnlineChecker
         string $php_version,
         int $error_level = self::DEFAULT_ERROR_LEVEL
     ): array {
-        $config = self::getPsalmConfig($settings, $fix_file, $file_contents, $error_level);
+        $snippet = self::parseSnippetConfig($file_contents);
+
+        if (is_string($snippet)) {
+            return self::firstLineError($snippet, $file_contents);
+        }
+
+        $settings = $snippet['settings'] + $settings;
+        $php_version = $snippet['php_version'] ?? $php_version;
+        $error_level = $snippet['error_level'] ?? $error_level;
+
+        $config = self::getPsalmConfig($settings, $fix_file, $error_level);
+
+        foreach ($snippet['config'] as $property => $value) {
+            $config->$property = $value;
+        }
 
         $psalm_version = self::getPsalmVersion();
         $file_provider = new FakeFileProvider();
@@ -73,6 +137,8 @@ final class OnlineChecker
         $project_checker->setPhpVersion($php_version, 'cli');
 
         $codebase = $project_checker->getCodebase();
+        // as ProjectBootstrap does for the CLI
+        $codebase->literal_array_key_check = $config->literal_array_key_check;
         $codebase->config->initializePlugins($project_checker);
         $codebase->collect_references = true;
 
@@ -97,10 +163,7 @@ final class OnlineChecker
 
         $codebase->scanner->addFileToDeepScan($file_path);
 
-        if (($settings['unused_variables'] ?? false)
-            || ($settings['unused_methods'] ?? false)
-            || strpos($file_contents, '<?php // findUnusedCode') === 0
-        ) {
+        if (($settings['unused_variables'] ?? false) || ($settings['unused_methods'] ?? false)) {
             $codebase->reportUnusedCode();
         }
 
@@ -120,6 +183,10 @@ final class OnlineChecker
                     'type' => 'parser_error'
                 ]
             ];
+        } catch (FileIncludeException) {
+            return self::firstLineError(self::INCLUDE_ERROR, $file_contents);
+        } catch (InvalidClasslikeOverrideException) {
+            return self::firstLineError(self::STUB_OVERRIDE_ERROR, $file_contents);
         }
 
         $config->visitStubFiles($codebase, null);
@@ -152,7 +219,13 @@ final class OnlineChecker
                 $codebase->taint_flow_graph->connectSinksAndSources($codebase->progress);
             }
 
-            if (($settings['unused_methods'] ?? false) || strpos($file_contents, '<?php // findUnusedCode') === 0) {
+            // As Analyzer::analyzeFiles() does: infers the purity of unannotated code, which the purity
+            // suggestions report, and consolidateAnalyzedData() suggests the annotations of classes
+            if ($config->suggest_purity_annotations) {
+                \Psalm\Internal\Codebase\MutationLevelResolver::resolve($project_checker);
+            }
+
+            if (($settings['unused_methods'] ?? false) || $config->suggest_purity_annotations) {
                 $project_checker->consolidateAnalyzedData();
             }
 
@@ -231,7 +304,23 @@ final class OnlineChecker
                     'type' => 'parser_error'
                 ]
             ];
+        } catch (FileIncludeException) {
+            return self::firstLineError(self::INCLUDE_ERROR, $file_contents);
         }
+    }
+
+    /** @return array{error: array{message: string, line_from: int, from: int, to: int, type: string}} */
+    private static function firstLineError(string $message, string $file_contents): array
+    {
+        return [
+            'error' => [
+                'message' => $message,
+                'line_from' => 1,
+                'from' => 0,
+                'to' => strcspn($file_contents, "\n"),
+                'type' => 'config_error'
+            ]
+        ];
     }
 
     /**
@@ -483,10 +572,72 @@ final class OnlineChecker
         return [];
     }
 
+    /**
+     * Reads the psalm.xml attributes on the first line of a snippet, such as
+     * <?php // findUnusedCode="true" phpVersion="8.1". A first line with other text is an ordinary comment.
+     *
+     * @return array{
+     *     settings: array<string, bool>,
+     *     config: array<string, bool>,
+     *     php_version: ?string,
+     *     error_level: ?int
+     * }|string the attributes, or what is wrong with them
+     */
+    private static function parseSnippetConfig(string $file_contents): array|string
+    {
+        $snippet = ['settings' => [], 'config' => [], 'php_version' => null, 'error_level' => null];
+        $first_line = rtrim(substr($file_contents, 0, strcspn($file_contents, "\n")), "\r");
+
+        // the shorthand of the blog articles
+        if ($first_line === '<?php // findUnusedCode') {
+            $snippet['settings'] = ['unused_methods' => true, 'unused_variables' => true];
+
+            return $snippet;
+        }
+
+        if (!preg_match('~^<\?php //((?:\s+[A-Za-z]+="[^"]*")+)\s*$~D', $first_line, $line)) {
+            return $snippet;
+        }
+
+        preg_match_all('~([A-Za-z]+)="([^"]*)"~', $line[1], $attributes, PREG_SET_ORDER);
+
+        foreach ($attributes as [, $name, $value]) {
+            if ($name === 'phpVersion') {
+                if (!preg_match('/' . self::SUPPORTED_PHP_VERSION_REGEX . '/D', $value)) {
+                    return 'phpVersion must be a PHP version Psalm can analyse';
+                }
+                $snippet['php_version'] = $value;
+            } elseif ($name === 'errorLevel') {
+                $snippet['error_level'] = self::parseErrorLevel($value);
+                if ($snippet['error_level'] === null) {
+                    return 'errorLevel must be 1 to ' . self::MAX_ERROR_LEVEL;
+                }
+            } elseif (isset(self::SNIPPET_BOOLEAN_ATTRIBUTES[$name]) || isset(self::SNIPPET_SETTING_ATTRIBUTES[$name])) {
+                if ($value !== 'true' && $value !== 'false') {
+                    return 'The options on the first line must be "true" or "false", except phpVersion and errorLevel';
+                }
+                if (isset(self::SNIPPET_SETTING_ATTRIBUTES[$name])) {
+                    $snippet['settings'][self::SNIPPET_SETTING_ATTRIBUTES[$name]] = $value === 'true';
+                } else {
+                    $snippet['config'][self::SNIPPET_BOOLEAN_ATTRIBUTES[$name]] = $value === 'true';
+                }
+            } else {
+                return 'The playground can\'t set this option: it accepts phpVersion, errorLevel and '
+                    . implode(', ', array_keys(self::SNIPPET_SETTING_ATTRIBUTES + self::SNIPPET_BOOLEAN_ATTRIBUTES));
+            }
+        }
+
+        // as in psalm.xml, findUnusedCode also sets findUnusedVariablesAndParams unless the snippet sets that too
+        if (isset($snippet['settings']['unused_methods'])) {
+            $snippet['settings']['unused_variables'] ??= $snippet['settings']['unused_methods'];
+        }
+
+        return $snippet;
+    }
+
     private static function getPsalmConfig(
         array $settings,
         bool $fix_file,
-        string $file_contents,
         int $error_level
     ): \Psalm\Config {
         if ($error_level < 1 || $error_level > 8) {
@@ -558,7 +709,7 @@ final class OnlineChecker
         $config->setCustomErrorLevel('NonStaticSelfCall', Config::REPORT_INFO);
         $config->setCustomErrorLevel('UndefinedAttributeClass', Config::REPORT_INFO);
 
-        if (($settings['unused_variables'] ?? false) || strpos($file_contents, '<?php // findUnusedCode') === 0) {
+        if ($settings['unused_variables'] ?? false) {
             $config->setCustomErrorLevel('UnusedParam', Config::REPORT_INFO);
             $config->setCustomErrorLevel('PossiblyUnusedParam', Config::REPORT_INFO);
             $config->setCustomErrorLevel('UnusedVariable', Config::REPORT_INFO);
@@ -568,7 +719,7 @@ final class OnlineChecker
             $config->setCustomErrorLevel('UnusedVariable', Config::REPORT_SUPPRESS);
         }
 
-        if (($settings['unused_methods'] ?? false) || strpos($file_contents, '<?php // findUnusedCode') === 0) {
+        if ($settings['unused_methods'] ?? false) {
             $config->setCustomErrorLevel('UnusedClass', Config::REPORT_INFO);
             $config->setCustomErrorLevel('UnusedMethod', Config::REPORT_INFO);
             $config->setCustomErrorLevel('PossiblyUnusedMethod', Config::REPORT_INFO);
