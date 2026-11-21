@@ -3,7 +3,7 @@
 require_once('../vendor/autoload.php');
 
 $canonical_url = 'https://psalm.dev/newsletter';
-$meta_description = 'Subscribe to the Psalm newsletter to get new articles from the Psalm blog by email.';
+$meta_description = 'Subscribe to the Psalm newsletter to get news about Psalm by email.';
 ?>
 <html lang="en">
 <head>
@@ -14,7 +14,7 @@ $meta_description = 'Subscribe to the Psalm newsletter to get new articles from 
 <?php require('../includes/nav.php'); ?>
 <div class="post">
 <h1>Newsletter</h1>
-<p>Subscribe to get new articles from the <a href="/articles">Psalm blog</a> by email: a few emails a year.</p>
+<p>Subscribe to get news about Psalm by email: a few emails a month.</p>
 <p>You'll get an email asking you to confirm: newsletters are only sent to confirmed addresses, and every newsletter has a link to unsubscribe.</p>
 <?php require_once('../includes/subscribe.php'); ?>
 <?= NewsletterForm::render('page') ?>

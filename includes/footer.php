@@ -2,7 +2,7 @@
 <footer>
 <?php if (!NewsletterForm::rendered()): ?>
     <div class="footer_newsletter">
-        <p>Get new Psalm articles by email:</p>
+        <p>Get Psalm news by email:</p>
 <?= NewsletterForm::render('compact') ?>
     </div>
 <?php endif ?>
