@@ -430,3 +430,5 @@ Thanks to everyone who contributed since 7.0.0, and especially to [@jirkace](htt
 Subscribe to the [newsletter](https://psalm.dev/newsletter) below to get the next post by email, and join us on [Discord](https://discord.gg/RwH8rEpxt9)!
 
 **Full Changelog**: [7.0.0...7.15.0](https://github.com/vimeo/psalm/compare/7.0.0...7.15.0)
+
+<div class="discuss"><a href="https://news.ycombinator.com/item?id=50592935">Comment on Hacker News</a></div>
