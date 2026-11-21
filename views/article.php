@@ -57,6 +57,13 @@ if ($article->is_preview) {
 // The library builds the description from rendered HTML, so it holds entities like &amp;
 $description = trim(preg_replace('/\s+/u', ' ', html_entity_decode($article->description, ENT_QUOTES | ENT_HTML5, 'UTF-8')));
 $meta_description = $description;
+// A # after each heading links to it, as in the docs
+$article_html = preg_replace(
+    '~<(h[2-6]) id="([^"]+)">(.*?)</\\1>~s',
+    '<$1 id="$2">$3<a class="headerlink" href="#$2" title="Permanent link">#</a></$1>',
+    $article->html
+) ?? $article->html;
+
 $timestamp = strtotime($article->date);
 $published = $timestamp === false ? null : date('c', $timestamp);
 
@@ -126,9 +133,9 @@ $published = $timestamp === false ? null : date('c', $timestamp);
 <?php endif ?>
 <?php require_once('../includes/subscribe.php'); ?>
 <?php // An article can add a subscription box in its text with <!-- newsletter --> ?>
-<?= str_contains($article->html, '<!-- newsletter -->')
-    ? str_replace('<!-- newsletter -->', NewsletterForm::render('box'), $article->html)
-    : $article->html ?>
+<?= str_contains($article_html, '<!-- newsletter -->')
+    ? str_replace('<!-- newsletter -->', NewsletterForm::render('box'), $article_html)
+    : $article_html ?>
 <?= NewsletterForm::render('box') ?>
 </div>
 <?php require('../includes/footer.php'); ?>
