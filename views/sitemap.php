@@ -12,6 +12,7 @@ $urls = [
     ['loc' => 'https://psalm.dev/plugins', 'lastmod' => null],
     ['loc' => 'https://psalm.dev/articles', 'lastmod' => null],
     ['loc' => 'https://psalm.dev/support', 'lastmod' => null],
+    ['loc' => 'https://psalm.dev/newsletter', 'lastmod' => null],
     ['loc' => 'https://psalm.dev/contribute', 'lastmod' => null],
 ];
 

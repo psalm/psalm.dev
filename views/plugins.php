@@ -50,7 +50,7 @@ $meta_description = 'Psalm plugins for Laravel, Symfony, PHPUnit, Doctrine and o
 
 <head>
     <title>Psalm plugins</title>
-    <?php require __DIR__ . "/../includes/meta.php" ?>
+    <?php require_once __DIR__ . '/../includes/meta.php'; page_meta($meta_description, $canonical_url); ?>
     <?php if ($filter_majors) : ?>
     <style>
         <?php foreach ($filter_majors as $major) : ?>

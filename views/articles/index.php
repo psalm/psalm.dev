@@ -13,11 +13,13 @@ $e = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES);
 <html lang="en">
 <head>
 <title>Blog - Psalm</title>
-<?php require('../../includes/meta.php'); ?>
+<?php require_once __DIR__ . '/../../includes/meta.php'; page_meta($meta_description, $canonical_url); ?>
 </head>
 <body>
 <?php require('../../includes/nav.php'); ?>
 <div class="post">
+<?php require_once('../../includes/subscribe.php'); ?>
+<?= NewsletterForm::render('box') ?>
 <?php foreach ($articles as $i => $article): ?>
 <?php if ($i !== 0): ?><hr><?php endif ?>
 <h3><a href="/articles/<?= $e($article->slug) ?>"><?= $e($article->title) ?></a></h3>

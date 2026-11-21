@@ -16,8 +16,7 @@
             <directory name="vendor" />
             <!-- Disabled maintenance endpoint (see the file header); analysed only when temporarily re-enabled -->
             <file name="views/migrate.php" />
-            <!-- Presentational partials included into a page scope; not independently analysable -->
-            <file name="includes/meta.php" />
+            <!-- A presentational partial included into a page scope; not independently analysable -->
             <file name="includes/not_found.php" />
         </ignoreFiles>
     </projectFiles>
