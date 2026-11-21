@@ -1,0 +1,71 @@
+// The editors that assets/js/interactive_code.js makes of PHP examples, in blog articles and docs pages,
+// drawn like the homepage playground
+div.cm_inline_container {
+    margin: 1.5em 0;
+
+    .CodeMirror {
+        background: #fff;
+        border: 2px solid #000;
+        max-width: 100%;
+        box-sizing: border-box;
+        height: auto;
+        // codemirror_custom.scss raises editors to 2, which would draw them over the docs' fixed header
+        z-index: 0;
+    }
+
+    .CodeMirror-scroll {
+        height: auto;
+    }
+
+    .CodeMirror-gutters {
+        background: #fff;
+        border-right: 1px solid #ddd;
+    }
+}
+
+.cm_inline_bar {
+    display: flex;
+
+    button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 36px;
+        margin: 0;
+        padding: 0 14px;
+        border: 2px solid #000;
+        border-top: 0;
+        background: #fff;
+        color: #000;
+        font-family: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono",
+            "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+        font-size: 14px;
+        line-height: 14px;
+        cursor: pointer;
+
+        &:hover {
+            background: #f5f5f5;
+        }
+
+        &:focus-visible {
+            outline: 2px solid #c42020;
+            outline-offset: 2px;
+        }
+
+        // Articles call it "the green button"
+        &.cm_inline_fix {
+            margin-left: auto;
+            background: #cfeabb;
+            color: #2e5d0b;
+
+            &:hover {
+                background: #bfe2a5;
+            }
+        }
+
+        // Adjacent buttons share a border
+        & + button:not(.cm_inline_fix) {
+            border-left: 0;
+        }
+    }
+}
