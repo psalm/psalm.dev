@@ -115,6 +115,23 @@
         value = value.replace(/^\W+/, "").replace(/\W+$/, "") || value
       return term.call(this, value, options)
     }
+    // The theme makes each word of a query an optional prefix, so in "escape for the sink" the
+    // stop words matched every heading starting with "for" or "the", which outranked the section.
+    // Leave stop words out (unless the query has nothing else) and require every other word.
+    var query = lunr.Index.prototype.query
+    lunr.Index.prototype.query = function (fn) {
+      return query.call(this, function (q) {
+        fn.call(q, q)
+        var words = q.clauses.filter(function (clause) {
+          return lunr.stopWordFilter(clause.term.replace(/\*$/, "")) !== undefined
+        })
+        if (words.length)
+          q.clauses = words
+        q.clauses.forEach(function (clause) {
+          clause.presence = lunr.Query.presence.REQUIRED
+        })
+      })
+    }
   })(window.lunr)
 
   // Search result titles have the same doubly escaped code spans as the
