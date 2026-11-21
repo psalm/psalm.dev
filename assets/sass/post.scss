@@ -34,6 +34,17 @@ div.post {
         padding-right: 20px;
         margin: 1.5em 0 .5em;
         font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
+
+        a.headerlink {
+            margin-left: .4em;
+            color: rgba(0, 0, 0, .26);
+            text-decoration: none;
+
+            &:hover,
+            &:focus {
+                color: #a75251;
+            }
+        }
     }
 
     h2 {

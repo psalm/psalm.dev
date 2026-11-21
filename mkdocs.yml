@@ -10,8 +10,11 @@ theme:
   custom_dir: 'theme'
 markdown_extensions:
   - codehilite
+  # A # after each heading links to it
+  - toc:
+      permalink: '#'
 extra:
   # The logo links to the main site
   homepage: https://psalm.dev/
 extra_css:
-  - '../assets/css/mkdocs_material_extra.css?v=11'
+  - '../assets/css/mkdocs_material_extra.css?v=12'

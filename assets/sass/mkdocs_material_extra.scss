@@ -149,6 +149,18 @@ p, ul, table {
 	}
 }
 
+// The # after each heading (the toc permalink of mkdocs.yml) stays visible, not only on hover, and turns red like
+// links when hovered or focused. html body and [id] make these rules more specific than the theme's.
+html body .md-typeset .headerlink {
+	opacity: 1;
+	transform: none;
+}
+
+html body .md-typeset [id] > .headerlink:hover,
+html body .md-typeset [id] > .headerlink:focus {
+	color: #943b3a;
+}
+
 .md-typeset {
 	h1, h2, h3 {
 		font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
