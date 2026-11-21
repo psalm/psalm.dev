@@ -43,20 +43,30 @@
         width: 100%;
     }
 
+    // Like the homepage's call to action
     button {
         font: inherit;
-        font-weight: bold;
+        font-weight: 500;
         height: 40px;
-        padding: 0 18px;
+        padding: 0 20px;
         border: 0;
-        border-radius: 3px;
-        background: #cfeabb;
-        color: #2e5d0b;
+        background: #000;
+        color: #fff;
         cursor: pointer;
 
-        &:hover {
-            background: #b9e09c;
+        &:hover,
+        &:focus-visible {
+            background: #a75251;
         }
+    }
+
+    input:focus-visible {
+        outline: 2px solid #a75251;
+        outline-offset: 1px;
+    }
+
+    input[type=checkbox] {
+        accent-color: #a75251;
     }
 
     .newsletter__consent {
