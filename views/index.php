@@ -9,6 +9,17 @@ require_once dirname(__DIR__) . '/src/HomepageExample.php';
 $playground_page = ($_GET['page'] ?? null) === 'play';
 // the code of an editor of an article or docs page, posted by its Expand button
 $posted_code = $playground_page && is_string($_POST['code'] ?? null) ? $_POST['code'] : null;
+// and the settings it was analysed with; the ones it leaves out, or that aren't settings, keep their default
+$posted_json = $_POST['settings'] ?? null;
+$posted_settings = $playground_page && is_string($posted_json) ? json_decode($posted_json, true) : null;
+$settings = Settings::defaultValues();
+if (is_array($posted_settings)) {
+    foreach (array_keys($settings) as $name) {
+        if (is_bool($posted_settings[$name] ?? null)) {
+            $settings[$name] = $posted_settings[$name] === true;
+        }
+    }
+}
 $canonical_url = $playground_page ? 'https://psalm.dev/play' : 'https://psalm.dev/';
 // homepage news: up to three articles from the last two weeks, listed under the playground widget
 $fresh_articles = $playground_page ? [] : PsalmDotOrg\FreshArticle::recent(dirname(__DIR__) . '/assets/articles');
@@ -80,7 +91,7 @@ render_playground(htmlspecialchars($posted_code ?? PsalmDotOrg\HomepageExample::
 <?php endif ?>
 </div>
 <script>
-var settings = <?php echo json_encode(Settings::defaultValues()) ?>;
+var settings = <?php echo json_encode($settings) ?>;
 </script>
 <?php if (!$playground_page) : ?>
 <?php require('../includes/footer.php'); ?>
