@@ -105,7 +105,7 @@
     'datePublished' => $published,
     'author' => ['@type' => 'Person', 'name' => $article->author],
     'publisher' => ['@type' => 'Organization', 'name' => 'Psalm', 'url' => 'https://psalm.dev/'],
-    'image' => 'https://psalm.dev/article_thumbnail.png',
+    'image' => 'https://psalm.dev/psalm_preview_2026.png',
     'inLanguage' => $lang,
     'mainEntityOfPage' => $canonical_url ?: $url,
 ]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_INVALID_UTF8_SUBSTITUTE | JSON_PRETTY_PRINT) ?>]]></code>
@@ -121,7 +121,7 @@
     'datePublished' => $published,
     'author' => ['@type' => 'Person', 'name' => $article->author],
     'publisher' => ['@type' => 'Organization', 'name' => 'Psalm', 'url' => 'https://psalm.dev/'],
-    'image' => 'https://psalm.dev/article_thumbnail.png',
+    'image' => 'https://psalm.dev/psalm_preview_2026.png',
     'inLanguage' => $lang,
     'mainEntityOfPage' => $canonical_url ?: $url,
 ]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_INVALID_UTF8_SUBSTITUTE | JSON_PRETTY_PRINT) ?>]]></code>

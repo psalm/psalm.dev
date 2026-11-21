@@ -1,0 +1,38 @@
+<!doctype html>
+<!-- Source of /psalm_preview_2026.png. Serve the site and run: chromium --headless=new --hide-scrollbars --window-size=1200,630 --screenshot=psalm_preview_2026.png http://localhost/assets/link_preview.html -->
+<html lang="en"><head><meta charset="utf-8"><title>Psalm link preview</title>
+<style>
+@font-face { font-family: "National 2"; font-weight: 700; src: url(/extra/national-2-web-bold.woff2) format("woff2"); }
+@font-face { font-family: "National 2"; font-weight: 500; src: url(/extra/national-2-web-medium.woff2) format("woff2"); }
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #fff; color: #000; }
+body { padding: 38px 40px 36px; font-family: "National 2", "Helvetica Neue", Helvetica, sans-serif; display: flex; flex-direction: column; }
+header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 24px; }
+h1 { margin: 0; font-size: 62px; line-height: 1; font-weight: 700; letter-spacing: -1.5px; text-decoration: underline wavy #c42020 4px; text-underline-offset: 9px; }
+p { margin: 0; font-size: 29px; font-weight: 500; }
+.editor { flex: 1; border: 2px solid #000; padding: 15px 0; font: 20px/28.5px "DejaVu Sans Mono", ui-monospace, Menlo, Consolas, monospace; }
+.l { display: flex; height: 28.5px; white-space: pre; }
+.n { width: 58px; padding-right: 18px; text-align: right; color: #999; flex: none; }
+.k, .s { color: #c42020; }
+.e { padding-bottom: 4px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 10'%3E%3Cpath fill='none' stroke='%23c42020' stroke-width='6' d='M0 8.5c8 0 8-7 16-7s8 7 16 7 8-7 16-7 8 7 16 7'/%3E%3C/svg%3E") 0 100% / 8px 4px repeat-x; }
+.i { margin-left: 22px; padding: 0 10px; height: 26px; line-height: 26px; align-self: center; background: #c42020; color: #fff; font: 500 17px/26px "National 2", Helvetica, sans-serif; }
+</style></head><body>
+<header><h1>Psalm</h1><p>Find bugs and security issues in your PHP code</p></header>
+<div class="editor">
+<div class="l"><span class="n">1</span><span><span class="k">&lt;?php</span></span></div>
+<div class="l"><span class="n">2</span></div>
+<div class="l"><span class="n">3</span><span><span class="k">function</span> greeting(?string $name): string {</span></div>
+<div class="l"><span class="n">4</span><span>    <span class="k">return</span> <span class="s">'Hello, '</span> . strtoupper(<span class="e">$name</span>);</span><span class="i">PossiblyNullArgument</span></div>
+<div class="l"><span class="n">5</span><span>}</span></div>
+<div class="l"><span class="n">6</span></div>
+<div class="l"><span class="n">7</span><span><span class="k">function</span> findUser(PDO $db, string $name): void {</span></div>
+<div class="l"><span class="n">8</span><span>    $db-&gt;query(<span class="e s">"SELECT * FROM users WHERE name = '$name'"</span>);</span><span class="i">TaintedSql</span></div>
+<div class="l"><span class="n">9</span><span>}</span></div>
+<div class="l"><span class="n">10</span></div>
+<div class="l"><span class="n">11</span><span>$name = $_GET[<span class="s">'name'</span>] ?? <span class="k">null</span>;</span></div>
+<div class="l"><span class="n">12</span></div>
+<div class="l"><span class="n">13</span><span><span class="k">if</span> (is_string($name)) {</span></div>
+<div class="l"><span class="n">14</span><span>    findUser(<span class="k">new</span> PDO(<span class="s">'sqlite::memory:'</span>), $name);</span></div>
+<div class="l"><span class="n">15</span><span>}</span></div>
+</div>
+</body></html>

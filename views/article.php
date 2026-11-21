@@ -86,11 +86,11 @@ $published = $timestamp === false ? null : date('c', $timestamp);
 <?php if ($published): ?>
 <meta property="article:published_time" content="<?= $published ?>" />
 <?php endif ?>
-<meta name="twitter:card" content="summary" />
+<meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:site" content="@psalmphp" />
 <meta name="twitter:title" content="<?= $e($article->title) ?>" />
 <meta name="twitter:description" content="<?= $e($description) ?>" />
-<meta name="twitter:image" content="https://psalm.dev/article_thumbnail.png" />
+<meta name="twitter:image" content="https://psalm.dev/psalm_preview_2026.png" />
 <script type="application/ld+json">
 <?= json_encode(array_filter([
     '@context' => 'https://schema.org',
@@ -100,7 +100,7 @@ $published = $timestamp === false ? null : date('c', $timestamp);
     'datePublished' => $published,
     'author' => ['@type' => 'Person', 'name' => $article->author],
     'publisher' => ['@type' => 'Organization', 'name' => 'Psalm', 'url' => 'https://psalm.dev/'],
-    'image' => 'https://psalm.dev/article_thumbnail.png',
+    'image' => 'https://psalm.dev/psalm_preview_2026.png',
     'inLanguage' => $lang,
     'mainEntityOfPage' => $canonical_url ?: $url,
 ]), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_INVALID_UTF8_SUBSTITUTE | JSON_PRETTY_PRINT) ?>

@@ -16,6 +16,12 @@
 {% endblock %}
 
 {% block extrahead %}
+<meta property="og:site_name" content="Psalm" />
+<meta property="og:image" content="https://psalm.dev/psalm_preview_2026.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://psalm.dev/psalm_preview_2026.png" />
 {% if page and page.file %}
 <!-- The Markdown source of this page, served by views/docs_markdown.php -->
 <link rel="alternate" type="text/markdown" href="{{ config.site_url }}{{ page.file.src_path }}">

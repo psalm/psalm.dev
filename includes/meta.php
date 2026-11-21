@@ -24,7 +24,9 @@ function page_meta(?string $description = null, string|false|null $canonical = n
 <link rel="canonical" href="<?= htmlspecialchars($canonical, ENT_QUOTES) ?>" />
 <?php endif ?>
 <meta property="og:site_name" content="Psalm" />
-<meta property="og:image" content="https://psalm.dev/psalm_preview.png" />
+<meta property="og:image" content="https://psalm.dev/psalm_preview_2026.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
 <link rel="stylesheet" href="<?= asset_url('/assets/css/site.css') ?>">
 <?php /* Fonts used above the fold on every page: request them with the stylesheet instead of after it is parsed */ ?>
 <link rel="preload" href="/extra/national-2-web-bold.woff2" as="font" type="font/woff2" crossorigin>
