@@ -127,8 +127,9 @@ $published = $timestamp === false ? null : date('c', $timestamp);
     <hr />
 <?php endif ?>
 <?= $article->html ?>
+<?php $subscribe_variant = 'box'; require('../includes/subscribe.php'); ?>
 </div>
-<?php require('../includes/footer.php'); ?>
+<?php $subscribe_footer = false; require('../includes/footer.php'); ?>
 <script>
 const serializeJSON = function(data) {
     return Object.keys(data).map(function (keyName) {

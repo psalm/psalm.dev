@@ -18,6 +18,7 @@ $e = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES);
 <body>
 <?php require('../../includes/nav.php'); ?>
 <div class="post">
+<?php $subscribe_variant = 'box'; require('../../includes/subscribe.php'); ?>
 <?php foreach ($articles as $i => $article): ?>
 <?php if ($i !== 0): ?><hr><?php endif ?>
 <h3><a href="/articles/<?= $e($article->slug) ?>"><?= $e($article->title) ?></a></h3>
@@ -26,6 +27,6 @@ $e = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES);
 <p><?= $article->description ?></p>
 <?php endforeach; ?>
 </div>
-<?php require('../../includes/footer.php'); ?>
+<?php $subscribe_footer = false; require('../../includes/footer.php'); ?>
 </body>
 </html>

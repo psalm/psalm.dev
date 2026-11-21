@@ -1,0 +1,163 @@
+// The newsletter forms (includes/subscribe.php and the docs theme) and the docs' box (assets/js/newsletter.js)
+.newsletter {
+    font-family: "National 2", "Helvetica Neue", "Helvetica", sans-serif;
+    font-size: 15px;
+    line-height: 1.4;
+    text-align: left;
+
+    p {
+        margin: 0 0 .6em;
+    }
+
+    .newsletter__title {
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .newsletter__fields {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: flex-end;
+
+        label {
+            flex: 1 1 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 13px;
+            color: #555;
+        }
+    }
+
+    input[type=email],
+    input[type=text] {
+        font: inherit;
+        padding: 0 10px;
+        height: 40px;
+        border: 1px solid #c9c4c4;
+        border-radius: 3px;
+        background: #fff;
+        color: #000;
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    button {
+        font: inherit;
+        font-weight: bold;
+        height: 40px;
+        padding: 0 18px;
+        border: 0;
+        border-radius: 3px;
+        background: #cfeabb;
+        color: #2e5d0b;
+        cursor: pointer;
+
+        &:hover {
+            background: #b9e09c;
+        }
+    }
+
+    .newsletter__consent {
+        display: block;
+        margin-top: 8px;
+        font-size: 13px;
+        color: #555;
+    }
+
+    .newsletter__turnstile:not(:empty) {
+        margin-top: 8px;
+    }
+}
+
+// Honeypot: bots fill it, people don't see it
+.newsletter__hp {
+    position: absolute !important;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.newsletter__error {
+    padding: 10px 14px;
+    border-left: 3px solid #c42020;
+    background: #fbeaea;
+    color: #7a1414;
+}
+
+.newsletter--page,
+.newsletter--box {
+    margin: 2em 0;
+}
+
+.newsletter--box {
+    padding: 18px 20px;
+    background: #f1f0f0;
+    border-radius: 4px;
+}
+
+.newsletter--compact {
+    max-width: 480px;
+    margin: 0 auto 24px;
+}
+
+.footer_newsletter > p {
+    margin-bottom: 8px;
+}
+
+.newsletter-popup {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 10;
+    width: 340px;
+    max-width: calc(100vw - 32px);
+    box-sizing: border-box;
+    padding: 18px 20px;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, .2);
+
+    .newsletter__title {
+        padding-right: 24px;
+    }
+}
+
+.newsletter-popup__close {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    border: 0;
+    background: none;
+    font-size: 24px;
+    line-height: 1;
+    color: #777;
+    cursor: pointer;
+
+    &:hover {
+        color: #000;
+    }
+}
+
+// In articles and pages, aligned with the text, whose paragraphs are indented
+div.post {
+    .newsletter--page,
+    .newsletter--box,
+    .newsletter__error {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
+    .newsletter p {
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        margin: 0 0 .6em;
+    }
+
+    p.newsletter__error {
+        padding: 10px 14px;
+    }
+}
