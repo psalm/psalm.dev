@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Psalm performance report</title>
+<style>
+/* Colours, fonts and shapes follow psalm.dev (site.css, playground.css): flat panels, 2px ink rules, square corners,
+   Tiempos Text for prose, National 2 for the interface, #a75251 as the accent. psalm.dev has no dark theme, so the
+   dark palette below is derived from it. The chart palette (--c1..--c8 and friends) is the report's own. */
+:root {
+  --bg: #f1f0f0; --panel: #fff; --fg: #000; --muted: #666; --faint: #7a7070; --hover: #e9e8e8; --divider: #ddd;
+  --ink-hover: #333; --accent: #a75251; --err: #c42020; --code: #f3f3f3; --bar: #ecd6d5;
+  --track: rgba(0, 0, 0, .05); --grid: rgba(0, 0, 0, .16);
+  --tipbg: #000; --tipfg: #fff; --rule: 2px solid var(--fg);
+  --nav-bg: #fff; --nav-link: #a75251;
+  --serif: "Tiempos Text", Georgia, "Times New Roman", serif;
+  --sans: "National 2", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+  --wave: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 10'><path fill='none' stroke='%23c42020' stroke-width='3' d='M0 8.5c8 0 8-7 16-7s8 7 16 7 8-7 16-7 8 7 16 7' class='st0'/></svg>");
+  --c1: #5f7185; --c2: #3b7dd8; --c3: #17846e; --c4: #8a5cc7; --c5: #c26a10; --c6: #cf4863; --c7: #5a8a1e; --c8: #a07a12;
+  --init: #d99a2b; --run: #2f9e6b; --collect: #cf4863; --merge: #8a5cc7; --warn: #e0902b;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #171515; --panel: #232020; --fg: #f1f0f0; --muted: #b0a9a9; --faint: #a39b9b; --hover: #2f2b2b; --divider: #3b3636;
+    --ink-hover: #cfc9c9; --accent: #e08a88; --code: #2f2b2b; --bar: #5a3a39;
+    --track: rgba(255, 255, 255, .06); --grid: rgba(255, 255, 255, .18);
+    --tipbg: #f1f0f0; --tipfg: #171515; --nav-bg: #232020; --nav-link: #e08a88;
+  }
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { background: var(--bg); color: var(--fg); scrollbar-gutter: stable; }
+body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; font: 15px/1.5 var(--serif); text-rendering: optimizeLegibility; -webkit-text-size-adjust: 100%; }
+body > .page { flex: 1; }
+a { color: var(--accent); text-underline-offset: .15em; text-decoration-thickness: 1px; }
+code, .mono, .path { font-family: var(--mono); font-size: .85em; }
+code { background: var(--code); border-radius: .3em; padding: 1px 4px; }
+.path { word-break: break-all; }
+td code, th code, .path code { background: none; padding: 0; }
+.muted { color: var(--muted); }
+.wrap { max-width: 1640px; margin: 0 auto; padding: 0 20px; }
+
+/* site header, as on psalm.dev */
+.site { background: linear-gradient(0deg, rgba(0, 0, 0, .27) 5%, gold 5%, gold 55%, #0057b7 55%) var(--nav-bg); background-repeat: no-repeat; background-size: 100% 15%; position: relative; margin-bottom: 8px; }
+.site::after { content: ""; z-index: 300; background-image: var(--wave); background-repeat: repeat-x; background-size: 11px 4px; height: 6px; width: 100%; position: absolute; bottom: -4px; left: 0; }
+.site .wrap { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; }
+.site .logo { margin: 10px 0; font: 600 36px/24px var(--sans); }
+.site .logo a { color: var(--fg); padding: 20px 0; text-decoration: none; display: block; -webkit-font-smoothing: antialiased; }
+.site ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; align-items: center; }
+.site li { margin-left: 6px; }
+.site li a { padding: 10px; font: 500 18px/1.5 var(--sans); text-decoration: none; display: block; color: var(--nav-link); }
+.site li a:hover { text-decoration: underline; }
+.site li svg { display: block; fill: currentColor; }
+.pagehead { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: baseline; padding-top: 24px; }
+h1 { font: 500 34px/1.3 var(--sans); color: var(--faint); margin: 0; }
+h2 { font: 600 13px/1.5 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); border-top: var(--rule); margin: 0 0 12px; padding-top: 12px; }
+h2 + h3 { margin-top: 0; }
+h3 { font: 500 17px/1.3 var(--sans); margin: 20px 0 6px; }
+#source { margin: 0; flex: 1 1 280px; font-family: var(--sans); }
+.pagehead .actions { flex-basis: 100%; }
+#nav { margin: 14px 0 0; font-family: var(--sans); }
+#nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 18px; }
+#nav a { font-weight: 500; }
+main { padding-bottom: 40px; }
+main > section { margin-top: 36px; scroll-margin-top: 12px; }
+main > section:first-child { margin-top: 24px; }
+
+/* buttons: the white bar buttons of the playground, the black "Get started" button for the main action */
+button, select { font: 500 14px/1.2 var(--sans); color: var(--fg); background: var(--panel); border: var(--rule); border-radius: 0; padding: 5px 12px; cursor: pointer; }
+button:hover { background: var(--hover); }
+button[aria-pressed="true"] { background: var(--fg); color: var(--panel); }
+button.primary { background: var(--fg); color: var(--panel); border-color: var(--fg); font-size: 16px; padding: 9px 20px; }
+button.primary:hover, button.primary:focus-visible { background: var(--accent); border-color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button:focus-visible, select:focus-visible { outline: 2px dashed currentColor; outline-offset: -5px; }
+.b:focus-visible { outline: none; stroke: var(--accent); stroke-width: 2; }
+
+/* empty state and messages */
+#empty { margin: 36px 0; background: var(--panel); border: 2px dashed var(--fg); padding: 48px 20px; text-align: center; }
+#empty h2 { font: 500 30px/1.3 var(--sans); letter-spacing: 0; text-transform: none; color: var(--fg); border: 0; margin: 0 0 18px; padding: 0; }
+#empty p { margin: 12px auto; max-width: 620px; }
+#empty pre { margin: 6px auto 0; display: inline-block; text-align: left; background: var(--code); padding: 10px 18px; }
+#empty pre code { background: none; padding: 0; font-size: 15px; }
+#error { margin: 16px 0; padding: 10px 14px; color: #7a1414; background: #fbeaea; border-left: 3px solid var(--err); font-family: var(--sans); }
+#schema-warn { margin: 16px 0; padding: 10px 14px; border: var(--rule); border-left: 6px solid var(--warn); background: var(--panel); font: 500 15px/1.4 var(--sans); }
+@media (prefers-color-scheme: dark) { #error { color: #f3c2c2; background: #3a1f1f; } }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+#save-note { font-size: 13px; }
+body.dragging::after { content: "Drop the dump to open it"; position: fixed; inset: 0; display: grid; place-items: center; font: 500 28px var(--sans); background: color-mix(in srgb, var(--bg) 88%, transparent); border: 4px dashed var(--accent); z-index: 500; pointer-events: none; }
+
+/* summary cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin: 0; font-family: var(--sans); }
+.card { background: var(--panel); border: var(--rule); padding: 9px 12px; min-width: 0; }
+.card dt { color: var(--faint); font: 600 12px/1.5 var(--sans); text-transform: uppercase; letter-spacing: .08em; }
+.card dd { margin: 0; }
+.card .v { font-size: 24px; font-weight: 500; line-height: 1.3; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.card .v.long { font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card .s { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+details { margin-top: 14px; }
+summary { cursor: pointer; font-family: var(--sans); font-weight: 500; }
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: 2px 16px; margin: 8px 0 0; }
+.kv dt { color: var(--muted); font-family: var(--sans); }
+.kv dd { margin: 0; overflow-wrap: anywhere; }
+.kv.num { display: block; max-width: 460px; font-family: var(--sans); }
+.kv.num > div { display: flex; justify-content: space-between; gap: 16px; padding: 2px 6px; margin: 0 -6px; border-bottom: 1px solid var(--divider); }
+.kv.num > div:hover, .kv.num > div:focus-within { background: var(--hover); }
+.kv.num dd { text-align: right; font-variant-numeric: tabular-nums; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.chips li { background: var(--panel); border: 1px solid var(--divider); padding: 0 8px; font: 12px var(--mono); }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 0 32px; }
+
+/* timeline */
+.tl-ctl { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center; justify-content: space-between; margin-bottom: 6px; font-family: var(--sans); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font: 13px var(--sans); color: var(--muted); }
+.legend span::before { content: ""; display: inline-block; width: 11px; height: 11px; margin-right: 5px; vertical-align: -1px; background: var(--sw, var(--c1)); opacity: var(--op, 1); }
+.legend .idle::before { background: repeating-linear-gradient(45deg, var(--warn) 0 3px, transparent 3px 6px); }
+.zoomctl { display: flex; align-items: center; gap: 6px; }
+.zoomctl input[type=range] { width: 170px; accent-color: var(--accent); }
+.zoomctl output { min-width: 14em; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.hint { margin: 0 0 8px; font-size: 14px; color: var(--muted); }
+.tl { display: flex; border: var(--rule); overflow: hidden; background: var(--panel); }
+.tl > svg { flex: none; display: block; }
+.tl-s { flex: 1 1 auto; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+.tl-s svg { display: block; }
+text { font: 11px var(--sans); fill: var(--muted); }
+text.grp { font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: .05em; }
+text.sub { font-size: 10px; }
+text.tick { font-size: 10px; }
+text.bt { fill: #fff; pointer-events: none; font-weight: 500; }
+text.rl { font-size: 10.5px; font-variant-numeric: tabular-nums; }
+.trk { fill: var(--track); }
+.gl { stroke: var(--grid); stroke-width: .6; }
+.ax { stroke: var(--grid); stroke-width: 1; }
+.b { cursor: pointer; }
+.sep { stroke: var(--panel); stroke-width: 1; }
+.o7 { opacity: .72; }
+.faint { opacity: .22; }
+.f1 { fill: var(--c1); } .f2 { fill: var(--c2); } .f3 { fill: var(--c3); } .f4 { fill: var(--c4); }
+.f5 { fill: var(--c5); } .f6 { fill: var(--c6); } .f7 { fill: var(--c7); } .f8 { fill: var(--c8); }
+.fi { fill: var(--init); } .fr { fill: var(--run); } .fc { fill: var(--collect); } .fm { fill: var(--merge); }
+.fh { fill: url(#hatch); }
+.lines { fill: none; stroke: var(--c6); stroke-width: 2; }
+.dot { stroke: var(--panel); stroke-width: 1; }
+#mem-chart { background: var(--panel); border: var(--rule); margin-top: 6px; }
+
+/* tooltip */
+#tip { position: fixed; z-index: 600; pointer-events: none; max-width: 380px; padding: 7px 10px; background: var(--tipbg); color: var(--tipfg); font: 13px/1.4 var(--sans); box-shadow: 0 6px 24px rgba(0, 0, 0, .2); left: 0; top: 0; }
+#tip h4 { margin: 0 0 3px; font-size: 13.5px; font-weight: 600; overflow-wrap: anywhere; }
+#tip .tr { display: flex; justify-content: space-between; gap: 16px; }
+#tip .tr span { opacity: .75; }
+#tip .tr b { font-weight: 500; font-variant-numeric: tabular-nums; text-align: right; overflow-wrap: anywhere; }
+
+/* tables */
+.tw { overflow-x: auto; background: var(--panel); border: var(--rule); font-family: var(--sans); font-size: 14px; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+caption { text-align: left; color: var(--muted); font: 14px/1.45 var(--serif); padding: 8px 10px; }
+th, td { padding: 5px 10px; border-bottom: 1px solid var(--divider); text-align: left; vertical-align: top; }
+tbody tr:last-child > * { border-bottom: 0; }
+thead th { position: sticky; top: 0; background: var(--panel); font-weight: 600; white-space: nowrap; border-bottom: var(--rule); }
+th[scope=row] { font-weight: 400; }
+.n { text-align: right; }
+th.n button { text-align: right; }
+th button { all: unset; cursor: pointer; font-weight: 600; display: inline-flex; gap: 4px; align-items: center; }
+th button:focus-visible { outline: 2px dashed currentColor; outline-offset: 2px; }
+th button .ar::after { content: "\2195"; opacity: .35; font-size: 11px; }
+th[aria-sort=ascending] .ar::after { content: "\25B2"; opacity: 1; }
+th[aria-sort=descending] .ar::after { content: "\25BC"; opacity: 1; }
+tbody tr:hover, tbody tr:focus-within { background: var(--hover); }
+tr.step th { padding-left: 28px; }
+tr.gap th, tr.gap td { color: var(--muted); font-style: italic; }
+tr.stage th { font-weight: 600; }
+.ib { position: relative; min-width: 120px; white-space: nowrap; }
+.ib i { position: absolute; left: 0; top: 1px; bottom: 1px; width: var(--w); background: var(--bar); }
+.ib b { position: relative; font-weight: 400; padding-left: 4px; }
+.n .ib i { left: auto; right: 0; }
+.n .ib b { padding: 0 4px 0 0; }
+.more { margin: 8px 0 0; display: flex; gap: 10px; align-items: center; color: var(--muted); font: 13px var(--sans); }
+.tools { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center; margin-bottom: 8px; font-family: var(--sans); }
+.seg-wrap { display: inline-flex; align-items: center; gap: 8px; }
+.seg { display: inline-flex; }
+.seg button { margin-left: -2px; }
+.seg button:first-child { margin-left: 0; }
+#mem-chart svg { display: block; width: 100%; }
+.cut { color: var(--muted); font-size: 13px; }
+
+/* footer, as on psalm.dev */
+body > footer { text-align: center; background: var(--panel); padding: 37px 15px 30px; position: relative; margin-top: 30px; color: var(--muted); font: 14px var(--sans); }
+body > footer::before { content: ""; z-index: 300; background-image: var(--wave); background-repeat: repeat-x; background-size: 11px 4px; height: 6px; width: 100%; position: absolute; top: -2px; left: 0; }
+body > footer p { margin: 0 auto; }
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <p class="logo"><a href="https://psalm.dev/">Psalm</a></p>
+    <nav aria-label="psalm.dev">
+      <ul>
+        <li><a href="https://psalm.dev/docs/">Docs</a></li>
+        <li><a href="https://psalm.dev/play">Playground</a></li>
+        <li><a href="https://psalm.dev/plugins">Plugins</a></li>
+        <li><a href="https://psalm.dev/articles">Blog</a></li>
+        <li><a href="https://psalm.dev/support">Paid support</a></li>
+        <li><a href="https://github.com/vimeo/psalm" aria-label="Psalm on GitHub"><svg width="24" height="24" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div class="page">
+<div class="wrap">
+  <div class="pagehead">
+    <h1>Performance report</h1>
+    <p id="source" class="muted"></p>
+    <div class="actions">
+      <button type="button" id="open" class="primary">Open a dump&hellip;</button>
+      <button type="button" id="save" hidden>Save as standalone HTML</button>
+      <button type="button" id="trace" hidden>Export trace (Chrome JSON)</button>
+      <span id="trace-note" class="muted" hidden>Opens in <a href="https://ui.perfetto.dev">Perfetto</a>, <a href="https://www.speedscope.app">speedscope</a> and <a href="https://profiler.firefox.com">Firefox Profiler</a>; the file is built in your browser.</span>
+      <span id="save-note" class="muted" hidden>The standalone copy leaves out <code>traceEvents</code> of old dumps.</span>
+      <input type="file" id="file" accept=".json,application/json" hidden>
+    </div>
+  </div>
+  <nav aria-label="Sections" id="nav" hidden></nav>
+  <p id="error" role="alert" hidden></p>
+  <p id="schema-warn" role="alert" hidden></p>
+  <section id="empty" hidden aria-labelledby="h-empty">
+    <h2 id="h-empty">Drop a perf.json here, or choose a file</h2>
+    <p><button type="button" id="open2" class="primary">Choose a file&hellip;</button></p>
+    <p>Write the file with Psalm:</p>
+    <pre><code>psalm --debug-performance=perf.json</code></pre>
+    <p class="muted">The file is read in your browser and sent nowhere.</p>
+  </section>
+  <noscript><p>This report needs JavaScript.</p></noscript>
+  <main id="report" hidden></main>
+</div>
+</div>
+<footer><p><span id="foot"></span><br>The dump is read in your browser and never uploaded.</p></footer>
+<div id="tip" role="status" hidden></div>
+<script type="application/json" id="dump"></script>
+<script>
+(() => {
+'use strict';
+const t0 = performance.now();
+const VIEWER_VERSION = '2026-11-23';
+const SUPPORTED_SCHEMAS = [1];
+// the page as it was delivered, for "Save as standalone HTML"
+const pristine = document.documentElement.cloneNode(true);
+// psalm.dev serves its fonts from the same origin; a saved copy opened from disk falls back to the system fonts
+if (/^https?:$/.test(location.protocol)) {
+  const f = (family, file, weight, style) => `@font-face{font-display:swap;font-family:"${family}";${weight ? 'font-weight:' + weight + ';' : ''}${style ? 'font-style:' + style + ';' : ''}src:url(/extra/${file}.woff2) format("woff2")}`;
+  const st = document.createElement('style');
+  st.textContent = f('Tiempos Text', 'TiemposTextWeb-Regular') + f('Tiempos Text', 'TiemposTextWeb-RegularItalic', 0, 'italic') + f('Tiempos Text', 'TiemposTextWeb-Medium', 500) +
+    f('National 2', 'national-2-web-regular') + f('National 2', 'national-2-web-medium', 500) + f('National 2', 'national-2-web-bold', 600);
+  document.head.append(st);
+}
+let current = null;
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const nf = new Intl.NumberFormat('en-US');
+const int = n => nf.format(Math.round(n));
+const fmtT = us => {
+  if (us == null || isNaN(us)) return '\u2014';
+  const a = Math.abs(us), sg = us < 0 ? '-' : '';
+  if (a >= 1e6) return sg + (a / 1e6).toFixed(2) + ' s';
+  if (a >= 1e3) { const ms = a / 1e3; return sg + ms.toFixed(ms >= 100 ? 0 : ms >= 10 ? 1 : 2) + ' ms'; }
+  return a === 0 ? '0 ms' : sg + (a >= 100 ? Math.round(a) : a >= 10 ? a.toFixed(1) : a.toFixed(2)) + ' \u00b5s';
+};
+const fmtB = b => {
+  if (b == null || isNaN(b)) return '\u2014';
+  const a = Math.abs(b), sg = b < 0 ? '-' : '';
+  if (a >= 1073741824) return sg + (a / 1073741824).toFixed(2) + ' GB';
+  if (a >= 1048576) return sg + (a / 1048576).toFixed(1) + ' MB';
+  if (a >= 1024) return sg + (a / 1024).toFixed(1) + ' KB';
+  return sg + a + ' B';
+};
+const fmtPct = f => (f == null || isNaN(f)) ? '\u2014' : (f > 0 && f < 0.001 ? '<0.1 %' : (f * 100).toFixed(1) + ' %');
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const fmtTick = (sec, step) => step >= 1 ? int(sec) + ' s' : step >= 0.1 ? sec.toFixed(1) + ' s' : step >= 0.01 ? sec.toFixed(2) + ' s' : (sec * 1000).toFixed(0) + ' ms';
+const niceStepAtLeast = min => { const p = Math.pow(10, Math.floor(Math.log10(min))); for (const m of [1, 2, 5, 10]) if (m * p >= min) return m * p; return 10 * p; };
+const num = v => typeof v === 'number' && isFinite(v);
+const shortPsalm = v => { const [n, h] = String(v).split('@'); return h ? n + '@' + h.slice(0, 10) : n; };
+const kvRow = (k, v) => `<div class="tr"><span>${esc(k)}</span><b>${v}</b></div>`;
+
+/* ---------- tooltip ---------- */
+const tipEl = $('#tip');
+const Tip = {
+  cur: null,
+  set(html) { tipEl.innerHTML = html; tipEl.hidden = false; },
+  move(x, y) {
+    const w = tipEl.offsetWidth, h = tipEl.offsetHeight;
+    let l = x + 14, t = y + 16;
+    if (l + w > innerWidth - 6) l = Math.max(6, x - w - 14);
+    if (t + h > innerHeight - 6) t = Math.max(6, y - h - 12);
+    tipEl.style.left = l + 'px'; tipEl.style.top = t + 'px';
+  },
+  hide() { tipEl.hidden = true; Tip.cur = null; },
+};
+function bindTip(root, htmlOf) {
+  root.addEventListener('pointermove', e => {
+    const el = e.target.closest ? e.target.closest('[data-i]') : null;
+    if (!el || !root.contains(el)) { Tip.hide(); return; }
+    if (el !== Tip.cur) { const h = htmlOf(el); if (!h) { Tip.hide(); return; } Tip.cur = el; Tip.set(h); }
+    Tip.move(e.clientX, e.clientY);
+  });
+  root.addEventListener('pointerleave', Tip.hide);
+  root.addEventListener('focusin', e => {
+    const el = e.target.closest ? e.target.closest('[data-i]') : null;
+    if (!el) return;
+    const h = htmlOf(el); if (!h) return;
+    Tip.cur = el; Tip.set(h);
+    const r = el.getBoundingClientRect();
+    Tip.move(clamp(r.left, 4, innerWidth - 40), r.bottom + 2);
+  });
+  root.addEventListener('focusout', Tip.hide);
+}
+addEventListener('keydown', e => { if (e.key === 'Escape') Tip.hide(); });
+addEventListener('scroll', Tip.hide, { passive: true });
+
+/* ---------- generic UI: segmented control and sortable table ---------- */
+function seg(host, label, opts, cur, cb) {
+  host.classList.add('seg-wrap');
+  host.innerHTML = `<span class="muted">${esc(label)}</span><span class="seg" role="group" aria-label="${esc(label)}">` +
+    opts.map(o => `<button type="button" data-v="${esc(o.v)}" aria-pressed="${String(o.v === String(cur))}">${esc(o.t)}</button>`).join('') + '</span>';
+  host.onclick = e => {
+    const b = e.target.closest('button[data-v]'); if (!b) return;
+    host.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    cb(b.dataset.v);
+  };
+}
+
+/* cols: {k, label, v(row) sort value, h(row) html, f(row) text, bar(row) 0..1, num, row (th scope=row), cls} */
+function mkTable(host, o) {
+  const st = { key: o.key, dir: o.dir ?? -1, limit: o.limit ?? 50, rows: o.rows };
+  const step = o.step ?? 50, cap = o.cap ?? 1000, sortable = o.sortable !== false;
+  let cache = null, cacheKey = '';
+  const sorted = () => {
+    const c = o.cols.find(c => c.k === st.key);
+    if (!sortable || !c) return st.rows;
+    const ck = st.key + ':' + st.dir;
+    if (cache && cache.src === st.rows && cacheKey === ck) return cache.arr;
+    const v = c.v, arr = st.rows.slice();
+    arr.sort((a, b) => { const x = v(a), y = v(b); return (x < y ? -1 : x > y ? 1 : 0) * st.dir; });
+    cache = { src: st.rows, arr }; cacheKey = ck;
+    return arr;
+  };
+  const cell = (c, r) => {
+    let h = c.h ? c.h(r) : esc(c.f(r));
+    if (c.bar) { const f = c.bar(r); if (f != null) h = `<div class="ib" style="--w:${clamp(f * 100, 0, 100).toFixed(1)}%"><i></i><b>${h}</b></div>`; }
+    const tag = c.row ? 'th scope="row"' : 'td';
+    return `<${tag} class="${c.num ? 'n ' : ''}${c.cls || ''}">${h}</${c.row ? 'th' : 'td'}>`;
+  };
+  function draw() {
+    const all = sorted(), n = Math.min(st.limit, cap, all.length);
+    let h = `<div class="tw" tabindex="0" role="region" aria-label="${esc(o.label)}"><table><caption>${o.caption || esc(o.label)}</caption><thead><tr>`;
+    for (const c of o.cols) {
+      const sortedHere = sortable && c.k === st.key;
+      h += `<th scope="col" class="${c.num ? 'n' : ''}"${sortable && c.sort !== false ? ` aria-sort="${sortedHere ? (st.dir > 0 ? 'ascending' : 'descending') : 'none'}"` : ''}>` +
+        (sortable && c.sort !== false ? `<button type="button" data-k="${c.k}">${esc(c.label)}<span class="ar" aria-hidden="true"></span></button>` : esc(c.label)) + '</th>';
+    }
+    h += '</tr></thead><tbody>';
+    for (let i = 0; i < n; i++) {
+      const r = all[i];
+      h += `<tr${o.rowCls ? ` class="${o.rowCls(r)}"` : ''}>` + o.cols.map(c => cell(c, r)).join('') + '</tr>';
+    }
+    h += '</tbody></table></div>';
+    if (all.length > n || (all.length > step && n > step)) {
+      const left = Math.min(all.length, cap) - n;
+      h += `<p class="more"><span>Showing ${int(n)} of ${int(all.length)}${all.length > cap && n >= cap ? ' (capped at ' + int(cap) + ')' : ''}</span>` +
+        (left > 0 ? `<button type="button" data-more>Show ${int(Math.min(step, left))} more</button><button type="button" data-all>Show ${all.length > cap ? 'first ' + int(cap) : 'all'}</button>` : '') +
+        (n > step ? '<button type="button" data-less>Show fewer</button>' : '') + '</p>';
+    }
+    host.innerHTML = h;
+  }
+  host.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b || !host.contains(b)) return;
+    if (b.dataset.k) {
+      const c = o.cols.find(c => c.k === b.dataset.k);
+      if (st.key === c.k) st.dir = -st.dir; else { st.key = c.k; st.dir = c.num ? -1 : 1; }
+      draw(); host.querySelector(`button[data-k="${c.k}"]`)?.focus();
+    } else if ('more' in b.dataset) { st.limit += step; draw(); (host.querySelector('button[data-more]') || host.querySelector('button[data-less]'))?.focus(); }
+    else if ('all' in b.dataset) { st.limit = cap; draw(); host.querySelector('button[data-less]')?.focus(); }
+    else if ('less' in b.dataset) { st.limit = o.limit ?? 50; draw(); }
+  });
+  draw();
+  return { setRows(rows) { st.rows = rows; st.limit = o.limit ?? 50; draw(); } };
+}
+
+/* ---------- data ---------- */
+const STAGE_CLS = { bootstrap: 1, 'scan.setup': 2, 'scan.files': 3, 'scan.populate': 4, 'analysis.setup': 6, 'analysis.files': 5, 'analysis.merge': 4, taint: 7, 'analysis.finish': 1, post: 8, report: 1 };
+const stageCls = name => {
+  if (STAGE_CLS[name]) return STAGE_CLS[name];
+  let h = 0; for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  return 1 + (h % 8);
+};
+const ROLE_CLS = { scan: 3, analysis: 5 };
+const roleCls = role => ROLE_CLS[role] || 4;
+
+function prepare(d) {
+  // new field names first, the old ones for dumps that are already written
+  const withEnd = x => ({ ...x, php_bytes: x.php_end_bytes ?? x.php_bytes });
+  const hooks = d.hooks || [];
+  const counts = { ...(d.counts || {}) };
+  const parser = { ...(d.parser || {}) };
+  if (parser.parses == null && counts.files_parsed != null) parser.parses = counts.files_parsed;
+  if (parser.cache_hits == null && counts.parser_cache_hits != null) parser.cache_hits = counts.parser_cache_hits;
+  delete counts.files_parsed; delete counts.parser_cache_hits; delete counts.parser_cache_misses;
+  // workers are nested in their pool in the final format and a top-level list in older dumps: flatten to one list
+  const flat = (d.pools || []).some(p => Array.isArray(p.workers))
+    ? (d.pools || []).flatMap(p => (Array.isArray(p.workers) ? p.workers : []).map(w => ({ ...w, pool: p.id, role: p.role })))
+    : (d.workers || []);
+  const D = {
+    raw: d, env: d.env || {}, totals: d.totals || {}, stages: (d.stages || []).map(withEnd), steps: (d.steps || []).map(withEnd),
+    pools: (d.pools || []).map(p => {
+      const pb = p.payload_bytes;
+      return { ...p, workers: Array.isArray(p.workers) ? p.workers.length : p.workers, payload: typeof pb === 'number' ? pb : (pb && pb.sum != null ? pb.sum : null), payload_max: p.payload_max_bytes ?? (pb && typeof pb === 'object' ? pb.max : null) ?? null };
+    }),
+    workers: flat.map(w => {
+      const growth = w.php_peak_growth_bytes ?? (num(w.php_peak_bytes) && num(w.php_start_bytes) ? w.php_peak_bytes - w.php_start_bytes : null);
+      return { ...w, growth, php_peak_bytes: num(w.php_peak_bytes) ? w.php_peak_bytes : (num(growth) && num(w.php_start_bytes) ? w.php_start_bytes + growth : null) };
+    }),
+    files: d.files || [], hot: d.hot || d.top || {}, hooks: hooks.filter(h => h.hook !== 'PluginInit'), pluginInit: hooks.filter(h => h.hook === 'PluginInit'),
+    counts, parser, taint: d.taint || {}, mainFiles: [],
+  };
+  let T = D.totals.wall_us;
+  if (!num(T) || T <= 0) {
+    T = 0;
+    for (const s of D.stages) T = Math.max(T, s.start_us + s.wall_us);
+    for (const w of D.workers) T = Math.max(T, w.end_us);
+    for (const f of D.files) T = Math.max(T, f.start_us + f.wall_us);
+  }
+  D.T = T || 1;
+  D.poolById = new Map(D.pools.map(p => [p.id, p]));
+  D.collectAt = p => p ? p.start_us + p.init_us + p.run_us : null;
+  D.analysisUs = 0;
+  // files -> workers or main-process lanes; busy intervals merged with gaps < 30 ms
+  const byPid = new Map();
+  for (const w of D.workers) { w._raw = []; (byPid.get(w.pid) || byPid.set(w.pid, []).get(w.pid)).push(w); }
+  const main = { scan: { raw: [], n: 0 }, analysis: { raw: [], n: 0 } };
+  for (const f of D.files) {
+    if (f.op === 'analysis') D.analysisUs += f.wall_us;
+    const list = byPid.get(f.pid);
+    let tgt = null;
+    if (list) tgt = list.length === 1 ? list[0] : (list.find(w => f.start_us >= w.start_us - 1000 && f.start_us <= w.end_us + 1000) || list[0]);
+    if (!tgt) D.mainFiles.push(f);
+    const t = tgt || (main[f.op] || main.scan);
+    t._raw ? t._raw.push([f.start_us, f.start_us + f.wall_us, f.cpu_us]) : (t.raw.push([f.start_us, f.start_us + f.wall_us, f.cpu_us]));
+  }
+  const merge = raw => {
+    raw.sort((a, b) => a[0] - b[0]);
+    const out = [];
+    for (const [s, e, c] of raw) {
+      const l = out[out.length - 1];
+      if (l && s - l[1] < 30000) { if (e > l[1]) l[1] = e; l[2]++; l[3] += c || 0; } else out.push([s, e, 1, c || 0]);
+    }
+    return out;
+  };
+  for (const w of D.workers) { w._iv = merge(w._raw); w._raw = null; }
+  D.main = {};
+  for (const op of ['scan', 'analysis']) { const iv = merge(main[op].raw); if (iv.length) D.main[op] = iv; }
+  return D;
+}
+
+/* ---------- header ---------- */
+function cardsHtml(D) {
+  const t = D.totals, e = D.env, out = [];
+  const add = (k, v, s, cls) => out.push(`<div class="card"><dt>${esc(k)}</dt><dd><div class="v${cls ? ' ' + cls : ''}">${v}</div>${s ? `<div class="s">${s}</div>` : ''}</dd></div>`);
+  if (num(t.wall_us)) add('Wall time', fmtT(t.wall_us));
+  if (num(t.cpu_us)) {
+    const ch = t.children_cpu_us || 0, tot = t.cpu_us + ch;
+    add('CPU time', fmtT(tot), `main ${fmtT(t.cpu_us)}${ch ? ` + children ${fmtT(ch)}` : ''}` + (num(t.wall_us) && t.wall_us ? `<br>${(tot / t.wall_us).toFixed(1)} cores busy on average` : '') + (num(t.cpu_sys_us) ? `<br>system ${fmtT(t.cpu_sys_us)} (main)` : ''));
+  }
+  if (num(t.php_peak_bytes)) add('Peak PHP memory', fmtB(t.php_peak_bytes), 'main process' + (e.memory_limit ? `, limit ${esc(e.memory_limit)}` : ''));
+  if (num(t.max_rss_bytes)) add('Max RSS', fmtB(t.max_rss_bytes), num(t.children_max_rss_bytes) && t.children_max_rss_bytes ? `largest child ${fmtB(t.children_max_rss_bytes)}` : 'main process');
+  if (num(t.files_scanned) || num(t.files_analyzed)) add('Files', `${int(t.files_scanned ?? 0)} / ${int(t.files_analyzed ?? 0)}`, 'scanned / analysed');
+  if (t.issues) add('Issues', `${int(t.issues.errors ?? 0)} / ${int(t.issues.infos ?? 0)}`, 'errors / infos');
+  if (e.threads != null) add('Threads', esc(e.threads) + (e.scan_threads != null && e.scan_threads !== e.threads ? ` / ${esc(e.scan_threads)}` : ''), 'analysis' + (e.scan_threads != null && e.scan_threads !== e.threads ? ' / scan' : '') + (e.cpu_count ? `, ${esc(e.cpu_count)} CPUs on the machine` : ''));
+  if (e.psalm) add('Psalm', `<span title="${esc(e.psalm)}">${esc(shortPsalm(e.psalm))}</span>`, String(e.psalm) !== shortPsalm(e.psalm) ? `full: ${esc(e.psalm)}` : '', 'long');
+  if (e.php) add('PHP', esc(e.php), [e.opcache != null ? 'opcache ' + (e.opcache ? 'on' : 'off') : '', e.jit != null ? 'JIT ' + (e.jit ? 'on' : 'off') : '', e.zend_assertions != null ? 'zend.assertions=' + e.zend_assertions : ''].filter(Boolean).join(', '));
+  if (Array.isArray(e.plugins)) add('Plugins', int(e.plugins.length), e.plugins.length ? e.plugins.map(p => esc(String(p).split('\\').slice(-2).join('\\'))).slice(0, 3).join(', ') + (e.plugins.length > 3 ? ', &hellip;' : '') : 'none');
+  if (e.cache != null) add('Cache', e.cache === 'none' ? 'off (cold run)' : 'on', e.ci ? 'CI' : '');
+  if (e.taint_analysis != null) add('Taint analysis', e.taint_analysis ? 'on' : 'off', e.find_unused_code != null ? 'unused code detection ' + (e.find_unused_code ? 'on' : 'off') : '');
+  return out.length ? `<dl class="cards">${out.join('')}</dl>` : '';
+}
+function envHtml(D) {
+  const e = D.env;
+  if (!Object.keys(e).length) return '';
+  const rows = [];
+  const kv = (k, v) => { if (v != null && v !== '') rows.push(`<dt>${esc(k)}</dt><dd>${v}</dd>`); };
+  kv('System', esc([e.os, e.arch].filter(Boolean).join(' ')));
+  kv('Target PHP version', esc(e.target_php_version));
+  kv('Config SHA-256', e.config_sha256 ? `<code>${esc(e.config_sha256)}</code>` : '');
+  kv('Trace context', e.traceparent ? `<code>${esc(e.traceparent)}</code>` : '');
+  kv('Options', Array.isArray(e.options) ? `<ul class="chips">${e.options.map(o => `<li>--${esc(o)}</li>`).join('')}</ul>` : '');
+  kv('Plugins', Array.isArray(e.plugins) && e.plugins.length ? `<ul class="chips">${e.plugins.map(o => `<li>${esc(o)}</li>`).join('')}</ul>` : '');
+  kv('Extensions', Array.isArray(e.extensions) ? `<ul class="chips">${e.extensions.map(o => `<li>${esc(o)}</li>`).join('')}</ul>` : '');
+  return rows.length ? `<details><summary>Environment, options and plugins</summary><dl class="kv">${rows.join('')}</dl></details>` : '';
+}
+
+/* ---------- timeline ---------- */
+const AX = 26, LW = 176, RW = 176;
+function buildModel(D) {
+  const items = [], labels = [], rlabels = [], rows = [];
+  let y = AX;
+  const row = (h, pitch, label, rlabel) => {
+    const r = { y, h, items: [] }; rows.push(r);
+    if (label != null) labels.push({ y: y + h / 2, t: label });
+    if (rlabel != null) rlabels.push({ y: y + h / 2, t: rlabel });
+    y += pitch; return r;
+  };
+  const group = t => { labels.push({ y: y + 10, t, g: 1 }); y += 17; };
+  const add = (r, it) => { it.y = r.y; it.h = r.h; r.items.push(it); return it; };
+  const shortRun = (n, t) => `${int(n)} files \u00b7 busy ${fmtT(t)}`;
+
+  const rs = row(24, 30, 'stages');
+  for (const s of D.stages) add(rs, { kind: 'stage', ref: s, s: s.start_us, e: s.start_us + s.wall_us, cls: 'f' + stageCls(s.name) + ' b sep', text: s.name, focus: 1 });
+  if (D.steps.length) {
+    const r = row(22, 28, 'steps');
+    D.steps.forEach((s, i) => add(r, { kind: 'step', ref: s, s: s.start_us, e: s.start_us + s.wall_us, cls: 'f' + stageCls(s.stage || '') + ' b sep' + (i % 2 ? ' o7' : ''), text: s.name, focus: 1 }));
+  }
+  if (D.pools.length) {
+    const r = row(22, 28, 'pools');
+    for (const p of D.pools) {
+      let at = p.start_us;
+      for (const ph of [['init', 'fi'], ['run', 'fr'], ['collect', 'fc'], ['merge', 'fm']]) {
+        const dur = p[ph[0] + '_us'] || 0;
+        add(r, { kind: 'phase', ref: { pool: p, phase: ph[0] }, s: at, e: at + dur, cls: ph[1] + ' b sep', text: ph[0] === 'run' ? `${p.role} #${p.id}` : ph[0], focus: 1 });
+        at += dur;
+      }
+    }
+  }
+  // main process lanes
+  const mainOps = ['scan', 'analysis'].filter(op => D.main[op]);
+  if (mainOps.length) {
+    group('main process');
+    for (const op of mainOps) {
+      const iv = D.main[op], n = iv.reduce((a, x) => a + x[2], 0), busy = iv.reduce((a, x) => a + (x[1] - x[0]), 0);
+      const r = row(12, 16, op + ' files', shortRun(n, busy));
+      for (const x of iv) add(r, { kind: 'busy', ref: { iv: x, who: 'main process \u00b7 ' + op }, s: x[0], e: x[1], cls: 'f' + roleCls(op) + ' b' });
+    }
+  }
+  // workers
+  const roles = [...new Set(D.workers.map(w => w.role))];
+  const poolsOf = role => {
+    const ids = [...new Set(D.workers.filter(w => w.role === role).map(w => w.pool))].sort((a, b) => a - b);
+    return ids.map(id => ({ id, pool: D.poolById.get(id), workers: D.workers.filter(w => w.pool === id && w.role === role).sort((a, b) => a.pid - b.pid) }));
+  };
+  const addWorker = (r, w, pool, cls) => {
+    add(r, { kind: 'wspan', ref: { w, pool }, s: w.start_us, e: w.end_us, cls: cls + ' b faint', focus: 1, rank: 0 });
+    const ca = D.collectAt(pool);
+    if (ca != null && ca > w.end_us) add(r, { kind: 'idle', ref: { w, pool }, s: w.end_us, e: ca, cls: 'fh b', inset: 1, rank: 1 });
+    for (const x of w._iv) add(r, { kind: 'busy', ref: { iv: x, who: `${w.role} worker pid ${w.pid}`, w, pool }, s: x[0], e: x[1], cls: cls + ' b', rank: 1 });
+  };
+  for (const role of roles) {
+    const ps = poolsOf(role), cls = 'f' + roleCls(role);
+    if (role === 'scan') {
+      group(`scan workers \u00b7 ${ps.length} pool${ps.length === 1 ? '' : 's'}`);
+      const slots = Math.max(...ps.map(p => p.workers.length));
+      for (let k = 0; k < slots; k++) {
+        let tasks = 0, busy = 0;
+        const ws = ps.map(p => ({ w: p.workers[k], pool: p.pool })).filter(x => x.w);
+        for (const x of ws) { tasks += x.w.tasks || 0; busy += x.w.busy_us || 0; }
+        const r = row(10, 13, `scan worker ${k + 1}`, shortRun(tasks, busy));
+        for (const x of ws) addWorker(r, x.w, x.pool, cls);
+      }
+    } else {
+      for (const p of ps) {
+        group(`${role} workers${ps.length > 1 ? ' \u00b7 pool #' + p.id : ''}`);
+        p.workers.forEach((w, n) => addWorker(row(13, 18, `${role} worker ${n + 1}`, shortRun(w.tasks || 0, w.busy_us || 0)), w, p.pool, cls) );
+      }
+    }
+  }
+  for (const r of rows) r.items.sort((a, b) => a.s - b.s || (a.rank || 0) - (b.rank || 0));
+  rows.forEach(r => r.items.forEach(it => { it.i = items.length; items.push(it); }));
+  return { items, rows, labels, rlabels, H: y + 8 };
+}
+
+function tipFor(D, it) {
+  const T = D.T, dur = it.e - it.s;
+  const base = kvRow('Start', fmtT(it.s)) + kvRow('Duration', fmtT(dur)) + kvRow('Of run', fmtPct(dur / T));
+  const r = it.ref;
+  switch (it.kind) {
+    case 'stage': return `<h4>Stage ${esc(r.name)}</h4>${base}${kvRow('CPU', fmtT(r.cpu_us))}${r.children_cpu_us ? kvRow('Children CPU', fmtT(r.children_cpu_us)) : ''}${kvRow('PHP memory at end', fmtB(r.php_bytes))}${kvRow('Peak so far', fmtB(r.php_peak_bytes))}`;
+    case 'step': return `<h4>Step ${esc(r.name)}</h4>${kvRow('Stage', esc(r.stage || ''))}${base}${kvRow('CPU', fmtT(r.cpu_us))}${kvRow('PHP memory at end', fmtB(r.php_bytes))}`;
+    case 'phase': { const p = r.pool; return `<h4>${esc(p.role)} pool #${esc(p.id)}: ${esc(r.phase)}</h4>${kvRow('Role', esc(p.role))}${kvRow('Workers', int(p.workers))}${kvRow('Tasks', int(p.tasks))}${base}`; }
+    case 'wspan': { const w = r.w; const life = w.end_us - w.start_us; return `<h4>${esc(w.role)} worker, pid ${esc(w.pid)}</h4>${kvRow('Pool', '#' + esc(w.pool))}${kvRow('Tasks', int(w.tasks))}${base}${kvRow('Busy', fmtT(w.busy_us) + (life > 0 ? ` (${fmtPct(w.busy_us / life)})` : ''))}${kvRow('CPU', fmtT(w.cpu_us))}${kvRow('Peak PHP memory', fmtB(w.php_peak_bytes))}${w.growth != null ? kvRow('Peak growth since fork', fmtB(w.growth)) : ''}${kvRow('Max RSS', fmtB(w.max_rss_bytes))}`; }
+    case 'idle': { const w = r.w; return `<h4>Idle tail, ${esc(w.role)} worker pid ${esc(w.pid)}</h4>${kvRow('Finished at', fmtT(w.end_us))}${kvRow('Waited', fmtT(dur))}${kvRow('Of run', fmtPct(dur / T))}<div class="muted">until the main process started to collect results</div>`; }
+    case 'busy': { const x = r.iv; return `<h4>${esc(r.who)}: busy</h4>${kvRow('Files', int(x[2]))}${base}${kvRow('File CPU', fmtT(x[3]))}<div class="muted">merged intervals, gaps under 30 ms</div>`; }
+  }
+  return '';
+}
+
+function renderTimeline(D) {
+  const host = $('#tl'); if (!host) return;
+  const model = buildModel(D);
+  const sc = $('#tl-scroll'), chart = $('#tl-chart'), left = $('#tl-left'), right = $('#tl-right');
+  const Ts = D.T / 1e6, H = model.H;
+  const hasRight = model.rlabels.length > 0;
+  left.setAttribute('width', LW); left.setAttribute('height', H);
+  left.innerHTML = model.labels.map(l => l.g
+    ? `<text class="grp" x="8" y="${l.y}" dominant-baseline="central">${esc(l.t)}</text>`
+    : `<text x="8" y="${l.y}" dominant-baseline="central">${esc(l.t)}</text>`).join('');
+  right.hidden = !hasRight;
+  if (hasRight) {
+    right.setAttribute('width', RW); right.setAttribute('height', H);
+    right.innerHTML = model.rlabels.map(l => `<text class="rl" x="8" y="${l.y}" dominant-baseline="central">${esc(l.t)}</text>`).join('');
+  }
+  chart.setAttribute('height', H);
+
+  let base = Math.max(300, sc.clientWidth) / Ts, pps = base, maxPps = Math.max(base, Math.min(5000, 3e6 / Ts));
+  let rx0 = 0, rx1 = -1, lastFocus = null;
+  const out = $('#z-text'), range = $('#z-range');
+
+  function draw(force) {
+    const sl = sc.scrollLeft, vw = sc.clientWidth, totalW = Math.ceil(Ts * pps);
+    if (!force && rx1 >= 0 && sl >= rx0 + (rx0 > 0 ? vw * .5 : 0) - 1 && sl + vw <= rx1 - (rx1 < totalW ? vw * .5 : 0) + 1) return;
+    const x0 = Math.max(0, sl - vw), x1 = Math.min(totalW, sl + 2 * vw);
+    rx0 = x0; rx1 = x1;
+    const a = x0 / pps * 1e6, b = x1 / pps * 1e6, k = pps / 1e6;
+    const step = niceStepAtLeast(80 / pps);
+    let s = '<defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="6" style="fill:var(--warn)"/></pattern></defs>';
+    for (let n = Math.ceil(x0 / pps / step); n * step * pps <= x1; n++) {
+      const x = (n * step * pps).toFixed(1);
+      s += `<line class="gl" x1="${x}" y1="${AX - 6}" x2="${x}" y2="${H}"/><text class="tick" x="${(+x + 3).toFixed(1)}" y="12">${fmtTick(n * step, step)}</text>`;
+    }
+    s += `<line class="ax" x1="${x0}" y1="${AX - 6}" x2="${x1}" y2="${AX - 6}"/>`;
+    for (const r of model.rows) s += `<rect class="trk" x="${x0}" width="${(x1 - x0).toFixed(1)}" y="${r.y - 1}" height="${r.h + 2}"/>`;
+    for (const r of model.rows) {
+      for (const it of r.items) {
+        if (it.s > b) break;
+        if (it.e < a) continue;
+        const x = it.s * k, w = Math.max((it.e - it.s) * k, .6);
+        const hh = it.inset ? it.h - 6 : it.h, yy = it.inset ? it.y + 3 : it.y;
+        s += `<rect class="${it.cls}" data-i="${it.i}" x="${x.toFixed(1)}" y="${yy}" width="${w.toFixed(1)}" height="${hh}"${it.kind === 'busy' || it.kind === 'wspan' || it.kind === 'idle' ? '' : ' rx="2"'}${it.focus ? ` tabindex="0" role="img" aria-label="${esc(it.kind === 'wspan' ? `${it.ref.w.role} worker pid ${it.ref.w.pid}` : it.kind === 'phase' ? `${it.ref.pool.role} pool ${it.ref.pool.id} ${it.ref.phase}` : it.ref.name)}, ${fmtT(it.e - it.s)}"` : ''}/>`;
+        if (it.text && w > it.text.length * 6.3 + 10) s += `<text class="bt" x="${(x + 5).toFixed(1)}" y="${yy + it.h / 2}" dominant-baseline="central">${esc(it.text)}${it.kind === 'stage' && w > (it.text.length + 9) * 6.3 + 10 ? ' ' + fmtT(it.e - it.s) : ''}</text>`;
+      }
+    }
+    const act = document.activeElement, keep = act && chart.contains(act) ? act.dataset.i : null;
+    chart.innerHTML = s;
+    if (keep != null) chart.querySelector(`[data-i="${keep}"]`)?.focus({ preventScroll: true });
+    status();
+  }
+  function status() {
+    const z = pps / base, sl = sc.scrollLeft, vw = sc.clientWidth;
+    out.textContent = `\u00d7${z < 10 ? z.toFixed(1) : Math.round(z)} \u00b7 ${fmtT(sl / pps * 1e6)} \u2013 ${fmtT(Math.min(Ts, (sl + vw) / pps) * 1e6)}`;
+    range.value = maxPps > base ? String(Math.round(100 * Math.log(pps / base) / Math.log(maxPps / base))) : '0';
+  }
+  function setPps(v, anchor) {
+    v = clamp(v, base, maxPps);
+    const t = (sc.scrollLeft + anchor) / pps;
+    pps = v;
+    chart.setAttribute('width', Math.ceil(Ts * pps));
+    sc.scrollLeft = t * pps - anchor;
+    draw(true);
+  }
+  function zoomTo(s, e) {
+    const span = Math.max(e - s, 2000) / 1e6, vw = sc.clientWidth;
+    pps = clamp(vw / (span * 1.12), base, maxPps);
+    chart.setAttribute('width', Math.ceil(Ts * pps));
+    sc.scrollLeft = (s / 1e6 - (vw / pps - (e - s) / 1e6) / 2) * pps;
+    draw(true);
+  }
+  chart.setAttribute('width', Math.ceil(Ts * pps));
+  sc.scrollLeft = 0;
+  draw(true);
+  sc.addEventListener('scroll', () => requestAnimationFrame(() => { draw(false); status(); }), { passive: true });
+  sc.addEventListener('wheel', e => {
+    if (!(e.ctrlKey || e.metaKey)) return;
+    e.preventDefault();
+    setPps(pps * Math.exp(-e.deltaY * 0.0025), e.clientX - sc.getBoundingClientRect().left);
+  }, { passive: false });
+  const mid = () => sc.clientWidth / 2;
+  $('#z-in').onclick = () => setPps(pps * 1.6, mid());
+  $('#z-out').onclick = () => setPps(pps / 1.6, mid());
+  $('#z-fit').onclick = () => setPps(base, 0);
+  range.oninput = () => setPps(base * Math.pow(maxPps / base, +range.value / 100), mid());
+  const act = el => { const it = model.items[+el.dataset.i]; if (it) zoomTo(it.s, it.e); };
+  chart.addEventListener('click', e => { const el = e.target.closest('[data-i]'); if (el) act(el); });
+  chart.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.dataset && e.target.dataset.i) { e.preventDefault(); act(e.target); } });
+  bindTip($('#tl'), el => tipFor(D, model.items[+el.dataset.i]));
+  // resize: keep the zoom factor
+  let rt = 0, lastW = sc.clientWidth;
+  Resizer.add(() => {
+    clearTimeout(rt);
+    rt = setTimeout(() => {
+      const w = sc.clientWidth; if (Math.abs(w - lastW) < 4) return; lastW = w;
+      const z = pps / base, c = (sc.scrollLeft + w / 2) / pps;
+      base = Math.max(300, w) / Ts; maxPps = Math.max(base, Math.min(5000, 3e6 / Ts)); pps = clamp(base * z, base, maxPps);
+      chart.setAttribute('width', Math.ceil(Ts * pps)); sc.scrollLeft = c * pps - w / 2; draw(true);
+    }, 120);
+  });
+}
+const Resizer = { fns: [], add(f) { this.fns.push(f); }, clear() { this.fns = []; } };
+addEventListener('resize', () => Resizer.fns.forEach(f => f()));
+
+function timelineSection(D) {
+  const legend = [['Init', 'var(--init)'], ['Run', 'var(--run)'], ['Collect', 'var(--collect)'], ['Merge', 'var(--merge)']].map(([t, c]) => `<span style="--sw:${c}">pool ${t.toLowerCase()}</span>`).join('') +
+    (D.workers.length || Object.keys(D.main).length ? '<span style="--sw:var(--c3)">scan busy</span><span style="--sw:var(--c5)">analysis busy</span><span style="--sw:var(--c5);--op:.25">worker lifetime</span><span class="idle">idle tail (waiting for collect)</span>' : '');
+  return `<section id="timeline" aria-labelledby="h-timeline"><h2 id="h-timeline">Timeline</h2>
+<div class="tl-ctl"><div class="legend" aria-label="Legend">${legend}</div>
+<div class="zoomctl"><button type="button" id="z-out" aria-label="Zoom out">&minus;</button><input id="z-range" type="range" min="0" max="100" step="1" value="0" aria-label="Zoom level"><button type="button" id="z-in" aria-label="Zoom in">+</button><button type="button" id="z-fit">Fit</button><output id="z-text" for="z-range"></output></div></div>
+<p class="hint">Hover or focus a bar for details. Enter or a click zooms to a bar. Scroll sideways to pan, Ctrl/Cmd + wheel zooms. Worker bars are busy intervals merged from the per-file records (scan pools run one after another, a row is one worker slot across them); the tables below list every stage, step, pool and worker.</p>
+<div class="tl" id="tl"><svg id="tl-left" role="group" aria-label="Lane names"></svg><div class="tl-s" id="tl-scroll" tabindex="0" role="group" aria-label="Timeline chart, scrollable"><svg id="tl-chart"></svg></div><svg id="tl-right" role="group" aria-label="Lane totals"></svg></div></section>`;
+}
+
+/* ---------- stages and steps ---------- */
+function stagesSection(D) {
+  if (!D.stages.length) return '';
+  return `<section id="stages" aria-labelledby="h-stages"><h2 id="h-stages">Stages and steps</h2><div id="stages-t"></div></section>`;
+}
+function initStages(D) {
+  const host = $('#stages-t'); if (!host) return;
+  const T = D.T, agg = new Map();
+  const get = name => agg.get(name) || agg.set(name, { name, count: 0, wall: 0, cpu: 0, ccpu: 0, steps: new Map() }).get(name);
+  for (const s of D.stages) { const a = get(s.name); a.count++; a.wall += s.wall_us; a.cpu += s.cpu_us || 0; a.ccpu += s.children_cpu_us || 0; }
+  for (const s of D.steps) {
+    const a = get(s.stage || '(unknown)');
+    const x = a.steps.get(s.name) || a.steps.set(s.name, { name: s.name, count: 0, wall: 0, cpu: 0 }).get(s.name);
+    x.count++; x.wall += s.wall_us; x.cpu += s.cpu_us || 0;
+  }
+  const rows = [];
+  for (const a of agg.values()) {
+    rows.push({ kind: 'stage', ...a });
+    let sum = 0; for (const x of a.steps.values()) { rows.push({ kind: 'step', ...x }); sum += x.wall; }
+    if (a.steps.size && a.wall - sum > Math.max(5000, 0.002 * T)) rows.push({ kind: 'gap', name: '(outside any step)', count: 0, wall: a.wall - sum, cpu: null });
+  }
+  const hasCc = D.stages.some(s => s.children_cpu_us > 0);
+  const cols = [
+    { k: 'name', label: 'Name', row: true, h: r => esc(r.name) },
+    { k: 'count', label: 'Count', num: true, h: r => r.count > 1 ? '\u00d7' + r.count : (r.count ? '1' : '') },
+    { k: 'wall', label: 'Wall', num: true, h: r => fmtT(r.wall) },
+    { k: 'cpu', label: 'CPU', num: true, h: r => r.cpu == null ? '' : fmtT(r.cpu) },
+  ];
+  if (hasCc) cols.push({ k: 'ccpu', label: 'Children CPU', num: true, h: r => r.kind === 'stage' ? (r.ccpu ? fmtT(r.ccpu) : '\u2014') : '' });
+  cols.push({ k: 'share', label: 'Share of run', num: true, h: r => fmtPct(r.wall / T), bar: r => r.wall / T });
+  mkTable(host, { label: 'Stages and steps', caption: 'A stage that comes back, such as <code>scan.files</code>, is one row with its count. Steps are the named parts of a stage in the main process. Wall is the main process time.', cols, rows, sortable: false, rowCls: r => r.kind });
+}
+
+/* ---------- memory ---------- */
+function memorySection(D) {
+  if (!D.stages.length || !D.stages.some(s => num(s.php_bytes))) return '';
+  const t = D.totals;
+  return `<section id="memory" aria-labelledby="h-memory"><h2 id="h-memory">Memory</h2>
+<p class="hint">${num(t.php_peak_bytes) ? `Peak PHP memory of the main process ${fmtB(t.php_peak_bytes)}` : ''}${num(t.max_rss_bytes) ? `, max RSS ${fmtB(t.max_rss_bytes)}` : ''}${t.children_max_rss_bytes ? `, largest child RSS ${fmtB(t.children_max_rss_bytes)}` : ''}.</p>
+<div class="legend" aria-label="Legend"><span style="--sw:var(--c2);--op:.55">PHP memory at the end of the stage</span><span style="--sw:var(--c6)">peak so far (main process)</span>${D.workers.length ? '<span style="--sw:var(--c3)">scan worker peak</span><span style="--sw:var(--c5)">analysis worker peak</span>' : ''}</div>
+<div id="mem-chart"></div><h3>Per stage</h3><div id="mem-t"></div></section>`;
+}
+function initMemory(D) {
+  const host = $('#mem-chart'); if (!host) return;
+  const T = D.T, tips = [];
+  const draw = () => {
+    tips.length = 0;
+    const W = Math.max(520, host.clientWidth), Hh = 250, L = 64, R = 14, Tp = 12, B = 26, pw = W - L - R, ph = Hh - Tp - B;
+    let max = 1;
+    for (const s of D.stages) max = Math.max(max, s.php_peak_bytes || 0, s.php_bytes || 0);
+    for (const w of D.workers) max = Math.max(max, w.php_peak_bytes || 0);
+    const unit = max >= 1073741824 ? 1073741824 : 1048576, uname = unit > 1048576 ? 'GB' : 'MB';
+    const ys = niceStepAtLeast(max / unit / 4) * unit, top = Math.ceil(max / ys) * ys;
+    const X = us => L + pw * us / T, Y = b => Tp + ph * (1 - b / top);
+    let s = '';
+    for (let v = 0; v <= top + 1; v += ys) s += `<line class="gl" x1="${L}" x2="${W - R}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}"/><text class="tick" x="${L - 6}" y="${Y(v).toFixed(1)}" text-anchor="end" dominant-baseline="central">${(v / unit).toFixed(v / unit % 1 ? 1 : 0)} ${uname}</text>`;
+    const step = niceStepAtLeast(80 / (pw / (T / 1e6)));
+    for (let n = 0; n * step * 1e6 <= T; n++) s += `<text class="tick" x="${X(n * step * 1e6).toFixed(1)}" y="${Hh - 8}" text-anchor="middle">${fmtTick(n * step, step)}</text>`;
+    D.stages.forEach(st => {
+      if (!num(st.php_bytes)) return;
+      tips.push(`<h4>Stage ${esc(st.name)}</h4>${kvRow('PHP memory at end', fmtB(st.php_bytes))}${kvRow('Peak so far', fmtB(st.php_peak_bytes))}${kvRow('Start', fmtT(st.start_us))}${kvRow('Duration', fmtT(st.wall_us))}`);
+      s += `<rect class="b f2" style="opacity:.55" data-i="${tips.length - 1}" tabindex="0" role="img" aria-label="${esc(st.name)}, ${fmtB(st.php_bytes)}" x="${X(st.start_us).toFixed(1)}" y="${Y(st.php_bytes).toFixed(1)}" width="${Math.max(1, X(st.start_us + st.wall_us) - X(st.start_us)).toFixed(1)}" height="${(Tp + ph - Y(st.php_bytes)).toFixed(1)}"/>`;
+    });
+    let pts = '';
+    for (const st of D.stages) if (num(st.php_peak_bytes)) pts += `${X(st.start_us).toFixed(1)},${Y(st.php_peak_bytes).toFixed(1)} ${X(st.start_us + st.wall_us).toFixed(1)},${Y(st.php_peak_bytes).toFixed(1)} `;
+    s += `<polyline class="lines" points="${pts}"/>`;
+    for (const w of D.workers) {
+      if (!num(w.php_peak_bytes)) continue;
+      tips.push(`<h4>${esc(w.role)} worker, pid ${esc(w.pid)}</h4>${kvRow('Peak PHP memory', fmtB(w.php_peak_bytes))}${w.growth != null ? kvRow('Peak growth since fork', fmtB(w.growth)) : ''}${kvRow('PHP memory at start', fmtB(w.php_start_bytes))}${kvRow('Max RSS', fmtB(w.max_rss_bytes))}${kvRow('Finished at', fmtT(w.end_us))}`);
+      s += `<circle class="dot f${roleCls(w.role)}" data-i="${tips.length - 1}" cx="${X(w.end_us).toFixed(1)}" cy="${Y(w.php_peak_bytes).toFixed(1)}" r="4"/>`;
+    }
+    host.innerHTML = `<svg viewBox="0 0 ${W} ${Hh}" width="${W}" height="${Hh}" role="group" aria-label="Memory per stage over time">${s}</svg>`;
+  };
+  draw();
+  bindTip(host, el => tips[+el.dataset.i]);
+  let rt = 0, lw = host.clientWidth;
+  Resizer.add(() => { clearTimeout(rt); rt = setTimeout(() => { if (Math.abs(host.clientWidth - lw) > 3) { lw = host.clientWidth; draw(); } }, 120); });
+  const rows = D.stages.map((s, i) => ({ s, i, d: i ? s.php_bytes - D.stages[i - 1].php_bytes : null }));
+  mkTable($('#mem-t'), {
+    label: 'Memory per stage', caption: 'PHP memory of the main process at the end of each stage, and the peak reached so far.', key: 'i', dir: 1, limit: 50, rows,
+    cols: [
+      { k: 'i', label: '#', num: true, v: r => r.i, h: r => r.i + 1 },
+      { k: 'name', label: 'Stage', row: true, v: r => r.s.name, h: r => esc(r.s.name) },
+      { k: 'start', label: 'Started', num: true, v: r => r.s.start_us, h: r => fmtT(r.s.start_us) },
+      { k: 'php', label: 'PHP memory at end', num: true, v: r => r.s.php_bytes ?? -1, h: r => fmtB(r.s.php_bytes), bar: r => r.s.php_bytes / (D.totals.php_peak_bytes || 1) },
+      { k: 'peak', label: 'Peak so far', num: true, v: r => r.s.php_peak_bytes ?? -1, h: r => fmtB(r.s.php_peak_bytes) },
+      { k: 'd', label: 'Change', num: true, v: r => r.d ?? 0, h: r => r.d == null ? '' : (r.d > 0 ? '+' : '') + fmtB(r.d) },
+    ],
+  });
+}
+
+/* ---------- hot ---------- */
+function hotSection(D) {
+  const h = D.hot, st = h.statements || [], fn = h.functions || [];
+  if (!st.length && !fn.length) return '';
+  return `<section id="hot" aria-labelledby="h-hot"><h2 id="h-hot">Hot statements and functions</h2>
+${st.length ? '<h3>Statements</h3><div id="hot-s"></div>' : ''}${fn.length ? '<h3>Functions and methods</h3><div id="hot-f"></div>' : ''}</section>`;
+}
+function initHot(D) {
+  const h = D.hot, loc = r => `<span class="path">${esc(r.path)}:${esc(r.line)}</span>`;
+  const mk = (id, rows, label, cap, cols) => {
+    if (!$(id)) return;
+    const maxSelf = Math.max(1, ...rows.map(r => r.self_us ?? r.wall_us ?? 0)), maxWall = Math.max(1, ...rows.map(r => r.wall_us ?? 0));
+    mkTable($(id), {
+      label, caption: cap, rows, key: rows.some(r => r.self_us != null) ? 'own' : 'tot', dir: -1, limit: 25, step: 25,
+      cols: [
+        { k: 'own', label: 'Own time', num: true, v: r => r.self_us ?? -1, h: r => r.self_us == null ? '\u2014' : fmtT(r.self_us), bar: r => r.self_us == null ? null : r.self_us / maxSelf },
+        { k: 'tot', label: 'Total time', num: true, v: r => r.wall_us ?? -1, h: r => fmtT(r.wall_us), bar: r => (r.wall_us ?? 0) / maxWall },
+        { k: 'passes', label: 'Passes', num: true, v: r => r.passes ?? 0, h: r => int(r.passes ?? 0) },
+        { k: 'loc', label: 'Path:line', row: true, v: r => r.path + ':' + String(r.line).padStart(8, '0'), h: loc },
+        ...cols,
+      ],
+    });
+  };
+  const lim = (h.limit != null ? ` The list keeps the ${h.limit} longest.` : '') + (h.min_us != null ? ` Only entries of ${fmtT(h.min_us)} or more are captured.` : '');
+  mk('#hot-s', h.statements || [], 'Hottest statements', `The ${(h.statements || []).length} statements that took longest, per place. Own time is the statement itself, total time includes the functions analysed meanwhile.${lim}`, [
+    { k: 'node', label: 'Node', v: r => r.node || '', h: r => `<code>${esc(r.node || '')}</code>` },
+  ]);
+  mk('#hot-f', h.functions || [], 'Hottest functions and methods', `The ${(h.functions || []).length} function-likes that took longest. Own time is the function-like itself, total time includes the functions analysed meanwhile. A constructor is analysed twice, so it has more than one pass.${lim}`, [
+    { k: 'id', label: 'Function', v: r => r.id || '', h: r => `<span class="path">${esc(r.id || '')}</span>` },
+    { k: 'pass', label: 'Pass', v: r => r.pass || '', h: r => esc(r.pass || '') },
+  ]);
+}
+
+/* ---------- hooks ---------- */
+function hooksSection(D) {
+  if (!D.hooks.length && !D.pluginInit.length) return '';
+  return `<section id="hooks" aria-labelledby="h-hooks"><h2 id="h-hooks">Plugins and providers</h2>${D.hooks.length ? '<div class="tools" id="hooks-f"></div><div id="hooks-t"></div>' : ''}${D.pluginInit.length ? '<h3>Plugin initialisation</h3><div id="init-t"></div>' : ''}</section>`;
+}
+function initHooks(D) {
+  if ($('#init-t')) {
+    const maxI = Math.max(1, ...D.pluginInit.map(r => r.wall_us));
+    mkTable($('#init-t'), {
+      label: 'Plugin initialisation', key: 'time', dir: -1, limit: 10, step: 25, rows: D.pluginInit,
+      caption: 'Time each plugin took to register its handlers, when the config was loaded.',
+      cols: [
+        { k: 'handler', label: 'Plugin', row: true, v: r => r.handler, h: r => `<span class="path">${esc(r.handler)}</span>` },
+        { k: 'origin', label: 'Origin', v: r => r.origin || '', h: r => esc(r.origin || '') },
+        { k: 'time', label: 'Time', num: true, v: r => r.wall_us, h: r => fmtT(r.wall_us), bar: r => r.wall_us / maxI },
+      ],
+    });
+  }
+  const host = $('#hooks-t'); if (!host) return;
+  const base = D.analysisUs || (D.totals.cpu_us || 0) || 0;
+  const maxT = Math.max(1, ...D.hooks.map(r => r.wall_us));
+  const t = mkTable(host, {
+    label: 'Time per handler and hook', key: 'time', dir: -1, limit: 25, step: 25, rows: D.hooks,
+    caption: `Time in handlers of plugins and of Psalm, per hook. Share is relative to ${D.analysisUs ? 'the file analysis time over all processes' : 'the CPU time of the main process'} (${fmtT(base)}). Handlers run during the analysis in worker processes too, and each call is timed, so these times include some cost of measuring.`,
+    cols: [
+      { k: 'handler', label: 'Handler', row: true, v: r => r.handler, h: r => `<span class="path">${esc(r.handler)}</span>` },
+      { k: 'hook', label: 'Hook', v: r => r.hook, h: r => esc(r.hook) },
+      { k: 'origin', label: 'Origin', v: r => r.origin || '', h: r => esc(r.origin || '') },
+      { k: 'calls', label: 'Calls', num: true, v: r => r.calls, h: r => int(r.calls) },
+      { k: 'time', label: 'Time', num: true, v: r => r.wall_us, h: r => fmtT(r.wall_us), bar: r => r.wall_us / maxT },
+      { k: 'avg', label: 'Per call', num: true, v: r => r.calls ? r.wall_us / r.calls : 0, h: r => r.calls ? fmtT(r.wall_us / r.calls) : '\u2014' },
+      { k: 'share', label: 'Share', num: true, v: r => r.wall_us, h: r => base ? fmtPct(r.wall_us / base) : '\u2014' },
+    ],
+  });
+  const origins = [...new Set(D.hooks.map(h => h.origin).filter(Boolean))];
+  seg($('#hooks-f'), 'Origin', [{ v: 'all', t: 'All' }, ...origins.map(o => ({ v: o, t: o[0].toUpperCase() + o.slice(1) }))], 'all', v => t.setRows(v === 'all' ? D.hooks : D.hooks.filter(h => h.origin === v)));
+}
+
+/* ---------- files ---------- */
+function filesSection(D) {
+  return D.files.length ? `<section id="files" aria-labelledby="h-files"><h2 id="h-files">Files</h2><div class="tools" id="files-f"></div>
+<h3>Slowest files by CPU</h3><div id="files-t"></div><h3>Directories</h3><div class="tools" id="dirs-f"></div><div id="dirs-t"></div></section>` : '';
+}
+function dirOf(path, depth) {
+  const segs = String(path).replace(/\\/g, '/').split('/'); segs.pop();
+  const abs = segs.length > 0 && segs[0] === ''; if (abs) segs.shift();
+  const use = segs.slice(0, depth);
+  return use.length ? (abs ? '/' : '') + use.join('/') + '/' : (abs ? '/' : '(project root)');
+}
+function initFiles(D) {
+  if (!$('#files-t')) return;
+  const st = { op: 'all', depth: 2 };
+  const sel = () => st.op === 'all' ? D.files : D.files.filter(f => f.op === st.op);
+  const hasBytes = D.files.some(f => f.bytes != null), hasIssues = D.files.some(f => f.issues != null), hasStorage = D.files.some(f => f.storage);
+  let maxCpu = 1; for (const f of D.files) if (f.cpu_us > maxCpu) maxCpu = f.cpu_us;
+  const ft = mkTable($('#files-t'), {
+    label: 'Slowest files', key: 'cpu', dir: -1, limit: 50, step: 50, cap: 1000, rows: sel(),
+    caption: 'One record per file scanned or analysed. CPU and wall are per file and per process. Times per file are most reliable with --threads=1.',
+    cols: [
+      { k: 'cpu', label: 'CPU', num: true, v: r => r.cpu_us, h: r => fmtT(r.cpu_us), bar: r => r.cpu_us / maxCpu },
+      { k: 'wall', label: 'Wall', num: true, v: r => r.wall_us, h: r => fmtT(r.wall_us) },
+      { k: 'op', label: 'Op', v: r => r.op, h: r => esc(r.op) },
+      { k: 'path', label: 'Path', row: true, v: r => r.path, h: r => `<span class="path">${esc(r.path)}</span>` },
+      { k: 'peak', label: 'Peak growth', num: true, v: r => r.peak_growth_bytes ?? 0, h: r => fmtB(r.peak_growth_bytes) },
+      ...(hasBytes ? [{ k: 'bytes', label: 'Size', num: true, v: r => r.bytes ?? -1, h: r => r.bytes == null ? '' : fmtB(r.bytes) }] : []),
+      ...(hasIssues ? [{ k: 'issues', label: 'Issues', num: true, v: r => r.issues ?? -1, h: r => r.issues == null ? '' : int(r.issues) }] : []),
+      ...(hasStorage ? [{ k: 'storage', label: 'Storage', v: r => r.storage || '', h: r => esc(r.storage || '') + (r.deep ? ' (deep)' : '') }] : []),
+    ],
+  });
+  const dcache = new Map();
+  const dirRows = () => {
+    const key = st.op + ':' + st.depth; if (dcache.has(key)) return dcache.get(key);
+    const m = new Map(); let tot = 0;
+    for (const f of sel()) {
+      const d = dirOf(f.path, st.depth); let a = m.get(d);
+      if (!a) m.set(d, a = { dir: d, n: 0, cpu: 0, wall: 0 });
+      a.n++; a.cpu += f.cpu_us; a.wall += f.wall_us; tot += f.cpu_us;
+    }
+    const rows = [...m.values()]; rows.forEach(r => r.tot = tot);
+    dcache.set(key, rows); return rows;
+  };
+  const maxDir = rows => Math.max(1, ...rows.map(r => r.cpu));
+  let md = 1;
+  const dt = mkTable($('#dirs-t'), {
+    label: 'CPU per directory', key: 'cpu', dir: -1, limit: 25, step: 25, cap: 2000, rows: [],
+    caption: 'Directories as printed in the dump, cut to the chosen number of path segments. Wall is summed over files and processes, so it can exceed the run time.',
+    cols: [
+      { k: 'dir', label: 'Directory', row: true, v: r => r.dir, h: r => `<span class="path">${esc(r.dir)}</span>` },
+      { k: 'n', label: 'Files', num: true, v: r => r.n, h: r => int(r.n) },
+      { k: 'cpu', label: 'CPU', num: true, v: r => r.cpu, h: r => fmtT(r.cpu), bar: r => r.cpu / md },
+      { k: 'wall', label: 'Wall', num: true, v: r => r.wall, h: r => fmtT(r.wall) },
+      { k: 'share', label: 'Share of CPU', num: true, v: r => r.cpu, h: r => fmtPct(r.tot ? r.cpu / r.tot : 0) },
+    ],
+  });
+  const setDirs = () => { const rows = dirRows(); md = maxDir(rows); dt.setRows(rows); };
+  setDirs();
+  seg($('#files-f'), 'Operation', [{ v: 'all', t: 'All' }, { v: 'scan', t: 'Scan' }, { v: 'analysis', t: 'Analysis' }], 'all', v => { st.op = v; ft.setRows(sel()); setDirs(); });
+  seg($('#dirs-f'), 'Path segments', [1, 2, 3, 4].map(n => ({ v: String(n), t: String(n) })), '2', v => { st.depth = +v; setDirs(); });
+}
+
+/* ---------- workers and pools ---------- */
+function workersSection(D) {
+  if (!D.pools.length && !D.workers.length) return '';
+  return `<section id="workers" aria-labelledby="h-workers"><h2 id="h-workers">Pools and workers</h2>${D.pools.length ? '<h3>Pools</h3><div id="pools-t"></div>' : ''}${D.workers.length ? '<h3>Workers</h3><div id="workers-t"></div>' : ''}</section>`;
+}
+function initWorkers(D) {
+  const ws = D.workers;
+  const tail = w => { const ca = D.collectAt(D.poolById.get(w.pool)); return ca == null ? null : Math.max(0, ca - w.end_us); };
+  if ($('#pools-t')) {
+    const rows = D.pools.map(p => {
+      const mine = ws.filter(w => w.pool === p.id);
+      const busy = mine.reduce((a, w) => a + w.busy_us, 0), mx = mine.reduce((a, w) => Math.max(a, w.busy_us), 0);
+      const ends = mine.map(w => w.end_us);
+      return { p, imb: busy > 0 ? mx * mine.length / busy : null, tail: ends.length ? Math.max(...ends) - Math.min(...ends) : null };
+    });
+    mkTable($('#pools-t'), {
+      label: 'Pools', key: 'id', dir: 1, limit: 50, rows,
+      caption: 'Forked pools: init forks the workers, run is the work, collect reads the results, merge merges them into the main process. Workers CPU is what the worker processes of the pool used, measured by the main process. Imbalance is the busiest worker over the mean (1.00 is even). Tail is the spread of the worker finishing times.',
+      cols: [
+        { k: 'id', label: 'Pool', num: true, row: true, v: r => r.p.id, h: r => '#' + esc(r.p.id) },
+        { k: 'role', label: 'Role', v: r => r.p.role, h: r => esc(r.p.role) },
+        { k: 'workers', label: 'Workers', num: true, v: r => r.p.workers, h: r => int(r.p.workers) },
+        { k: 'tasks', label: 'Tasks', num: true, v: r => r.p.tasks, h: r => int(r.p.tasks) },
+        { k: 'start', label: 'Start', num: true, v: r => r.p.start_us, h: r => fmtT(r.p.start_us) },
+        { k: 'init', label: 'Init', num: true, v: r => r.p.init_us, h: r => fmtT(r.p.init_us) },
+        { k: 'run', label: 'Run', num: true, v: r => r.p.run_us, h: r => fmtT(r.p.run_us) },
+        { k: 'collect', label: 'Collect', num: true, v: r => r.p.collect_us, h: r => fmtT(r.p.collect_us) },
+        { k: 'merge', label: 'Merge', num: true, v: r => r.p.merge_us, h: r => fmtT(r.p.merge_us) },
+        { k: 'cpu', label: 'Workers CPU', num: true, v: r => r.p.cpu_us ?? -1, h: r => r.p.cpu_us == null ? '\u2014' : fmtT(r.p.cpu_us) },
+        { k: 'pay', label: 'Payload sum / max', num: true, v: r => r.p.payload ?? -1, h: r => r.p.payload == null ? '\u2014' : `${fmtB(r.p.payload)}${r.p.payload_max != null ? ' / ' + fmtB(r.p.payload_max) : ''}` },
+        { k: 'imb', label: 'Imbalance', num: true, v: r => r.imb ?? 0, h: r => r.imb == null ? '\u2014' : r.imb.toFixed(2) },
+        { k: 'tail', label: 'Tail', num: true, v: r => r.tail ?? 0, h: r => r.tail == null ? '\u2014' : fmtT(r.tail) },
+      ],
+    });
+  }
+  if ($('#workers-t')) {
+    const maxBusy = Math.max(1, ...ws.map(w => w.busy_us));
+    mkTable($('#workers-t'), {
+      label: 'Workers', key: 'pool', dir: 1, limit: 50, rows: ws,
+      caption: 'Peak growth is the peak memory of the worker minus what it held when forked. Busy is the time spent on tasks, idle tail is how long the worker waited for the main process to collect its results after it finished.',
+      cols: [
+        { k: 'pool', label: 'Pool', num: true, v: r => r.pool * 1e7 + r.pid % 1e7, h: r => '#' + esc(r.pool) },
+        { k: 'role', label: 'Role', v: r => r.role, h: r => esc(r.role) },
+        { k: 'pid', label: 'PID', num: true, row: true, v: r => r.pid, h: r => esc(r.pid) },
+        { k: 'tasks', label: 'Tasks', num: true, v: r => r.tasks, h: r => int(r.tasks) },
+        { k: 'busy', label: 'Busy', num: true, v: r => r.busy_us, h: r => fmtT(r.busy_us), bar: r => r.busy_us / maxBusy },
+        { k: 'cpu', label: 'CPU', num: true, v: r => r.cpu_us, h: r => fmtT(r.cpu_us) },
+        { k: 'idle', label: 'Idle tail', num: true, v: r => tail(r) ?? -1, h: r => tail(r) == null ? '\u2014' : fmtT(tail(r)) },
+        { k: 'growth', label: 'Peak growth', num: true, v: r => r.growth ?? -1, h: r => fmtB(r.growth) },
+        { k: 'peak', label: 'Peak PHP memory', num: true, v: r => r.php_peak_bytes ?? -1, h: r => fmtB(r.php_peak_bytes) },
+        { k: 'rss', label: 'Max RSS', num: true, v: r => r.max_rss_bytes ?? -1, h: r => fmtB(r.max_rss_bytes) },
+      ],
+    });
+  }
+}
+
+/* ---------- counts and taint ---------- */
+function countsSection(D) {
+  const dl = (o, label) => {
+    const e = Object.entries(o).filter(([, v]) => v != null);
+    if (!e.length) return '';
+    return `<div><h3>${label}</h3><dl class="kv num">${e.map(([k, v]) => `<div><dt>${esc(k.replace(/_/g, ' '))}</dt><dd>${typeof v === 'number' ? int(v) : esc(typeof v === 'object' ? JSON.stringify(v) : v)}</dd></div>`).join('')}</dl></div>`;
+  };
+  const parser = { 'parses': D.parser.parses, 'statements reused instead of parsed': D.parser.cache_hits };
+  const body = dl(D.counts, 'Counts') + dl(parser, 'Parser') + dl(D.taint, 'Taint graph');
+  return body ? `<section id="counts" aria-labelledby="h-counts"><h2 id="h-counts">Counts and taint</h2><div class="two">${body}</div></section>` : '';
+}
+
+/* ---------- page ---------- */
+function render(d, name) {
+  const r0 = performance.now();
+  Resizer.clear(); Tip.hide();
+  const D = prepare(d);
+  const secs = [
+    ['timeline', 'Timeline', timelineSection(D)],
+    ['stages', 'Stages', stagesSection(D)],
+    ['memory', 'Memory', memorySection(D)],
+    ['hot', 'Hot code', hotSection(D)],
+    ['hooks', 'Plugins', hooksSection(D)],
+    ['files', 'Files', filesSection(D)],
+    ['workers', 'Workers', workersSection(D)],
+    ['counts', 'Counts', countsSection(D)],
+  ].filter(s => s[2]);
+  const report = $('#report');
+  report.innerHTML = `<section id="summary" aria-labelledby="h-summary" style="margin-top:20px"><h2 id="h-summary">Run summary</h2>${cardsHtml(D)}${envHtml(D)}</section>` + secs.map(s => s[2]).join('');
+  report.hidden = false; $('#empty').hidden = true; $('#error').hidden = true;
+  const nav = $('#nav');
+  nav.innerHTML = '<ul>' + [['summary', 'Summary'], ...secs.map(s => [s[0], s[1]])].map(s => `<li><a href="#${s[0]}">${s[1]}</a></li>`).join('') + '</ul>';
+  nav.hidden = false;
+  $('#source').innerHTML = (name ? `Source: <code>${esc(name)}</code>` : '') + (d.schema != null ? ` \u00b7 schema ${esc(d.schema)}` : '');
+  document.title = 'Psalm performance report' + (name ? ' \u00b7 ' + name : '');
+  renderTimeline(D); initStages(D); initMemory(D); initHot(D); initHooks(D); initFiles(D); initWorkers(D);
+  current = { d, name };
+  const warn = schemaWarning(d.schema);
+  const wEl = $('#schema-warn'); wEl.textContent = warn; wEl.hidden = !warn;
+  $('#save').hidden = $('#trace').hidden = $('#trace-note').hidden = false;
+  $('#save-note').hidden = !('traceEvents' in d);
+  const ms = Math.round(performance.now() - r0);
+  window.__renderMs = ms;
+  setFoot(d);
+  console.info('psalm-perf-report: rendered in ' + ms + ' ms');
+}
+
+function setFoot(d) {
+  $('#foot').textContent = d ? `Viewer ${VIEWER_VERSION} \u00b7 dump schema ${d.schema ?? 'unknown'} \u00b7 Psalm ${(d.env && d.env.psalm) ? shortPsalm(d.env.psalm) : 'unknown'}` : `Viewer ${VIEWER_VERSION}`;
+  $('#foot').title = d && d.env && d.env.psalm ? String(d.env.psalm) : '';
+}
+
+function schemaWarning(s) {
+  if (SUPPORTED_SCHEMAS.includes(s)) return '';
+  if (num(s) && s > Math.max(...SUPPORTED_SCHEMAS)) return 'This dump comes from a newer Psalm; some parts may be missing.';
+  return 'This is not a recognised dump schema; the report shows what it can, and some parts may be missing.';
+}
+
+function saveStandalone() {
+  if (!current) return;
+  const copy = { ...current.d }; delete copy.traceEvents; delete copy.displayTimeUnit;
+  // "<" is escaped so that nothing in the data can end the script element
+  const json = JSON.stringify(copy).replace(/[<\u2028\u2029]/g, c => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'));
+  const root = pristine.cloneNode(true), el = root.querySelector('#dump');
+  el.textContent = json;
+  if (current.name) el.setAttribute('data-source', current.name); else el.removeAttribute('data-source');
+  download('<!DOCTYPE html>\n' + root.outerHTML, 'text/html', (current.name || 'psalm-perf-report') + '.html');
+}
+
+function download(text, type, name) {
+  const url = URL.createObjectURL(new Blob([text], { type }));
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+/* Trace Event Format for ui.perfetto.dev, built from the records of the dump (never from an embedded traceEvents) */
+function buildTrace(d) {
+  const D = prepare(d);
+  const wpids = new Set(D.workers.map(w => w.pid));
+  let mainPid = D.mainFiles.length ? D.mainFiles[0].pid : null;
+  if (mainPid == null && Array.isArray(d.traceEvents)) {
+    const m = d.traceEvents.find(e => e.ph === 'M' && e.name === 'process_name' && e.args && e.args.name === 'psalm');
+    if (m) mainPid = m.pid;
+  }
+  if (mainPid == null || wpids.has(mainPid)) mainPid = Math.max(0, ...wpids) + 1;
+  const ev = [];
+  const meta = (name, pid, tid, value) => ev.push({ ph: 'M', name, pid, tid, args: { name: value } });
+  const span = (name, cat, ts, dur, pid, tid, args) => { const e = { name, cat, ph: 'X', ts, dur: Math.max(0, dur), pid, tid }; if (args) e.args = args; ev.push(e); };
+  meta('process_name', mainPid, 0, 'psalm');
+  ['stages', 'steps', 'pools', 'files'].forEach((n, tid) => meta('thread_name', mainPid, tid, n));
+  for (const w of D.workers) {
+    meta('process_name', w.pid, 0, `psalm ${w.role} worker`);
+    meta('thread_name', w.pid, 0, 'files'); meta('thread_name', w.pid, 1, 'worker');
+  }
+  for (const s of D.stages) span(s.name, 'stage', s.start_us, s.wall_us, mainPid, 0);
+  for (const s of D.steps) span(s.name, 'step', s.start_us, s.wall_us, mainPid, 1, s.stage ? { stage: s.stage } : undefined);
+  for (const p of D.pools) {
+    let at = p.start_us;
+    for (const ph of ['init', 'run', 'collect', 'merge']) {
+      const dur = p[ph + '_us'] || 0;
+      span(`${p.role} ${ph}`, 'pool', at, dur, mainPid, 2, { pool: p.id, workers: p.workers, tasks: p.tasks });
+      at += dur;
+    }
+  }
+  for (const w of D.workers) {
+    const ca = D.collectAt(D.poolById.get(w.pool));
+    span('worker', 'worker', w.start_us, w.end_us - w.start_us, w.pid, 1, { tasks: w.tasks, busy_us: w.busy_us, cpu_us: w.cpu_us });
+    span('idle', 'worker', w.end_us, ca != null ? ca - w.end_us : 0, w.pid, 1);
+  }
+  for (const f of D.files) {
+    const base = String(f.path).split('/').pop();
+    span(base, f.op, f.start_us, f.wall_us, f.pid, wpids.has(f.pid) ? 0 : 3, { path: f.path, cpu_us: f.cpu_us });
+  }
+  return { displayTimeUnit: 'ms', traceEvents: ev };
+}
+function exportTrace() {
+  if (!current) return;
+  download(JSON.stringify(buildTrace(current.d)), 'application/json', (current.name || 'psalm-perf') + '.trace.json');
+}
+
+function fail(msg) {
+  const e = $('#error'); e.textContent = msg; e.hidden = false;
+  if ($('#report').hidden) $('#empty').hidden = false;
+}
+async function loadFile(file) {
+  try {
+    const text = await file.text();
+    const d = JSON.parse(text);
+    if (!d || typeof d !== 'object' || Array.isArray(d) || (!d.totals && !d.stages && !d.files)) throw new Error('This does not look like a Psalm performance dump (no "totals", "stages" or "files" key).');
+    render(d, file.name);
+  } catch (err) { fail('Could not open ' + file.name + ': ' + err.message); }
+}
+const fileInput = $('#file');
+$('#open').onclick = $('#open2').onclick = () => fileInput.click();
+fileInput.onchange = () => { if (fileInput.files[0]) loadFile(fileInput.files[0]); fileInput.value = ''; };
+$('#save').onclick = saveStandalone;
+$('#trace').onclick = exportTrace;
+let dragDepth = 0;
+addEventListener('dragenter', e => { e.preventDefault(); dragDepth++; document.body.classList.add('dragging'); });
+addEventListener('dragover', e => e.preventDefault());
+addEventListener('dragleave', () => { if (--dragDepth <= 0) { dragDepth = 0; document.body.classList.remove('dragging'); } });
+addEventListener('drop', e => {
+  e.preventDefault(); dragDepth = 0; document.body.classList.remove('dragging');
+  const f = e.dataTransfer && e.dataTransfer.files[0]; if (f) loadFile(f);
+});
+
+const dumpEl = $('#dump'), raw = dumpEl.textContent.trim();
+if (raw) {
+  try { render(JSON.parse(raw), dumpEl.dataset.source || ''); }
+  catch (err) { fail('The embedded dump could not be rendered: ' + err.message); console.error(err); }
+} else { $('#empty').hidden = false; setFoot(null); }
+window.__loadMs = Math.round(performance.now() - t0);
+})();
+</script>
+</body>
+</html>
