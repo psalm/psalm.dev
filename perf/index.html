@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>Psalm performance report</title>
@@ -88,7 +89,6 @@ button:focus-visible, select:focus-visible { outline: 2px dashed currentColor; o
 #schema-warn { margin: 16px 0; padding: 10px 14px; border: var(--rule); border-left: 6px solid var(--warn); background: var(--panel); font: 500 15px/1.4 var(--sans); }
 @media (prefers-color-scheme: dark) { #error { color: #f3c2c2; background: #3a1f1f; } }
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
-#save-note { font-size: 13px; }
 body.dragging::after { content: "Drop the dump to open it"; position: fixed; inset: 0; display: grid; place-items: center; font: 500 28px var(--sans); background: color-mix(in srgb, var(--bg) 88%, transparent); border: 4px dashed var(--accent); z-index: 500; pointer-events: none; }
 
 /* summary cards */
@@ -218,7 +218,6 @@ body > footer p { margin: 0 auto; }
       <button type="button" id="save" hidden>Save as standalone HTML</button>
       <button type="button" id="trace" hidden>Export trace (Chrome JSON)</button>
       <span id="trace-note" class="muted" hidden>Opens in <a href="https://ui.perfetto.dev">Perfetto</a>, <a href="https://www.speedscope.app">speedscope</a> and <a href="https://profiler.firefox.com">Firefox Profiler</a>; the file is built in your browser.</span>
-      <span id="save-note" class="muted" hidden>The standalone copy leaves out <code>traceEvents</code> of old dumps.</span>
       <input type="file" id="file" accept=".json,application/json" hidden>
     </div>
   </div>
@@ -259,23 +258,23 @@ let current = null;
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const nf = new Intl.NumberFormat('en-US');
-const int = n => nf.format(Math.round(n));
+const int = n => num(n) ? nf.format(Math.round(n)) : '\u2014';
 const fmtT = us => {
-  if (us == null || isNaN(us)) return '\u2014';
+  if (!num(us)) return '\u2014';
   const a = Math.abs(us), sg = us < 0 ? '-' : '';
   if (a >= 1e6) return sg + (a / 1e6).toFixed(2) + ' s';
   if (a >= 1e3) { const ms = a / 1e3; return sg + ms.toFixed(ms >= 100 ? 0 : ms >= 10 ? 1 : 2) + ' ms'; }
   return a === 0 ? '0 ms' : sg + (a >= 100 ? Math.round(a) : a >= 10 ? a.toFixed(1) : a.toFixed(2)) + ' \u00b5s';
 };
 const fmtB = b => {
-  if (b == null || isNaN(b)) return '\u2014';
+  if (!num(b)) return '\u2014';
   const a = Math.abs(b), sg = b < 0 ? '-' : '';
   if (a >= 1073741824) return sg + (a / 1073741824).toFixed(2) + ' GB';
   if (a >= 1048576) return sg + (a / 1048576).toFixed(1) + ' MB';
   if (a >= 1024) return sg + (a / 1024).toFixed(1) + ' KB';
   return sg + a + ' B';
 };
-const fmtPct = f => (f == null || isNaN(f)) ? '\u2014' : (f > 0 && f < 0.001 ? '<0.1 %' : (f * 100).toFixed(1) + ' %');
+const fmtPct = f => !num(f) ? '\u2014' : (f > 0 && f < 0.001 ? '<0.1 %' : (f * 100).toFixed(1) + ' %');
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const fmtTick = (sec, step) => step >= 1 ? int(sec) + ' s' : step >= 0.1 ? sec.toFixed(1) + ' s' : step >= 0.01 ? sec.toFixed(2) + ' s' : (sec * 1000).toFixed(0) + ' ms';
 const niceStepAtLeast = min => { const p = Math.pow(10, Math.floor(Math.log10(min))); for (const m of [1, 2, 5, 10]) if (m * p >= min) return m * p; return 10 * p; };
@@ -398,30 +397,18 @@ const ROLE_CLS = { scan: 3, analysis: 5 };
 const roleCls = role => ROLE_CLS[role] || 4;
 
 function prepare(d) {
-  // new field names first, the old ones for dumps that are already written
-  const withEnd = x => ({ ...x, php_bytes: x.php_end_bytes ?? x.php_bytes });
-  const hooks = d.hooks || [];
-  const counts = { ...(d.counts || {}) };
-  const parser = { ...(d.parser || {}) };
-  if (parser.parses == null && counts.files_parsed != null) parser.parses = counts.files_parsed;
-  if (parser.cache_hits == null && counts.parser_cache_hits != null) parser.cache_hits = counts.parser_cache_hits;
-  delete counts.files_parsed; delete counts.parser_cache_hits; delete counts.parser_cache_misses;
-  // workers are nested in their pool in the final format and a top-level list in older dumps: flatten to one list
-  const flat = (d.pools || []).some(p => Array.isArray(p.workers))
-    ? (d.pools || []).flatMap(p => (Array.isArray(p.workers) ? p.workers : []).map(w => ({ ...w, pool: p.id, role: p.role })))
-    : (d.workers || []);
+  const withEnd = x => ({ ...x, php_bytes: x.php_end_bytes });
+  const pools = d.pools || [];
   const D = {
     raw: d, env: d.env || {}, totals: d.totals || {}, stages: (d.stages || []).map(withEnd), steps: (d.steps || []).map(withEnd),
-    pools: (d.pools || []).map(p => {
-      const pb = p.payload_bytes;
-      return { ...p, workers: Array.isArray(p.workers) ? p.workers.length : p.workers, payload: typeof pb === 'number' ? pb : (pb && pb.sum != null ? pb.sum : null), payload_max: p.payload_max_bytes ?? (pb && typeof pb === 'object' ? pb.max : null) ?? null };
-    }),
-    workers: flat.map(w => {
-      const growth = w.php_peak_growth_bytes ?? (num(w.php_peak_bytes) && num(w.php_start_bytes) ? w.php_peak_bytes - w.php_start_bytes : null);
-      return { ...w, growth, php_peak_bytes: num(w.php_peak_bytes) ? w.php_peak_bytes : (num(growth) && num(w.php_start_bytes) ? w.php_start_bytes + growth : null) };
-    }),
-    files: d.files || [], hot: d.hot || d.top || {}, hooks: hooks.filter(h => h.hook !== 'PluginInit'), pluginInit: hooks.filter(h => h.hook === 'PluginInit'),
-    counts, parser, taint: d.taint || {}, mainFiles: [],
+    pools: pools.map(p => ({ ...p, workers: (p.workers || []).length, payload: p.payload_bytes ?? null, payload_max: p.payload_max_bytes ?? null })),
+    // workers are nested in their pool: flatten to one list, with the peak as an absolute size
+    workers: pools.flatMap(p => (p.workers || []).map(w => ({
+      ...w, pool: p.id, role: p.role, growth: w.peak_growth_bytes,
+      php_peak_bytes: num(w.php_start_bytes) && num(w.peak_growth_bytes) ? w.php_start_bytes + w.peak_growth_bytes : null,
+    }))),
+    files: d.files || [], hot: d.hot || {}, hooks: d.hooks || [], plugins: d.plugins || [],
+    counts: d.counts || {}, parser: d.parser || {}, taint: d.taint || {}, mainFiles: [],
   };
   let T = D.totals.wall_us;
   if (!num(T) || T <= 0) {
@@ -472,13 +459,13 @@ function cardsHtml(D) {
     add('CPU time', fmtT(tot), `main ${fmtT(t.cpu_us)}${ch ? ` + children ${fmtT(ch)}` : ''}` + (num(t.wall_us) && t.wall_us ? `<br>${(tot / t.wall_us).toFixed(1)} cores busy on average` : '') + (num(t.cpu_sys_us) ? `<br>system ${fmtT(t.cpu_sys_us)} (main)` : ''));
   }
   if (num(t.php_peak_bytes)) add('Peak PHP memory', fmtB(t.php_peak_bytes), 'main process' + (e.memory_limit ? `, limit ${esc(e.memory_limit)}` : ''));
-  if (num(t.max_rss_bytes)) add('Max RSS', fmtB(t.max_rss_bytes), num(t.children_max_rss_bytes) && t.children_max_rss_bytes ? `largest child ${fmtB(t.children_max_rss_bytes)}` : 'main process');
+  if (num(t.max_rss_bytes)) add('Max RSS', fmtB(t.max_rss_bytes), 'main process');
   if (num(t.files_scanned) || num(t.files_analyzed)) add('Files', `${int(t.files_scanned ?? 0)} / ${int(t.files_analyzed ?? 0)}`, 'scanned / analysed');
   if (t.issues) add('Issues', `${int(t.issues.errors ?? 0)} / ${int(t.issues.infos ?? 0)}`, 'errors / infos');
   if (e.threads != null) add('Threads', esc(e.threads) + (e.scan_threads != null && e.scan_threads !== e.threads ? ` / ${esc(e.scan_threads)}` : ''), 'analysis' + (e.scan_threads != null && e.scan_threads !== e.threads ? ' / scan' : '') + (e.cpu_count ? `, ${esc(e.cpu_count)} CPUs on the machine` : ''));
   if (e.psalm) add('Psalm', `<span title="${esc(e.psalm)}">${esc(shortPsalm(e.psalm))}</span>`, String(e.psalm) !== shortPsalm(e.psalm) ? `full: ${esc(e.psalm)}` : '', 'long');
-  if (e.php) add('PHP', esc(e.php), [e.opcache != null ? 'opcache ' + (e.opcache ? 'on' : 'off') : '', e.jit != null ? 'JIT ' + (e.jit ? 'on' : 'off') : '', e.zend_assertions != null ? 'zend.assertions=' + e.zend_assertions : ''].filter(Boolean).join(', '));
-  if (Array.isArray(e.plugins)) add('Plugins', int(e.plugins.length), e.plugins.length ? e.plugins.map(p => esc(String(p).split('\\').slice(-2).join('\\'))).slice(0, 3).join(', ') + (e.plugins.length > 3 ? ', &hellip;' : '') : 'none');
+  if (e.php) add('PHP', esc(e.php), [e.opcache != null ? 'opcache ' + (e.opcache ? 'on' : 'off') : '', e.jit != null ? 'JIT ' + (e.jit ? 'on' : 'off') : '', e.zend_assertions != null ? 'zend.assertions=' + esc(e.zend_assertions) : '', e.restarted ? 'restarted' : ''].filter(Boolean).join(', '));
+  if (Array.isArray(D.raw.plugins)) add('Plugins', int(D.plugins.length), D.plugins.length ? D.plugins.map(p => esc(String(p.class).split('\\').slice(-2).join('\\'))).slice(0, 3).join(', ') + (D.plugins.length > 3 ? ', &hellip;' : '') : 'none');
   if (e.cache != null) add('Cache', e.cache === 'none' ? 'off (cold run)' : 'on', e.ci ? 'CI' : '');
   if (e.taint_analysis != null) add('Taint analysis', e.taint_analysis ? 'on' : 'off', e.find_unused_code != null ? 'unused code detection ' + (e.find_unused_code ? 'on' : 'off') : '');
   return out.length ? `<dl class="cards">${out.join('')}</dl>` : '';
@@ -491,9 +478,11 @@ function envHtml(D) {
   kv('System', esc([e.os, e.arch].filter(Boolean).join(' ')));
   kv('Target PHP version', esc(e.target_php_version));
   kv('Config SHA-256', e.config_sha256 ? `<code>${esc(e.config_sha256)}</code>` : '');
+  kv('Restarted', e.restarted != null ? (e.restarted ? 'yes' : 'no') : '');
+  kv('Process id', e.pid != null ? esc(e.pid) : '');
   kv('Trace context', e.traceparent ? `<code>${esc(e.traceparent)}</code>` : '');
   kv('Options', Array.isArray(e.options) ? `<ul class="chips">${e.options.map(o => `<li>--${esc(o)}</li>`).join('')}</ul>` : '');
-  kv('Plugins', Array.isArray(e.plugins) && e.plugins.length ? `<ul class="chips">${e.plugins.map(o => `<li>${esc(o)}</li>`).join('')}</ul>` : '');
+  kv('Plugins', D.plugins.length ? `<ul class="chips">${D.plugins.map(o => `<li>${esc(o.class)}</li>`).join('')}</ul>` : '');
   kv('Extensions', Array.isArray(e.extensions) ? `<ul class="chips">${e.extensions.map(o => `<li>${esc(o)}</li>`).join('')}</ul>` : '');
   return rows.length ? `<details><summary>Environment, options and plugins</summary><dl class="kv">${rows.join('')}</dl></details>` : '';
 }
@@ -742,7 +731,7 @@ function memorySection(D) {
   if (!D.stages.length || !D.stages.some(s => num(s.php_bytes))) return '';
   const t = D.totals;
   return `<section id="memory" aria-labelledby="h-memory"><h2 id="h-memory">Memory</h2>
-<p class="hint">${num(t.php_peak_bytes) ? `Peak PHP memory of the main process ${fmtB(t.php_peak_bytes)}` : ''}${num(t.max_rss_bytes) ? `, max RSS ${fmtB(t.max_rss_bytes)}` : ''}${t.children_max_rss_bytes ? `, largest child RSS ${fmtB(t.children_max_rss_bytes)}` : ''}.</p>
+<p class="hint">${num(t.php_peak_bytes) ? `Peak PHP memory of the main process ${fmtB(t.php_peak_bytes)}` : ''}${num(t.max_rss_bytes) ? `, max RSS ${fmtB(t.max_rss_bytes)}` : ''}.</p>
 <div class="legend" aria-label="Legend"><span style="--sw:var(--c2);--op:.55">PHP memory at the end of the stage</span><span style="--sw:var(--c6)">peak so far (main process)</span>${D.workers.length ? '<span style="--sw:var(--c3)">scan worker peak</span><span style="--sw:var(--c5)">analysis worker peak</span>' : ''}</div>
 <div id="mem-chart"></div><h3>Per stage</h3><div id="mem-t"></div></section>`;
 }
@@ -818,11 +807,11 @@ function initHot(D) {
       ],
     });
   };
-  const lim = (h.limit != null ? ` The list keeps the ${h.limit} longest.` : '') + (h.min_us != null ? ` Only entries of ${fmtT(h.min_us)} or more are captured.` : '');
-  mk('#hot-s', h.statements || [], 'Hottest statements', `The ${(h.statements || []).length} statements that took longest, per place. Own time is the statement itself, total time includes the functions analysed meanwhile.${lim}`, [
+  const lim = (h.limit != null ? ` The list keeps the ${int(h.limit)} longest.` : '') + (h.min_us != null ? ` Only entries of ${fmtT(h.min_us)} or more are captured.` : '');
+  mk('#hot-s', h.statements || [], 'Hottest statements', `The ${int((h.statements || []).length)} statements that took longest, per place. Own time is the statement itself, total time includes the functions analysed meanwhile.${lim}`, [
     { k: 'node', label: 'Node', v: r => r.node || '', h: r => `<code>${esc(r.node || '')}</code>` },
   ]);
-  mk('#hot-f', h.functions || [], 'Hottest functions and methods', `The ${(h.functions || []).length} function-likes that took longest. Own time is the function-like itself, total time includes the functions analysed meanwhile. A constructor is analysed twice, so it has more than one pass.${lim}`, [
+  mk('#hot-f', h.functions || [], 'Hottest functions and methods', `The ${int((h.functions || []).length)} function-likes that took longest. Own time is the function-like itself, total time includes the functions analysed meanwhile. A constructor is analysed twice, so it has more than one pass.${lim}`, [
     { k: 'id', label: 'Function', v: r => r.id || '', h: r => `<span class="path">${esc(r.id || '')}</span>` },
     { k: 'pass', label: 'Pass', v: r => r.pass || '', h: r => esc(r.pass || '') },
   ]);
@@ -830,19 +819,18 @@ function initHot(D) {
 
 /* ---------- hooks ---------- */
 function hooksSection(D) {
-  if (!D.hooks.length && !D.pluginInit.length) return '';
-  return `<section id="hooks" aria-labelledby="h-hooks"><h2 id="h-hooks">Plugins and providers</h2>${D.hooks.length ? '<div class="tools" id="hooks-f"></div><div id="hooks-t"></div>' : ''}${D.pluginInit.length ? '<h3>Plugin initialisation</h3><div id="init-t"></div>' : ''}</section>`;
+  if (!D.hooks.length && !D.plugins.length) return '';
+  return `<section id="hooks" aria-labelledby="h-hooks"><h2 id="h-hooks">Plugins and providers</h2>${D.hooks.length ? '<div class="tools" id="hooks-f"></div><div id="hooks-t"></div>' : ''}${D.plugins.length ? '<h3>Plugin initialisation</h3><div id="init-t"></div>' : ''}</section>`;
 }
 function initHooks(D) {
   if ($('#init-t')) {
-    const maxI = Math.max(1, ...D.pluginInit.map(r => r.wall_us));
+    const maxI = Math.max(1, ...D.plugins.map(r => r.init_us));
     mkTable($('#init-t'), {
-      label: 'Plugin initialisation', key: 'time', dir: -1, limit: 10, step: 25, rows: D.pluginInit,
+      label: 'Plugin initialisation', key: 'time', dir: -1, limit: 10, step: 25, rows: D.plugins,
       caption: 'Time each plugin took to register its handlers, when the config was loaded.',
       cols: [
-        { k: 'handler', label: 'Plugin', row: true, v: r => r.handler, h: r => `<span class="path">${esc(r.handler)}</span>` },
-        { k: 'origin', label: 'Origin', v: r => r.origin || '', h: r => esc(r.origin || '') },
-        { k: 'time', label: 'Time', num: true, v: r => r.wall_us, h: r => fmtT(r.wall_us), bar: r => r.wall_us / maxI },
+        { k: 'class', label: 'Plugin', row: true, v: r => String(r.class), h: r => `<span class="path">${esc(r.class)}</span>` },
+        { k: 'time', label: 'Time', num: true, v: r => r.init_us, h: r => fmtT(r.init_us), bar: r => r.init_us / maxI },
       ],
     });
   }
@@ -881,7 +869,7 @@ function initFiles(D) {
   if (!$('#files-t')) return;
   const st = { op: 'all', depth: 2 };
   const sel = () => st.op === 'all' ? D.files : D.files.filter(f => f.op === st.op);
-  const hasBytes = D.files.some(f => f.bytes != null), hasIssues = D.files.some(f => f.issues != null), hasStorage = D.files.some(f => f.storage);
+  const hasBytes = D.files.some(f => f.size_bytes != null), hasIssues = D.files.some(f => f.issues != null), hasStorage = D.files.some(f => f.storage);
   let maxCpu = 1; for (const f of D.files) if (f.cpu_us > maxCpu) maxCpu = f.cpu_us;
   const ft = mkTable($('#files-t'), {
     label: 'Slowest files', key: 'cpu', dir: -1, limit: 50, step: 50, cap: 1000, rows: sel(),
@@ -892,7 +880,7 @@ function initFiles(D) {
       { k: 'op', label: 'Op', v: r => r.op, h: r => esc(r.op) },
       { k: 'path', label: 'Path', row: true, v: r => r.path, h: r => `<span class="path">${esc(r.path)}</span>` },
       { k: 'peak', label: 'Peak growth', num: true, v: r => r.peak_growth_bytes ?? 0, h: r => fmtB(r.peak_growth_bytes) },
-      ...(hasBytes ? [{ k: 'bytes', label: 'Size', num: true, v: r => r.bytes ?? -1, h: r => r.bytes == null ? '' : fmtB(r.bytes) }] : []),
+      ...(hasBytes ? [{ k: 'size', label: 'Size', num: true, v: r => r.size_bytes ?? -1, h: r => r.size_bytes == null ? '' : fmtB(r.size_bytes) }] : []),
       ...(hasIssues ? [{ k: 'issues', label: 'Issues', num: true, v: r => r.issues ?? -1, h: r => r.issues == null ? '' : int(r.issues) }] : []),
       ...(hasStorage ? [{ k: 'storage', label: 'Storage', v: r => r.storage || '', h: r => esc(r.storage || '') + (r.deep ? ' (deep)' : '') }] : []),
     ],
@@ -1024,7 +1012,6 @@ function render(d, name) {
   const warn = schemaWarning(d.schema);
   const wEl = $('#schema-warn'); wEl.textContent = warn; wEl.hidden = !warn;
   $('#save').hidden = $('#trace').hidden = $('#trace-note').hidden = false;
-  $('#save-note').hidden = !('traceEvents' in d);
   const ms = Math.round(performance.now() - r0);
   window.__renderMs = ms;
   setFoot(d);
@@ -1044,9 +1031,8 @@ function schemaWarning(s) {
 
 function saveStandalone() {
   if (!current) return;
-  const copy = { ...current.d }; delete copy.traceEvents; delete copy.displayTimeUnit;
   // "<" is escaped so that nothing in the data can end the script element
-  const json = JSON.stringify(copy).replace(/[<\u2028\u2029]/g, c => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'));
+  const json = JSON.stringify(current.d).replace(/[<\u2028\u2029]/g, c => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'));
   const root = pristine.cloneNode(true), el = root.querySelector('#dump');
   el.textContent = json;
   if (current.name) el.setAttribute('data-source', current.name); else el.removeAttribute('data-source');
@@ -1061,16 +1047,11 @@ function download(text, type, name) {
   setTimeout(() => URL.revokeObjectURL(url), 5000);
 }
 
-/* Trace Event Format for ui.perfetto.dev, built from the records of the dump (never from an embedded traceEvents) */
+/* Trace Event Format (Chrome JSON), built from the records of the dump */
 function buildTrace(d) {
   const D = prepare(d);
   const wpids = new Set(D.workers.map(w => w.pid));
-  let mainPid = D.mainFiles.length ? D.mainFiles[0].pid : null;
-  if (mainPid == null && Array.isArray(d.traceEvents)) {
-    const m = d.traceEvents.find(e => e.ph === 'M' && e.name === 'process_name' && e.args && e.args.name === 'psalm');
-    if (m) mainPid = m.pid;
-  }
-  if (mainPid == null || wpids.has(mainPid)) mainPid = Math.max(0, ...wpids) + 1;
+  const mainPid = D.env.pid;
   const ev = [];
   const meta = (name, pid, tid, value) => ev.push({ ph: 'M', name, pid, tid, args: { name: value } });
   const span = (name, cat, ts, dur, pid, tid, args) => { const e = { name, cat, ph: 'X', ts, dur: Math.max(0, dur), pid, tid }; if (args) e.args = args; ev.push(e); };
@@ -1103,6 +1084,7 @@ function buildTrace(d) {
 }
 function exportTrace() {
   if (!current) return;
+  if (!num(current.d.env && current.d.env.pid)) { fail('This dump has no env.pid, which the trace export needs.'); return; }
   download(JSON.stringify(buildTrace(current.d)), 'application/json', (current.name || 'psalm-perf') + '.trace.json');
 }
 
