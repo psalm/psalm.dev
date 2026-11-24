@@ -89,7 +89,7 @@ button:focus-visible, select:focus-visible { outline: 2px dashed currentColor; o
 #schema-warn { margin: 16px 0; padding: 10px 14px; border: var(--rule); border-left: 6px solid var(--warn); background: var(--panel); font: 500 15px/1.4 var(--sans); }
 @media (prefers-color-scheme: dark) { #error { color: #f3c2c2; background: #3a1f1f; } }
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
-body.dragging::after { content: "Drop the dump to open it"; position: fixed; inset: 0; display: grid; place-items: center; font: 500 28px var(--sans); background: color-mix(in srgb, var(--bg) 88%, transparent); border: 4px dashed var(--accent); z-index: 500; pointer-events: none; }
+body.dragging::after { content: "Drop the profile to open it"; position: fixed; inset: 0; display: grid; place-items: center; font: 500 28px var(--sans); background: color-mix(in srgb, var(--bg) 88%, transparent); border: 4px dashed var(--accent); z-index: 500; pointer-events: none; }
 
 /* summary cards */
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin: 0; font-family: var(--sans); }
@@ -214,7 +214,7 @@ body > footer p { margin: 0 auto; }
     <h1>Performance report</h1>
     <p id="source" class="muted"></p>
     <div class="actions">
-      <button type="button" id="open" class="primary">Open a dump&hellip;</button>
+      <button type="button" id="open" class="primary">Open a profile&hellip;</button>
       <button type="button" id="save" hidden>Save as standalone HTML</button>
       <button type="button" id="trace" hidden>Export trace (Chrome JSON)</button>
       <span id="trace-note" class="muted" hidden>Opens in <a href="https://ui.perfetto.dev">Perfetto</a>, <a href="https://www.speedscope.app">speedscope</a> and <a href="https://profiler.firefox.com">Firefox Profiler</a>; the file is built in your browser.</span>
@@ -235,14 +235,14 @@ body > footer p { margin: 0 auto; }
   <main id="report" hidden></main>
 </div>
 </div>
-<footer><p><span id="foot"></span><br>The dump is read in your browser and never uploaded.</p></footer>
+<footer><p><span id="foot"></span><br>The profile is read in your browser and never uploaded.</p></footer>
 <div id="tip" role="status" hidden></div>
 <script type="application/json" id="dump"></script>
 <script>
 (() => {
 'use strict';
 const t0 = performance.now();
-const VIEWER_VERSION = '2026-11-23';
+const VIEWER_VERSION = '2026-11-24';
 const SUPPORTED_SCHEMAS = [1];
 // the page as it was delivered, for "Save as standalone HTML"
 const pristine = document.documentElement.cloneNode(true);
@@ -901,7 +901,7 @@ function initFiles(D) {
   let md = 1;
   const dt = mkTable($('#dirs-t'), {
     label: 'CPU per directory', key: 'cpu', dir: -1, limit: 25, step: 25, cap: 2000, rows: [],
-    caption: 'Directories as printed in the dump, cut to the chosen number of path segments. Wall is summed over files and processes, so it can exceed the run time.',
+    caption: 'Directories as printed in the profile, cut to the chosen number of path segments. Wall is summed over files and processes, so it can exceed the run time.',
     cols: [
       { k: 'dir', label: 'Directory', row: true, v: r => r.dir, h: r => `<span class="path">${esc(r.dir)}</span>` },
       { k: 'n', label: 'Files', num: true, v: r => r.n, h: r => int(r.n) },
@@ -1019,14 +1019,14 @@ function render(d, name) {
 }
 
 function setFoot(d) {
-  $('#foot').textContent = d ? `Viewer ${VIEWER_VERSION} \u00b7 dump schema ${d.schema ?? 'unknown'} \u00b7 Psalm ${(d.env && d.env.psalm) ? shortPsalm(d.env.psalm) : 'unknown'}` : `Viewer ${VIEWER_VERSION}`;
+  $('#foot').textContent = d ? `Viewer ${VIEWER_VERSION} \u00b7 profile schema ${d.schema ?? 'unknown'} \u00b7 Psalm ${(d.env && d.env.psalm) ? shortPsalm(d.env.psalm) : 'unknown'}` : `Viewer ${VIEWER_VERSION}`;
   $('#foot').title = d && d.env && d.env.psalm ? String(d.env.psalm) : '';
 }
 
 function schemaWarning(s) {
   if (SUPPORTED_SCHEMAS.includes(s)) return '';
-  if (num(s) && s > Math.max(...SUPPORTED_SCHEMAS)) return 'This dump comes from a newer Psalm; some parts may be missing.';
-  return 'This is not a recognised dump schema; the report shows what it can, and some parts may be missing.';
+  if (num(s) && s > Math.max(...SUPPORTED_SCHEMAS)) return 'This profile comes from a newer Psalm; some parts may be missing.';
+  return 'This is not a recognised profile schema; the report shows what it can, and some parts may be missing.';
 }
 
 function saveStandalone() {
@@ -1047,7 +1047,7 @@ function download(text, type, name) {
   setTimeout(() => URL.revokeObjectURL(url), 5000);
 }
 
-/* Trace Event Format (Chrome JSON), built from the records of the dump */
+/* Trace Event Format (Chrome JSON), built from the records of the profile */
 function buildTrace(d) {
   const D = prepare(d);
   const wpids = new Set(D.workers.map(w => w.pid));
@@ -1084,7 +1084,7 @@ function buildTrace(d) {
 }
 function exportTrace() {
   if (!current) return;
-  if (!num(current.d.env && current.d.env.pid)) { fail('This dump has no env.pid, which the trace export needs.'); return; }
+  if (!num(current.d.env && current.d.env.pid)) { fail('This profile has no env.pid, which the trace export needs.'); return; }
   download(JSON.stringify(buildTrace(current.d)), 'application/json', (current.name || 'psalm-perf') + '.trace.json');
 }
 
@@ -1096,7 +1096,7 @@ async function loadFile(file) {
   try {
     const text = await file.text();
     const d = JSON.parse(text);
-    if (!d || typeof d !== 'object' || Array.isArray(d) || (!d.totals && !d.stages && !d.files)) throw new Error('This does not look like a Psalm performance dump (no "totals", "stages" or "files" key).');
+    if (!d || typeof d !== 'object' || Array.isArray(d) || (!d.totals && !d.stages && !d.files)) throw new Error('This does not look like a Psalm performance profile (no "totals", "stages" or "files" key).');
     render(d, file.name);
   } catch (err) { fail('Could not open ' + file.name + ': ' + err.message); }
 }
@@ -1117,7 +1117,7 @@ addEventListener('drop', e => {
 const dumpEl = $('#dump'), raw = dumpEl.textContent.trim();
 if (raw) {
   try { render(JSON.parse(raw), dumpEl.dataset.source || ''); }
-  catch (err) { fail('The embedded dump could not be rendered: ' + err.message); console.error(err); }
+  catch (err) { fail('The embedded profile could not be rendered: ' + err.message); console.error(err); }
 } else { $('#empty').hidden = false; setFoot(null); }
 window.__loadMs = Math.round(performance.now() - t0);
 })();
