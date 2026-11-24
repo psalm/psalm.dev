@@ -111,6 +111,8 @@ RewriteRule ^support/?$ /views/support.php [L,NC]
 RewriteRule ^newsletter/?$ /views/newsletter.php [L,NC]
 RewriteRule ^newsletter/check-your-email/?$ /views/newsletter_check.php [L,NC]
 RewriteRule ^plugins/?$ /views/plugins.php [L,NC]
+# the performance report viewer moved from /perf/ to /profile/
+RewriteRule ^perf(/.*)?$ /profile/ [R=301,L,NC]
 RewriteRule ^$ /views/index.php [L,NC]
 RewriteRule ^schema/config$ /vendor/vimeo/psalm/config.xsd [L,NC]
 # Docs pages as Markdown (/docs/<path>.md), served from vendor/vimeo/psalm/docs, the mkdocs source.
