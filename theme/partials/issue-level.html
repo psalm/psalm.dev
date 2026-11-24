@@ -1,0 +1,110 @@
+{#-
+  Error level badges under the H1 of an issue page (see main.html).
+
+  The level comes from running_psalm/error_levels.md, not from the issue page:
+  Psalm generates that page from each issue's ERROR_LEVEL, and its tests keep
+  them in sync. Every issue is a "[Name](issues/Name.md)" item under a "## ..."
+  heading naming its level, and the badges link to that heading.
+-#}
+{%- set levels_file = pages | selectattr("src_path", "equalto", "running_psalm/error_levels.md") | first -%}
+{%- set markdown = levels_file.page.markdown if levels_file and levels_file.page and levels_file.page.markdown else "" -%}
+{%- set item = markdown.find("](issues/" ~ page.file.name ~ ".md)") -%}
+{%- set heading_start = markdown.rfind("\n## ", 0, item) if item > -1 else -1 -%}
+{%- if heading_start > -1 -%}
+  {%- set heading = markdown[heading_start + 4:markdown.find("\n", heading_start + 4)] | trim -%}
+  {%- set href = (levels_file.page.url | url) ~ "#" ~ (heading | lower | replace(" ", "-")) -%}
+  {%- set default_level = 2 -%}
+  {%- set level = none -%}
+  {%- if heading == "Always treated as errors" -%}
+    {%- set level = "all" -%}
+  {%- elif heading == "Feature-specific errors" -%}
+    {%- set level = "config" -%}
+  {%- elif heading == "Errors that only appear at level 1" -%}
+    {%- set level = 1 -%}
+  {%- elif heading.startswith("Errors at level ") -%}
+    {%- set level = heading.split(" ")[3] | int -%}
+  {%- endif -%}
+
+  {#- The psalm.xml attribute that turns each feature-specific issue on, verified against Psalm's Config -#}
+  {%- set issue_configs = {
+    "UnusedClass": "findUnusedCode",
+    "UnusedConstructor": "findUnusedCode",
+    "UnusedMethod": "findUnusedCode",
+    "UnusedProperty": "findUnusedCode",
+    "UnusedParam": "findUnusedCode",
+    "UnusedReturnValue": "findUnusedCode",
+    "UnusedDocblockParam": "findUnusedCode",
+    "PossiblyUnusedMethod": "findUnusedCode",
+    "PossiblyUnusedParam": "findUnusedCode",
+    "PossiblyUnusedProperty": "findUnusedCode",
+    "PossiblyUnusedReturnValue": "findUnusedCode",
+    "UnusedVariable": "findUnusedVariablesAndParams",
+    "UnusedClosureParam": "findUnusedVariablesAndParams",
+    "UnusedForeachValue": "findUnusedVariablesAndParams",
+    "UnnecessaryVarAnnotation": "findUnusedVariablesAndParams",
+    "UnusedPsalmSuppress": "findUnusedPsalmSuppress",
+    "MissingOverrideAttribute": "ensureOverrideAttribute",
+    "MissingPureAnnotation": "suggestPurityAnnotations",
+    "MissingAbstractPureAnnotation": "suggestPurityAnnotations",
+    "MissingImmutableAnnotation": "suggestPurityAnnotations",
+    "MissingInterfaceImmutableAnnotation": "suggestPurityAnnotations",
+    "PossiblyUndefinedIntArrayOffset": "ensureArrayIntOffsetsExist",
+    "PossiblyUndefinedStringArrayOffset": "ensureArrayStringOffsetsExist",
+    "LiteralKeyUnshapedArray": "disallowLiteralKeysOnUnshapedArrays",
+    "UncaughtThrowInGlobalScope": "checkForThrowsInGlobalScope",
+  } -%}
+  {%- set config_titles = {
+    "runTaintAnalysis": 'runTaintAnalysis="true" in psalm.xml (the default), or --taint-analysis',
+    "findUnusedCode": 'findUnusedCode="true" in psalm.xml (the default), or --find-unused-code',
+    "findUnusedVariablesAndParams": 'findUnusedVariablesAndParams="true" in psalm.xml, or --find-unused-variables. findUnusedCode (on by default) turns it on too',
+    "findUnusedPsalmSuppress": 'findUnusedPsalmSuppress="true" in psalm.xml, or --find-unused-psalm-suppress',
+    "ensureOverrideAttribute": 'ensureOverrideAttribute="true" in psalm.xml (the default)',
+    "suggestPurityAnnotations": 'suggestPurityAnnotations="true" in psalm.xml',
+    "ensureArrayIntOffsetsExist": 'ensureArrayIntOffsetsExist="true" in psalm.xml',
+    "ensureArrayStringOffsetsExist": 'ensureArrayStringOffsetsExist="true" in psalm.xml',
+    "disallowLiteralKeysOnUnshapedArrays": 'disallowLiteralKeysOnUnshapedArrays="true" in psalm.xml',
+    "checkForThrowsInGlobalScope": 'checkForThrowsInGlobalScope="true" in psalm.xml',
+  } -%}
+  {%- set config = "runTaintAnalysis" if page.file.name.startswith("Tainted") else issue_configs.get(page.file.name) -%}
+
+  {%- set icon_error -%}
+    <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.4"/><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8"/></svg>
+  {%- endset -%}
+  {%- set icon_info -%}
+    <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4"/><circle cx="8" cy="4.9" r=".5" fill="currentColor"/></svg>
+  {%- endset -%}
+  {%- set icon_config -%}
+    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.8 14V2.2"/><path d="M3.8 3h8.2l-2 3 2 3H3.8"/></svg>
+  {%- endset -%}
+
+  {%- macro pill(kind, key, icon, value, title) -%}
+    <a class="psalm-level__pill psalm-level__pill--{{ kind }}" href="{{ href }}" title="{{ title | e }}">
+      <span class="psalm-level__key">{{ key }}</span>
+      <span class="psalm-level__value">{{ icon }}{{ value }}</span>
+    </a>
+  {%- endmacro -%}
+
+  {%- if level is not none %}
+<div class="psalm-level" role="note" aria-label="Error level">
+    {%- if level == "all" %}
+  {{ pill("error", "Error at levels", icon_error, "All", "Always reported as an error. The error level cannot turn it into info.") }}
+    {%- elif level == "config" %}
+  {{ pill("error", "Error at levels", icon_error, "All", "Reported only when its feature is on, and then always as an error.") }}
+      {%- if config %}
+  {{ pill("config", "Config", icon_config, "<code>" ~ config ~ "</code>", "Turned on by " ~ config_titles[config]) }}
+      {%- endif %}
+    {%- else %}
+      {%- if level == 1 %}
+  {{ pill("error", "Error at levels", icon_error, "1 only", "Reported as an error at level 1 only. At levels 2–8 it is info.") }}
+      {%- else %}
+  {{ pill("error", "Error at levels", icon_error, "1–" ~ level, "Reported as an error at levels 1–" ~ level ~ ". At " ~ ("level 8" if level == 7 else "levels " ~ (level + 1) ~ "–8") ~ " it is info.") }}
+      {%- endif %}
+      {%- if level >= default_level %}
+  {{ pill("error", "Default (" ~ default_level ~ ")", icon_error, "Error", "Reported as an error at the default error level (" ~ default_level ~ ").") }}
+      {%- else %}
+  {{ pill("info", "Default (" ~ default_level ~ ")", icon_info, "Info", "Reported as info at the default error level (" ~ default_level ~ ").") }}
+      {%- endif %}
+    {%- endif %}
+</div>
+  {%- endif %}
+{%- endif -%}

@@ -42,10 +42,21 @@
 }
 </script>
 {% endblock %}
-{# The newsletter form (the same as psalm.dev's includes/subscribe.php) under every page, and the box
+{# Issue pages show their error level under the H1 (see partials/issue-level.html). The newsletter
+   form (the same as psalm.dev's includes/subscribe.php) goes under every page, and the box
    /assets/js/newsletter.js shows readers after a while #}
 {% block content %}
-{{ super() }}
+{% if page.file.src_path.startswith("running_psalm/issues/") and "</h1>" in page.content %}
+  {% if page.edit_url %}
+    <a href="{{ page.edit_url }}" title="{{ lang.t('edit.link.title') }}" class="md-icon md-content__icon">&#xE3C9;</a>
+  {% endif %}
+  {% set title, body = page.content.split("</h1>", 1) %}
+  {{ title }}</h1>
+  {% include "partials/issue-level.html" %}
+  {{ body }}
+{% else %}
+  {{ super() }}
+{% endif %}
 <form class="newsletter newsletter--box" method="post" action="https://newsletter.daniil.it/subscribe">
   <p class="newsletter__title">Get Psalm news by email</p>
   <p class="newsletter__text">News about Psalm, a few emails a month. You can unsubscribe at any time.</p>
